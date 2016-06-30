@@ -295,9 +295,9 @@ actions = [0,0,3]
 # Form hypotheses
 hyps = list()
 h1 = H.Then('A', 'B')
-h2 = ['A']
+h2 = 'A'
 h3 = H.Or('A','B')
-h4 = ['B']
+h4 = 'B'
 hyps = [h1,h2,h3,h4]
 
 # Test Hypotheses
@@ -309,5 +309,3 @@ print "States: {}".format(infer.states)
 print "Actions: {}".format(infer.actions)
 
 
-# Write a function for multinomial for each derivation, stop symbol
-# write a recursive function till it calls a terminal function

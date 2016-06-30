@@ -7,8 +7,16 @@ import copy
 from collections import OrderedDict
 from GridWorld import GridWorld
 from Grid import Grid
+from scipy.stats import uniform
+from scipy.stats import beta
+
 import itertools
 
+# TODO LIST:
+# 1.) Randomly Sample Hypotheses
+# 2.) Form prior
+# Write a function for multinomial for each derivation, stop symbol
+# write a recursive function till it calls a terminal function
 
 class Hypothesis():
 	"""
@@ -22,22 +30,85 @@ class Hypothesis():
 			- Then
 
 	"""
-	def __init__(self, grid, hypothesis=None):		
+	def __init__(self, grid, occam=.1):		
 		self.grid = grid
+		self.hypotheses = None
+		self.occam = occam
+
+		self.primitives = list()
+		self.primitives = [self.And,self.Or,self.Then]
+		self.objects = grid.objects.keys()
+		self.space = [self.primitives, self.objects]
+
+		# Uniform pDistribution for sampling across objects and primitivres
+		self.pPrim = np.zeros(len(self.primitives))
+		self.pPrim = uniform.pdf(self.pPrim)
+		self.pPrim /= self.pPrim.sum()
+
+		self.pObj = np.zeros(len(self.objects))
+		self.pObj = uniform.pdf(self.pObj)
+		self.pObj /= self.pObj.sum()
+
+		self.p = [self.pPrim,self.pObj]
+
+		self.primCount = 0
 
 
-	def HGenerator(self):
-		pass
+	def sampleHypotheses(self, samples):
+		"""
+
+		"""
+
+		self.hypotheses = list()
+		
+		for i in range(samples):
+
+			self.resetPrimCount()
+			self.setBetaDistribution()
+
+			self.hypotheses.append(self.hGenerator())
+
+
+	def resetPrimCount(self):
+		self.primCount = 0
+
+	def hGenerator(self, arg=None):
+		"""
+		"""
+		choice = np.random.choice([0,1],p=self.choosePrimObj)
+
+		arg = np.random.choice(self.space[choice],p=self.p[choice])
+
+		if arg in self.objects:
+			return arg
+
+		self.primCount += self.occam
+		self.setBetaDistribution()
+
+		return arg(self.hGenerator(),self.hGenerator())
+
+	def setBetaDistribution(self):
+		"""
+		"""
+		choosePrimObj = [.25,.75]
+		choosePrimObj = beta.pdf(prior,1+self.primCount,1)
+		choosePrimObj /= choosePrimObj.sum()
+		self.choosePrimObj = choosePrimObj
 
 
 	def eval(self, graphList):
 		"""
 			Takes in a list of graphStrings, then evaluates by:
-
+			
 				1.) Linking graphs to a start node
 				2.) Finding minimum cost graphString
 				3.) Removing repeated nodes e.g. 'AAB' -> 'AB'
 				4.) Returning the optimal path from a series of graphs
+
+			*****
+			Cannot call this until starting state 'S' is inserted
+			in the grid!
+			*****
 		"""
 
 		# Attach graphs to start node
