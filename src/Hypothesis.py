@@ -20,6 +20,10 @@ import itertools
 
 class Hypothesis():
 	"""
+		**Valid Namespace for this class is restricted specifically to 'H' for
+		ease of parsing the hypothesis strings formed via primitives and objects
+		e.g. H = Hypothesis(Grid('testGrid'))
+
 
 		Provides functions to generate hypotheses from primitives and objects
 		in some GridWorld.
@@ -30,7 +34,7 @@ class Hypothesis():
 			- Then
 
 	"""
-	def __init__(self, grid, occam=.1):		
+	def __init__(self, grid, occam=.4):		
 		self.grid = grid
 		self.hypotheses = None
 		self.occam = occam
@@ -52,7 +56,9 @@ class Hypothesis():
 		self.p = [self.pPrim,self.pObj]
 
 		self.primCount = 0
+		self.primHypotheses = list()
 
+		self.setBetaDistribution()
 
 	def sampleHypotheses(self, samples):
 		"""
@@ -60,14 +66,21 @@ class Hypothesis():
 		"""
 
 		self.hypotheses = list()
-		
-		for i in range(samples):
+
+		while len(self.hypotheses) != samples:
 
 			self.resetPrimCount()
 			self.setBetaDistribution()
 
-			self.hypotheses.append(self.hGenerator())
+			hypothesis = self.hGenerator()
 
+			if hypothesis not in self.hypotheses: 
+				self.hypotheses.append(hypothesis)
+				self.primHypotheses.append((self.primCount / self.occam)+1)
+
+
+		self.evalHypotheses = [eval(i) for i in self.hypotheses]
+		self.hypotheses = [i.replace('self.','') for i in self.hypotheses]
 
 	def resetPrimCount(self):
 		self.primCount = 0
@@ -76,27 +89,33 @@ class Hypothesis():
 		"""
 		"""
 		choice = np.random.choice([0,1],p=self.choosePrimObj)
-
 		arg = np.random.choice(self.space[choice],p=self.p[choice])
 
-		if arg in self.objects:
-			return arg
+
+		if choice == 1:
+			return "'" + arg + "'"
 
 		self.primCount += self.occam
 		self.setBetaDistribution()
 
-		return arg(self.hGenerator(),self.hGenerator())
+		arg1 = self.hGenerator()
+		arg2 = self.hGenerator()
+
+		while arg1 == arg2:
+			arg2 = self.hGenerator()
+		
+		return 'self.' + arg.__name__ + '(' + arg1 + ',' + arg2 + ')'
 
 	def setBetaDistribution(self):
 		"""
 		"""
 		choosePrimObj = [.25,.75]
-		choosePrimObj = beta.pdf(prior,1+self.primCount,1)
+		choosePrimObj = beta.pdf(choosePrimObj,1.3+self.primCount,1)
 		choosePrimObj /= choosePrimObj.sum()
 		self.choosePrimObj = choosePrimObj
 
 
-	def eval(self, graphList):
+	def evaluate(self, graphList):
 		"""
 			Takes in a list of graphStrings, then evaluates by:
 			
@@ -116,9 +135,6 @@ class Hypothesis():
 
 		# Find cheapest path
 		graphString = self.minCostGraphString(graphList)
-
-		# Remove redundant nodes, e.g. 'AAB' -> 'AB'
-		graphString = ''.join(ch for ch, _ in itertools.groupby(graphString))
 
 		return graphString 
 
@@ -201,7 +217,12 @@ class Hypothesis():
 		C = np.array([])
 		for i in range(len(A)):
 			for j in range(len(B)):
-				C = np.append(C, A[i] + B[j])
+
+				if A[i][-1] == B[j][0]:
+					C = np.append(C, A[i]+B[j][1:])
+
+				else:
+					C = np.append(C, A[i] + B[j])
 
 		return C
 

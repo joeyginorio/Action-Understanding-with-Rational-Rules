@@ -114,7 +114,7 @@ class InferenceMachine():
 		return switch
 
 
-	def inferSummary(self, hypotheses, start, actions):
+	def inferSummary(self, samples, start, actions):
 		"""
 			Provide the prior, likelihood, and posterior distributions 
 			for a set of hypotheses. 
@@ -122,6 +122,10 @@ class InferenceMachine():
 			Utilizes Bayes' Rule, P(H|D) ~ P(D|H)P(H)
 
 		"""
+		h = Hypothesis(self.grid)
+		h.sampleHypotheses(samples)
+		self.hypotheses = h.hypotheses
+		self.primHypotheses = h.primHypotheses
 
 		# Add starting object to map
 		self.grid.objects['S'] = tuple(self.sims[0].scalarToCoord(start))
@@ -132,29 +136,38 @@ class InferenceMachine():
 		# Setup the distance matrix, for calculating cost of hypotheses
 		self.H.buildDistanceMatrix()
 
+		evalHypotheses = h.evalHypotheses
 		# For each hypotheses, evaluate it and return the minCost graphString
-		for i in range(len(hypotheses)):
-			hypotheses[i] = self.H.eval(hypotheses[i])
+		for i in range(len(h.hypotheses)):
+			evalHypotheses[i] = self.H.evaluate(h.evalHypotheses[i])
 
 		# Remove the 'S' node from each graph, no longer needed
 		# since cost of each graph has been computed
-		hypotheses = [hyp[1:] for hyp in hypotheses]
-		self.hypotheses = hypotheses
+		evalHypotheses = [hyp[1:] for hyp in evalHypotheses]
+		self.evalHypotheses = evalHypotheses
 
 		# Get state,action vectors to conduct inference over
 		self.getStateActionVectors(start,actions)
 
 		# Get policySwitch vector to know when to follow which policy
 		self.policySwitch = list()
-		for i in range(len(hypotheses)):
-			self.policySwitch.append(self.getPolicySwitch(hypotheses[i], self.states))
+		for i in range(len(h.hypotheses)):
+			self.policySwitch.append(self.getPolicySwitch(h.evalHypotheses[i], self.states))
 
 		# Compute the likelihood for all hypotheses
 		self.inferLikelihood(self.states, self.actions, self.policySwitch)
-
+		self.inferPrior()
+		self.inferPosterior()
 		# self.inferPosterior(state, action)
 		# self.expectedPosterior()
 		# self.plotDistributions()
+
+	def inferPrior(self):
+		"""
+
+		"""
+		self.prior = [1/(i) for i in self.primHypotheses]
+		self.prior /= np.sum(self.prior)
 
 	def buildBiasEngine(self):
 		""" 
@@ -193,89 +206,16 @@ class InferenceMachine():
 			self.likelihood.append(p)
 
 
-	def inferPosterior(self, state, action, prior='uniform'):
+	def inferPosterior(self):
 		"""
 			Uses inference engine to compute posterior probability from the 
 			likelihood and prior (beta distribution).
 		"""
 
-		if prior == 'beta':
-			# Beta Distribution
-			self.prior = np.linspace(.01,1.0,101)
-			self.prior = beta.pdf(self.prior,1.4,1.4)
-			self.prior /= self.prior.sum()
-
-		elif prior == 'shiftExponential':
-			# Shifted Exponential
-			self.prior = np.zeros(101)
-			for i in range(50):
-				self.prior[i + 50] = i * .02
-			self.prior[100] = 1.0
-			self.prior = expon.pdf(self.prior)
-			self.prior[0:51] = 0
-			self.prior *= self.prior
-			self.prior /= self.prior.sum()
-
-		elif prior == 'shiftBeta':
-			# Shifted Beta
-			self.prior = np.linspace(.01,1.0,101)
-			self.prior = beta.pdf(self.prior,1.2,1.2)
-			self.prior /= self.prior.sum()
-			self.prior[0:51] = 0
-
-		elif prior == 'uniform':
-			# Uniform
-			self.prior = np.zeros(len(self.sims))	
-			self.prior = uniform.pdf(self.prior)
-			self.prior /= self.prior.sum()
-
-
 		self.posterior = self.likelihood * self.prior
 		self.posterior /= self.posterior.sum()
 
-	def expectedPosterior(self):
-		"""
-			Calculates expected value for the posterior distribution.
-		"""
-		expectation_a = 0
-		expectation_b = 0
-		aGreaterB = 0
-		aLessB = 0
-		aEqualB = 0
-
-		x = range(len(self.posterior))
-
-		for i in range(len(self.posterior)):
-
-			e_a = self.test[i][0] * infer.posterior[i]
-			e_b = self.test[i][1] * infer.posterior[i]
-
-			expectation_a += e_a
-			expectation_b += e_b
-
-			# print "R_A: {}, R_B: {}".format(self.test[i][0], self.test[i][1])
-			# print "E_a: {}".format(e_a)
-			# print "E_b: {}\n".format(e_b)
-
-			
-			if self.test[i][0] > self.test[i][1]:
-				aGreaterB += self.posterior[i]
-
-			elif self.test[i][0] < self.test[i][1]:
-				aLessB += self.posterior[i]
-
-			elif self.test[i][0] == self.test[i][1]:
-				aEqualB += self.posterior[i]
-		
-		# print aGreaterB
-
-
-		print "Chance that agent prefers A over B: {}".format(aGreaterB)
-		print "Chance that agent prefers B over A: {}".format(aLessB)
-		print "Chance that agent prefers A and B equally: {}".format(aEqualB)
-
-		print "Expectation of Goal A: {}".format(expectation_a)
-		print "Expectation of Goal B: {}".format(expectation_b)
+	
 
 
 
@@ -290,22 +230,15 @@ infer = InferenceMachine(testGrid)
 
 # Define starting state, proceeding actions
 start = 8
-actions = [0,0,3]
+actions = [3,3]
 
-# Form hypotheses
-hyps = list()
-h1 = H.Then('A', 'B')
-h2 = 'A'
-h3 = H.Or('A','B')
-h4 = 'B'
-hyps = [h1,h2,h3,h4]
 
 # Test Hypotheses
-infer.inferSummary(hyps,start,actions)
+infer.inferSummary(100,start,actions)
 
-print "\nHypotheses: {}".format(infer.hypotheses)
-print "Likelihoods: {}".format(infer.likelihood)
-print "States: {}".format(infer.states)
-print "Actions: {}".format(infer.actions)
+print "\nHypotheses: \n{}".format(infer.hypotheses)
+print "Likelihoods: \n{}".format(infer.likelihood)
+print "States: \n{}".format(infer.states)
+print "Actions: \n{}".format(infer.actions)
 
 
