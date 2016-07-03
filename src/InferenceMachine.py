@@ -31,8 +31,8 @@ class InferenceMachine():
 		self.sims = list()
 
 		# Key elements of Bayes' Rule
-		self.likelihood = None
-		self.posterior = None
+		self.likelihoods = list()
+		self.posteriors = list()
 		self.prior = None
 
 		# Modify the GridWorld solver
@@ -41,6 +41,9 @@ class InferenceMachine():
 		self.epsilon = epsilon
 
 		self.grid = grid
+
+		self.states = list()
+		self.actions = list()
 
 		# Generate separate grids, one for each goal in the original map
 		# This will be used later to generate subpolicies for each goal
@@ -79,8 +82,8 @@ class InferenceMachine():
 			nextState = self.sims[0].takeAction(self.sims[0].scalarToCoord(states[i]),actions[i])
 			states.append(self.sims[0].coordToScalar(nextState))
 
-		self.states = states
-		self.actions = actions
+		self.states.append(states)
+		self.actions.append(actions)
 
 
 	def getPolicySwitch(self, hypothesis, states):
@@ -146,18 +149,41 @@ class InferenceMachine():
 		evalHypotheses = [hyp[1:] for hyp in evalHypotheses]
 		self.evalHypotheses = evalHypotheses
 
-		# Get state,action vectors to conduct inference over
-		self.getStateActionVectors(start,actions)
+		###########
+		########### Loop here over all state in list , over all actions in list
+		###########
 
-		# Get policySwitch vector to know when to follow which policy
-		self.policySwitch = list()
-		for i in range(len(h.hypotheses)):
-			self.policySwitch.append(self.getPolicySwitch(h.evalHypotheses[i], self.states))
+		for i in range(len(actions)):
 
-		# Compute the likelihood for all hypotheses
-		self.inferLikelihood(self.states, self.actions, self.policySwitch)
+			# Get state,action vectors to conduct inference over
+			self.getStateActionVectors(start,actions[i])
+
+			# Get policySwitch vector to know when to follow which policy
+			self.policySwitch = list()
+			for j in range(len(h.hypotheses)):
+				self.policySwitch.append(self.getPolicySwitch(h.evalHypotheses[j], self.states[i]))
+
+			# Compute the likelihood for all hypotheses
+			self.inferLikelihood(self.states[i], self.actions[i], self.policySwitch)
+			
+
+
 		self.inferPrior()
-		self.inferPosterior()
+
+		# Write loop to generates all posteriors
+		#####################################
+		#####################################
+		##
+
+		
+		for i in range(len(self.likelihoods)):
+
+			likelihood = 1
+			for j in range(i+1):
+				likelihood *= np.array(self.likelihoods[j])
+
+			self.inferPosterior(likelihood)
+
 		# self.inferPosterior(state, action)
 		# self.expectedPosterior()
 		# self.plotDistributions()
@@ -187,9 +213,7 @@ class InferenceMachine():
 			actions and current state.
 		"""
 
-		self.states = states
-		self.actions = actions
-		self.likelihood = list()
+		likelihood = list()
 
 		
 		for i in range(len(policySwitch)):
@@ -203,17 +227,22 @@ class InferenceMachine():
 				else:
 					p *= self.sims[self.grid.objects.keys().index(policySwitch[i][j])].policy[states[j]][actions[j]]
 
-			self.likelihood.append(p)
+			likelihood.append(p)
+
+		self.likelihoods.append(likelihood)
 
 
-	def inferPosterior(self):
+	def inferPosterior(self, likelihood):
 		"""
 			Uses inference engine to compute posterior probability from the 
 			likelihood and prior (beta distribution).
 		"""
 
-		self.posterior = self.likelihood * self.prior
-		self.posterior /= self.posterior.sum()
+		posterior = likelihood * self.prior
+		posterior /= posterior.sum()
+		self.posteriors.append(posterior)
+
+
 
 	
 
@@ -230,15 +259,22 @@ infer = InferenceMachine(testGrid)
 
 # Define starting state, proceeding actions
 start = 8
-actions = [3,3]
+actions = [[3],[3,3],[3,3],[3,3],[3,3],[3,3],[3,3]]
 
 
 # Test Hypotheses
-infer.inferSummary(100,start,actions)
+infer.inferSummary(1000,start,actions)
+# print "\nHypotheses: \n{}".format(infer.hypotheses)
+# print "================================="
 
-print "\nHypotheses: \n{}".format(infer.hypotheses)
-print "Likelihoods: \n{}".format(infer.likelihood)
-print "States: \n{}".format(infer.states)
-print "Actions: \n{}".format(infer.actions)
+# for i in range(len(actions)):
+
+# 	print "Event {}\n-------".format(i)
+
+# 	print "Likelihoods: \n{}".format(infer.likelihoods[i])
+# 	print "States: \n{}".format(infer.states[i])
+# 	print "Actions: \n{}".format(infer.actions[i])
+
+# 	print "\n"
 
 
