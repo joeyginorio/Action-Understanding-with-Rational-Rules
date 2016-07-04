@@ -48,12 +48,14 @@ class InferenceMachine():
 		# Generate separate grids, one for each goal in the original map
 		# This will be used later to generate subpolicies for each goal
 		# e.g. A policy just for going to A, one just for B, etc.
-		objectGrids = np.empty(len(self.grid.objects), dtype=object)
-		for i in range(len(self.grid.objects)):
-			objectGrids[i] = copy.deepcopy(self.grid)
-			objValue = objectGrids[i].objects[self.grid.objects.keys()[i]] 
-			objectGrids[i].objects.clear()
-			objectGrids[i].objects[self.grid.objects.keys()[i]] = objValue
+		objectGrids = np.empty([len(self.grid),len(self.grid[0].objects)], dtype=object)
+		for i in range(len(self.grid)):
+
+			for j in range(len(self.grid[0].objects)):
+				objectGrids[i][j] = copy.deepcopy(self.grid[i])
+				objValue = objectGrids[i][j].objects[self.grid[i].objects.keys()[j]] 
+				objectGrids[i][j].objects.clear()
+				objectGrids[i][j].objects[self.grid[i].objects.keys()[j]] = objValue
 
 		self.objectGrids = objectGrids
 
@@ -63,7 +65,7 @@ class InferenceMachine():
 		self.buildBiasEngine()
 
 
-	def getStateActionVectors(self,start,actions):
+	def getStateActionVectors(self,gridIndex,start,actions):
 		"""
 			Generates the state vectors resulting from starting in some 
 			state and taking a series of actions. Useful for testing 
@@ -79,27 +81,27 @@ class InferenceMachine():
 		for i in np.arange(0,len(actions)):
 
 			# State that an action in current state takes me to
-			nextState = self.sims[0].takeAction(self.sims[0].scalarToCoord(states[i]),actions[i])
-			states.append(self.sims[0].coordToScalar(nextState))
+			nextState = self.sims[gridIndex][0].takeAction(self.sims[gridIndex][0].scalarToCoord(states[i]),actions[i])
+			states.append(self.sims[gridIndex][0].coordToScalar(nextState))
 
 		self.states.append(states)
 		self.actions.append(actions)
 
 
-	def getPolicySwitch(self, hypothesis, states):
+	def getPolicySwitch(self, gridIndex, hypothesis, states):
 		"""
 			Generates a vector detailing, according to a hypothesis, when
 			to switch policies when iterating across a vector of states.
 		"""
 
 		# State location of all goals/object in map
-		goalStates = [self.sims[0].coordToScalar(goalCoord) for goalCoord in
-					self.grid.objects.values()]
+		goalStates = [self.sims[gridIndex][0].coordToScalar(goalCoord) for goalCoord in
+					self.grid[gridIndex].objects.values()]
 
 		# Create a dict, mapping goals->state_index
 		goalIndex = dict()
 		for i in range(len(goalStates)):
-			goalIndex[self.grid.objects.keys()[i]] = goalStates[i]
+			goalIndex[self.grid[gridIndex].objects.keys()[i]] = goalStates[i]
 
 		# Initialize policySwitch vector
 		switch = np.empty(len(states), dtype=str)
@@ -125,28 +127,39 @@ class InferenceMachine():
 			Utilizes Bayes' Rule, P(H|D) ~ P(D|H)P(H)
 
 		"""
-		h = Hypothesis(self.grid)
+		h = Hypothesis(self.grid[0])
 		h.sampleHypotheses(samples)
 		self.hypotheses = h.hypotheses
 		self.primHypotheses = h.primHypotheses
 
 		# Add starting object to map
-		self.grid.objects['S'] = tuple(self.sims[0].scalarToCoord(start))
 
-		# Initialize the hypotheis generator
-		self.H = Hypothesis(self.grid)
+		self.H = list()
+		for i in range(len(self.grid)):
 
-		# Setup the distance matrix, for calculating cost of hypotheses
-		self.H.buildDistanceMatrix()
+			self.grid[i].objects['S'] = tuple(self.sims[0][0].scalarToCoord(start))
 
-		evalHypotheses = h.evalHypotheses
+			# Initialize the hypotheis generator
+			self.H.append(Hypothesis(self.grid[i]))
+
+			# Setup the distance matrix, for calculating cost of hypotheses
+			self.H[i].buildDistanceMatrix()
+
+		evalHypotheses = list()
 		# For each hypotheses, evaluate it and return the minCost graphString
-		for i in range(len(h.hypotheses)):
-			evalHypotheses[i] = self.H.evaluate(h.evalHypotheses[i])
+		for i in range(len(self.H)):
+
+			bufferHypotheses = list()
+			for j in range(len(h.hypotheses)):
+				bufferHypotheses.append(self.H[i].evaluate(h.evalHypotheses[j]))
+
+			evalHypotheses.append(bufferHypotheses)
 
 		# Remove the 'S' node from each graph, no longer needed
 		# since cost of each graph has been computed
-		evalHypotheses = [hyp[1:] for hyp in evalHypotheses]
+
+		for i in range(len(self.H)):
+			evalHypotheses[i] = [hyp[1:] for hyp in evalHypotheses[i]]
 		self.evalHypotheses = evalHypotheses
 
 		###########
@@ -156,15 +169,15 @@ class InferenceMachine():
 		for i in range(len(actions)):
 
 			# Get state,action vectors to conduct inference over
-			self.getStateActionVectors(start,actions[i])
+			self.getStateActionVectors(i,start,actions[i])
 
 			# Get policySwitch vector to know when to follow which policy
 			self.policySwitch = list()
 			for j in range(len(h.hypotheses)):
-				self.policySwitch.append(self.getPolicySwitch(h.evalHypotheses[j], self.states[i]))
+				self.policySwitch.append(self.getPolicySwitch(i,self.evalHypotheses[i][j], self.states[i]))
 
 			# Compute the likelihood for all hypotheses
-			self.inferLikelihood(self.states[i], self.actions[i], self.policySwitch)
+			self.inferLikelihood(i,self.states[i], self.actions[i], self.policySwitch)
 			
 
 
@@ -203,11 +216,16 @@ class InferenceMachine():
 		# Builds/solves gridworld for each objectGrid, generating policies for
 		# each object in grid. One for going only to A, another just for B, etc.
 		for i in range(len(self.objectGrids)):
-			self.sims.append(GridWorld(self.objectGrids[i], [10], self.discount, self.tau, self.epsilon))
-			
 
+			simsBuffer = list()
+			for j in range(len(self.objectGrids[0])):
+				simsBuffer.append(GridWorld(self.objectGrids[i][j], [10], self.discount, self.tau, self.epsilon))
 
-	def inferLikelihood(self, states, actions, policySwitch):
+			self.sims.append(simsBuffer)
+		
+
+	# INTEGRATE GRIDINDEX INTO LIKEIHOOD
+	def inferLikelihood(self, gridIndex, states, actions, policySwitch):
 		"""
 			Uses inference engine to inferBias predicated on an agents'
 			actions and current state.
@@ -221,11 +239,11 @@ class InferenceMachine():
 			p = 1
 			for j in range(len(policySwitch[0])-1):
 
-				if states[j] == self.sims[0].coordToScalar(self.grid.objects[self.policySwitch[i][j]]):
-					p *= self.sims[self.grid.objects.keys().index(policySwitch[i][j])].policy[self.sims[0].s[len(self.sims[0].s)-1]][actions[j]]
+				if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects[self.policySwitch[i][j]]):
+					p *= self.sims[gridIndex][self.grid.objects.keys().index(policySwitch[i][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
 				
 				else:
-					p *= self.sims[self.grid.objects.keys().index(policySwitch[i][j])].policy[states[j]][actions[j]]
+					p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][j])].policy[states[j]][actions[j]]
 
 			likelihood.append(p)
 
@@ -254,16 +272,16 @@ class InferenceMachine():
 
 
 testGrid = Grid('testGrid')
-H = Hypothesis(testGrid)
-infer = InferenceMachine(testGrid)
+testGrid2 = Grid('testGrid2')
+infer = InferenceMachine([testGrid,testGrid2])
 
 # Define starting state, proceeding actions
 start = 8
-actions = [[3],[3,3],[3,3],[3,3],[3,3],[3,3],[3,3]]
+actions = [[0,0],[0,0]]
+infer.inferSummary(10,start,actions)
 
 
 # Test Hypotheses
-infer.inferSummary(1000,start,actions)
 # print "\nHypotheses: \n{}".format(infer.hypotheses)
 # print "================================="
 
@@ -278,3 +296,14 @@ infer.inferSummary(1000,start,actions)
 # 	print "\n"
 
 
+## Solution, add capability to iterate over multiple maps
+# or is bugged insofar as policyswitch vector for or(a,b) always
+# stays same (either all A or all B) depending on which is closest 
+
+# alternative models:
+# - model with no cost
+# - a or b, means u choose at random
+# - pick stuff out see what doesn't work, thats what is essential
+#  93 Gore St.
+#
+#

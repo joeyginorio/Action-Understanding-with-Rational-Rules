@@ -29,6 +29,9 @@ class Grid():
 		elif grid == 'testGrid':
 			self.getTestGrid()
 
+		elif grid == 'testGrid2':
+			self.getTestGrid2()
+
 
 	def setGrid(self, fileName):
 		""" 
@@ -86,4 +89,9 @@ class Grid():
 			file.
 		"""
 		fileName = 'gridWorlds/testGrid.txt'
+		self.setGrid(fileName)
+
+	def getTestGrid2(self):
+
+		fileName = 'gridWorlds/testGrid2.txt'
 		self.setGrid(fileName)
