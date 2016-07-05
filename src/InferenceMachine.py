@@ -27,7 +27,7 @@ class InferenceMachine():
 		
 	"""
 
-	def __init__(self, grid, discount=.99, tau=.01, epsilon=.01):
+	def __init__(self, samples, grid, start, action,discount=.99, tau=.01, epsilon=.01):
 		self.sims = list()
 
 		# Key elements of Bayes' Rule
@@ -63,6 +63,16 @@ class InferenceMachine():
 		# In this case, one for each object in the map
 		# Subpolicies for each objectGrid done here.
 		self.buildBiasEngine()
+		self.inferSummary(samples,start,action)
+
+		maxH = np.argwhere(self.posteriors[len(self.posteriors)-1] == np.amax(
+			self.posteriors[len(self.posteriors)-1]))
+		maxH = maxH.flatten().tolist()
+
+		print "\n"
+		for i,index in enumerate(maxH):
+			print "Max Hypothesis {}: {}".format(i,self.hypotheses[index])
+
 
 
 	def getStateActionVectors(self,gridIndex,start,actions):
@@ -162,9 +172,6 @@ class InferenceMachine():
 			evalHypotheses[i] = [hyp[1:] for hyp in evalHypotheses[i]]
 		self.evalHypotheses = evalHypotheses
 
-		###########
-		########### Loop here over all state in list , over all actions in list
-		###########
 
 		for i in range(len(actions)):
 
@@ -183,11 +190,6 @@ class InferenceMachine():
 
 		self.inferPrior()
 
-		# Write loop to generates all posteriors
-		#####################################
-		#####################################
-		##
-
 		
 		for i in range(len(self.likelihoods)):
 
@@ -197,9 +199,6 @@ class InferenceMachine():
 
 			self.inferPosterior(likelihood)
 
-		# self.inferPosterior(state, action)
-		# self.expectedPosterior()
-		# self.plotDistributions()
 
 	def inferPrior(self):
 		"""
@@ -240,7 +239,7 @@ class InferenceMachine():
 			for j in range(len(policySwitch[0])-1):
 
 				if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects[self.policySwitch[i][j]]):
-					p *= self.sims[gridIndex][self.grid.objects.keys().index(policySwitch[i][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+					p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
 				
 				else:
 					p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][j])].policy[states[j]][actions[j]]
@@ -261,49 +260,56 @@ class InferenceMachine():
 		self.posteriors.append(posterior)
 
 
+#################### Testing ############################
 
+test1 = False
+test2 = False
+test3 = False
+test4 = True
+
+
+if test1:
+	""" Test 1 """
+	# Testing 'A'
+
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8]
+	actions = [[0,0]]
+
+	infer = InferenceMachine(100, [testGrid], start, actions)
+
+if test2:
+	""" Test 2 """
+	# Testing Or(A,B)
+
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8,8]
+	actions = [[0,0],[0,0]]
+
+	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
+
+if test3:
+	""" Test 3 """
+	# Testing 'Then(A,B)'
 	
 
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8]
+	actions = [[0,0,3]]
 
+	infer = InferenceMachine(100, [testGrid], start, actions)
 
+if test4:
+	""" Test 4 """
 
-#######################################################################
-#################### Testing ##########################################
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8,8]
+	actions = [[0,0,3],[0,0,3]]
 
+	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
 
-testGrid = Grid('testGrid')
-testGrid2 = Grid('testGrid2')
-infer = InferenceMachine([testGrid,testGrid2])
-
-# Define starting state, proceeding actions
-start = [8,7]
-actions = [[0,0],[0]]
-infer.inferSummary(10,start,actions)
-
-
-# Test Hypotheses
-# print "\nHypotheses: \n{}".format(infer.hypotheses)
-# print "================================="
-
-# for i in range(len(actions)):
-
-# 	print "Event {}\n-------".format(i)
-
-# 	print "Likelihoods: \n{}".format(infer.likelihoods[i])
-# 	print "States: \n{}".format(infer.states[i])
-# 	print "Actions: \n{}".format(infer.actions[i])
-
-# 	print "\n"
-
-
-## Solution, add capability to iterate over multiple maps
-# or is bugged insofar as policyswitch vector for or(a,b) always
-# stays same (either all A or all B) depending on which is closest 
-
-# alternative models:
-# - model with no cost
-# - a or b, means u choose at random
-# - pick stuff out see what doesn't work, thats what is essential
-#  93 Gore St.
-#
-#
+# top 10 hypotheses

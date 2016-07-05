@@ -96,7 +96,11 @@ class Hypothesis():
 			return "'" + arg + "'"
 
 		self.primCount += self.occam
+		if arg == self.And:
+			self.primCount += self.occam
+
 		self.setBetaDistribution()
+
 
 		arg1 = self.hGenerator()
 		arg2 = self.hGenerator()
