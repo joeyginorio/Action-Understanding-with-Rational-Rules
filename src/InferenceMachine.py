@@ -137,7 +137,7 @@ class InferenceMachine():
 		self.H = list()
 		for i in range(len(self.grid)):
 
-			self.grid[i].objects['S'] = tuple(self.sims[0][0].scalarToCoord(start))
+			self.grid[i].objects['S'] = tuple(self.sims[0][0].scalarToCoord(start[i]))
 
 			# Initialize the hypotheis generator
 			self.H.append(Hypothesis(self.grid[i]))
@@ -169,7 +169,7 @@ class InferenceMachine():
 		for i in range(len(actions)):
 
 			# Get state,action vectors to conduct inference over
-			self.getStateActionVectors(i,start,actions[i])
+			self.getStateActionVectors(i,start[i],actions[i])
 
 			# Get policySwitch vector to know when to follow which policy
 			self.policySwitch = list()
@@ -276,8 +276,8 @@ testGrid2 = Grid('testGrid2')
 infer = InferenceMachine([testGrid,testGrid2])
 
 # Define starting state, proceeding actions
-start = 8
-actions = [[0,0],[0,0]]
+start = [8,7]
+actions = [[0,0],[0]]
 infer.inferSummary(10,start,actions)
 
 
