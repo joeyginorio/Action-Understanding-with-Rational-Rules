@@ -114,19 +114,17 @@ class InferenceMachine():
 			goalIndex[self.grid[gridIndex].objects.keys()[i]] = goalStates[i]
 
 		# Initialize policySwitch vector
-		switch = np.empty([len(hypothesis),len(states)], dtype=str)
+		switch = np.empty(len(states), dtype=str)
 
 		# Iterate across states, if you hit current goalState, switch to next goalState
 		# as your objective.
 		# Essentially, if goals are 'ABC', stay in A until you hit A, then make B the goal
-		for j in range(len(hypothesis)):
+		switchCount = 0
+		for i, state in enumerate(states):
+			if state == goalIndex[hypothesis[switchCount]] and switchCount + 1 < len(hypothesis):
+				switchCount += 1
 
-			switchCount = 0
-			for i, state in enumerate(states):
-				if state == goalIndex[hypothesis[j][switchCount]] and switchCount + 1 < len(hypothesis[j]):
-					switchCount += 1
-
-				switch[j][i] = hypothesis[j][switchCount]
+			switch[i] = hypothesis[switchCount]
 
 		return switch
 
@@ -206,7 +204,7 @@ class InferenceMachine():
 
 			print "\n\n policySwitch: {}".format(self.policySwitch)
 			# Compute the likelihood for all hypotheses
-			# self.inferLikelihood(i,self.states[i], self.actions[i], self.policySwitch)
+			self.inferLikelihood(i,self.states[i], self.actions[i], self.policySwitch)
 			
 
 
