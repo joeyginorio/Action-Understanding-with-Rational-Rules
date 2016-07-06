@@ -281,10 +281,10 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = False
+test1 = True
 test2 = False
 test3 = False
-test4 = True
+test4 = False
 
 
 if test1:
