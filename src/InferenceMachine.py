@@ -180,11 +180,6 @@ class InferenceMachine():
 		self.evalHypotheses = h.evalHypotheses
 		self.evalHypothesesSM = evalHypothesesCost
 
-		print self.hypotheses
-		print self.evalHypotheses
-		print self.evalHypothesesSM
-		# have cost, have the hypothesesd
-
 		for i in range(len(actions)):
 
 			# Get state,action vectors to conduct inference over
@@ -201,8 +196,6 @@ class InferenceMachine():
 					buff.append(self.getPolicySwitch(i,self.evalHypotheses[j][k], self.states[i]))
 				self.policySwitch.append(buff)
 				
-
-			print "\n\n policySwitch: {}".format(self.policySwitch)
 			# Compute the likelihood for all hypotheses
 			self.inferLikelihood(i,self.states[i], self.actions[i], self.policySwitch)
 			
@@ -254,17 +247,22 @@ class InferenceMachine():
 		
 		for i in range(len(policySwitch)):
 			
-			p = 1
-			for j in range(len(policySwitch[0])-1):
+			p_sum = 0
+			for k in range(len(policySwitch[i])):
 
-				if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects[self.policySwitch[i][j]]):
-					p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
-				
-				else:
-					p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][j])].policy[states[j]][actions[j]]
+				p = 1
+				for j in range(len(policySwitch[0][0])-1):
+
+					if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects[self.policySwitch[i][k][j]]):
+						p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+					else:
+						p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][k][j])].policy[states[j]][actions[j]]
 
 
-			likelihood.append(p)
+				p *= self.evalHypothesesSM[gridIndex][i][k]
+				p_sum += p
+
+			likelihood.append(p_sum)
 
 		self.likelihoods.append(likelihood)
 
@@ -283,9 +281,9 @@ class InferenceMachine():
 #################### Testing ############################
 
 test1 = False
-test2 = False
+test2 = True
 test3 = False
-test4 = True
+test4 = False
 
 
 if test1:
@@ -297,7 +295,7 @@ if test1:
 	start = [8]
 	actions = [[0,0]]
 
-	infer = InferenceMachine(100, [testGrid], start, actions)
+	infer = InferenceMachine(3, [testGrid], start, actions)
 
 if test2:
 	""" Test 2 """
@@ -305,7 +303,7 @@ if test2:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,8]
+	start = [10,8]
 	actions = [[0,0],[0,0]]
 
 	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
@@ -331,6 +329,6 @@ if test4:
 	start = [8,8]
 	actions = [[0,0,3],[0,0,3]]
 
-	infer = InferenceMachine(3, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
 
 # top 10 hypotheses
