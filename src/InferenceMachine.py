@@ -262,10 +262,10 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = False
+test1 = True
 test2 = False
 test3 = False
-test4 = True
+test4 = False
 
 
 if test1:
@@ -275,7 +275,7 @@ if test1:
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8]
-	actions = [[0,0]]
+	actions = [[1,1]]
 
 	infer = InferenceMachine(100, [testGrid], start, actions)
 
@@ -293,14 +293,13 @@ if test2:
 if test3:
 	""" Test 3 """
 	# Testing 'Then(A,B)'
-	
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8]
-	actions = [[0,0,3]]
+	start = [8,8]
+	actions = [[0,0,3],[3,0,3,0,3,2]]
 
-	infer = InferenceMachine(100, [testGrid], start, actions)
+	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
 
 if test4:
 	""" Test 4 """
