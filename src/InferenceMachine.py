@@ -303,7 +303,7 @@ if test2:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [10,8]
+	start = [8,8]
 	actions = [[0,0],[0,0]]
 
 	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
