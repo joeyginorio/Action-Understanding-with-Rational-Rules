@@ -182,9 +182,9 @@ class InferenceMachine():
 		self.evalHypotheses = h.evalHypotheses
 		self.evalHypothesesSM = evalHypothesesCost
 
+		print self.hypotheses
 		print self.evalHypotheses
-		print len(self.evalHypotheses)
-
+		print self.evalHypothesesSM
 		# have cost, have the hypothesesd
 
 		for i in range(len(actions)):
@@ -198,12 +198,15 @@ class InferenceMachine():
 
 				buff = list()
 				for k in range(len(self.evalHypotheses[j])):
+
+					##### HERE IS WHERE IT IS MESSED UP
 					buff.append(self.getPolicySwitch(i,self.evalHypotheses[j][k], self.states[i]))
 				self.policySwitch.append(buff)
 				
+
 			print "\n\n policySwitch: {}".format(self.policySwitch)
 			# Compute the likelihood for all hypotheses
-			self.inferLikelihood(i,self.states[i], self.actions[i], self.policySwitch)
+			# self.inferLikelihood(i,self.states[i], self.actions[i], self.policySwitch)
 			
 
 
@@ -261,6 +264,7 @@ class InferenceMachine():
 				
 				else:
 					p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][j])].policy[states[j]][actions[j]]
+
 
 			likelihood.append(p)
 
