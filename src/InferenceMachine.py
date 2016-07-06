@@ -139,7 +139,6 @@ class InferenceMachine():
 		"""
 		h = Hypothesis(self.grid[0])
 		h.sampleHypotheses(samples)
-		self.h = h
 		self.hypotheses = h.hypotheses
 		self.primHypotheses = h.primHypotheses
 
