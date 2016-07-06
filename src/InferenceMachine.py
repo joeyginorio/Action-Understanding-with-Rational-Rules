@@ -262,10 +262,10 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = True
+test1 = False
 test2 = False
 test3 = False
-test4 = False
+test4 = True
 
 
 if test1:
@@ -306,7 +306,7 @@ if test4:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,8]
+	start = [8,10]
 	actions = [[0,0,3],[0,0,3]]
 
 	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
