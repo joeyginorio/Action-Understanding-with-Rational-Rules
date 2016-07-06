@@ -114,17 +114,19 @@ class InferenceMachine():
 			goalIndex[self.grid[gridIndex].objects.keys()[i]] = goalStates[i]
 
 		# Initialize policySwitch vector
-		switch = np.empty(len(states), dtype=str)
-		switchCount = 0
+		switch = np.empty([len(hypothesis),len(states)], dtype=str)
 
 		# Iterate across states, if you hit current goalState, switch to next goalState
 		# as your objective.
 		# Essentially, if goals are 'ABC', stay in A until you hit A, then make B the goal
-		for i, state in enumerate(states):
-			if state == goalIndex[hypothesis[switchCount]] and switchCount + 1 < len(hypothesis):
-				switchCount += 1
+		for j in range(len(hypothesis)):
 
-			switch[i] = hypothesis[switchCount]
+			switchCount = 0
+			for i, state in enumerate(states):
+				if state == goalIndex[hypothesis[j][switchCount]] and switchCount + 1 < len(hypothesis[j]):
+					switchCount += 1
+
+				switch[j][i] = hypothesis[j][switchCount]
 
 		return switch
 
@@ -168,10 +170,22 @@ class InferenceMachine():
 		# Remove the 'S' node from each graph, no longer needed
 		# since cost of each graph has been computed
 
-		for i in range(len(self.H)):
-			evalHypotheses[i] = [hyp[1:] for hyp in evalHypotheses[i]]
-		self.evalHypotheses = evalHypotheses
+		evalHypothesesCost = evalHypotheses
 
+		for i in range(len(evalHypothesesCost)):
+			for j in range(len(evalHypothesesCost[i])):
+				evalHypothesesCost[i][j] = abs(evalHypothesesCost[i][j] - max(evalHypothesesCost[i][j]))
+				evalHypothesesCost[i][j] = evalHypothesesCost[i][j] - max(evalHypothesesCost[i][j])
+				evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j]/self.tau)
+				evalHypothesesCost[i][j] /= np.sum(evalHypothesesCost[i][j])
+
+		self.evalHypotheses = h.evalHypotheses
+		self.evalHypothesesSM = evalHypothesesCost
+
+		print self.evalHypotheses
+		print len(self.evalHypotheses)
+
+		# have cost, have the hypothesesd
 
 		for i in range(len(actions)):
 
@@ -180,9 +194,14 @@ class InferenceMachine():
 
 			# Get policySwitch vector to know when to follow which policy
 			self.policySwitch = list()
-			for j in range(len(h.hypotheses)):
-				self.policySwitch.append(self.getPolicySwitch(i,self.evalHypotheses[i][j], self.states[i]))
+			for j in range(len(self.evalHypotheses)):
 
+				buff = list()
+				for k in range(len(self.evalHypotheses[j])):
+					buff.append(self.getPolicySwitch(i,self.evalHypotheses[j][k], self.states[i]))
+				self.policySwitch.append(buff)
+				
+			print "\n\n policySwitch: {}".format(self.policySwitch)
 			# Compute the likelihood for all hypotheses
 			self.inferLikelihood(i,self.states[i], self.actions[i], self.policySwitch)
 			
@@ -223,7 +242,6 @@ class InferenceMachine():
 			self.sims.append(simsBuffer)
 		
 
-	# INTEGRATE GRIDINDEX INTO LIKEIHOOD
 	def inferLikelihood(self, gridIndex, states, actions, policySwitch):
 		"""
 			Uses inference engine to inferBias predicated on an agents'
@@ -304,12 +322,13 @@ if test3:
 
 if test4:
 	""" Test 4 """
+	# Testing 'And(A,B)'
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8,8]
 	actions = [[0,0,3],[0,0,3]]
 
-	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(3, [testGrid,testGrid2], start, actions)
 
 # top 10 hypotheses

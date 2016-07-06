@@ -20,10 +20,6 @@ import itertools
 
 class Hypothesis():
 	"""
-		**Valid Namespace for this class is restricted specifically to 'H' for
-		ease of parsing the hypothesis strings formed via primitives and objects
-		e.g. H = Hypothesis(Grid('testGrid'))
-
 
 		Provides functions to generate hypotheses from primitives and objects
 		in some GridWorld.
@@ -264,7 +260,7 @@ class Hypothesis():
 			costGraphList[i] = self.costGraphString(graphString)
 
 		# Return cheapest graphString
-		return graphList[np.argmin(costGraphList)]
+		return costGraphList
 
 
 	def linkGraphStrings(self, graphList):
