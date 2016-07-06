@@ -139,6 +139,7 @@ class InferenceMachine():
 		"""
 		h = Hypothesis(self.grid[0])
 		h.sampleHypotheses(samples)
+		self.h = h
 		self.hypotheses = h.hypotheses
 		self.primHypotheses = h.primHypotheses
 
@@ -147,7 +148,7 @@ class InferenceMachine():
 		self.H = list()
 		for i in range(len(self.grid)):
 
-			self.grid[i].objects['S'] = tuple(self.sims[0][0].scalarToCoord(start[i]))
+			self.grid[i].objects['S'] = tuple(self.sims[i][0].scalarToCoord(start[i]))
 
 			# Initialize the hypotheis generator
 			self.H.append(Hypothesis(self.grid[i]))
@@ -169,6 +170,7 @@ class InferenceMachine():
 		# since cost of each graph has been computed
 
 		evalHypothesesCost = evalHypotheses
+		self.hypCost = np.copy(evalHypothesesCost)
 
 		for i in range(len(evalHypothesesCost)):
 			for j in range(len(evalHypothesesCost[i])):
@@ -317,7 +319,7 @@ if test3:
 	start = [8,9]
 	actions = [[0,0,3],[0,2,2]]
 
-	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
 
 if test4:
 	""" Test 4 """
@@ -328,6 +330,6 @@ if test4:
 	start = [8,10]
 	actions = [[0,0,3],[0,0,3]]
 
-	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
 
 # top 10 hypotheses
