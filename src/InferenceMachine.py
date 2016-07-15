@@ -13,7 +13,6 @@ import copy
 import pyprind
 import matplotlib.pyplot as plt
 
-
 class InferenceMachine():
 	"""
 
@@ -27,8 +26,9 @@ class InferenceMachine():
 		
 	"""
 
-	def __init__(self, samples, grid, start, action,discount=.99, tau=.01, epsilon=.01):
+	def __init__(self, samples, grid, start, action, hypotheses = None,discount=.99, tau=.01, epsilon=.01, tauChoice=1):
 		self.sims = list()
+		self.temp = list()
 
 		# Key elements of Bayes' Rule
 		self.likelihoods = list()
@@ -38,6 +38,7 @@ class InferenceMachine():
 		# Modify the GridWorld solver
 		self.discount = discount
 		self.tau = tau
+		self.tauChoice = tauChoice
 		self.epsilon = epsilon
 
 		self.grid = grid
@@ -63,7 +64,7 @@ class InferenceMachine():
 		# In this case, one for each object in the map
 		# Subpolicies for each objectGrid done here.
 		self.buildBiasEngine()
-		self.inferSummary(samples,start,action)
+		self.inferSummary(samples,start,action,hypotheses)
 
 		maxH = np.argwhere(self.posteriors[len(self.posteriors)-1] == np.amax(
 			self.posteriors[len(self.posteriors)-1]))
@@ -72,6 +73,18 @@ class InferenceMachine():
 		print "\n"
 		for i,index in enumerate(maxH):
 			print "Max Hypothesis {}: {}".format(i,self.hypotheses[index])
+
+		self.hypPosterior = dict(zip(self.hypotheses,self.posteriors[len(self.posteriors)-1]))
+		self.maxHyp = sorted(self.hypPosterior,key=self.hypPosterior.get,reverse=True)
+
+		print "\n"
+
+		limit = 10
+		if len(self.hypotheses) < 10:
+			limit = len(self.hypotheses)
+
+		for i in range(limit):
+			print "Hypothesis {}: {} : {}".format(i+1,self.maxHyp[i],self.hypPosterior[self.maxHyp[i]])
 
 
 
@@ -103,6 +116,9 @@ class InferenceMachine():
 			Generates a vector detailing, according to a hypothesis, when
 			to switch policies when iterating across a vector of states.
 		"""
+		for i in range(len(self.grid[gridIndex].objects)):
+			hypothesis = hypothesis.replace(self.grid[gridIndex].objects.keys()[i],str(i))
+
 
 		# State location of all goals/object in map
 		goalStates = [self.sims[gridIndex][0].coordToScalar(goalCoord) for goalCoord in
@@ -111,7 +127,7 @@ class InferenceMachine():
 		# Create a dict, mapping goals->state_index
 		goalIndex = dict()
 		for i in range(len(goalStates)):
-			goalIndex[self.grid[gridIndex].objects.keys()[i]] = goalStates[i]
+			goalIndex[str(i)] = goalStates[i]
 
 		# Initialize policySwitch vector
 		switch = np.empty(len(states), dtype=str)
@@ -126,10 +142,11 @@ class InferenceMachine():
 
 			switch[i] = hypothesis[switchCount]
 
+
 		return switch
 
 
-	def inferSummary(self, samples, start, actions):
+	def inferSummary(self, samples=None, start=None, actions=None, hypotheses=None):
 		"""
 			Provide the prior, likelihood, and posterior distributions 
 			for a set of hypotheses. 
@@ -138,7 +155,7 @@ class InferenceMachine():
 
 		"""
 		h = Hypothesis(self.grid[0])
-		h.sampleHypotheses(samples)
+		h.sampleHypotheses(samples,hypotheses)
 		self.hypotheses = h.hypotheses
 		self.primHypotheses = h.primHypotheses
 
@@ -158,7 +175,6 @@ class InferenceMachine():
 		evalHypotheses = list()
 		# For each hypotheses, evaluate it and return the minCost graphString
 		for i in range(len(self.H)):
-
 			bufferHypotheses = list()
 			for j in range(len(h.hypotheses)):
 				bufferHypotheses.append(self.H[i].evaluate(h.evalHypotheses[j]))
@@ -175,7 +191,7 @@ class InferenceMachine():
 			for j in range(len(evalHypothesesCost[i])):
 				evalHypothesesCost[i][j] = abs(evalHypothesesCost[i][j] - max(evalHypothesesCost[i][j]))
 				evalHypothesesCost[i][j] = evalHypothesesCost[i][j] - max(evalHypothesesCost[i][j])
-				evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j]/self.tau)
+				evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j]/self.tauChoice)
 				evalHypothesesCost[i][j] /= np.sum(evalHypothesesCost[i][j])
 
 		self.evalHypotheses = h.evalHypotheses
@@ -190,8 +206,12 @@ class InferenceMachine():
 			self.policySwitch = list()
 			for j in range(len(self.evalHypotheses)):
 
+				if type(self.evalHypotheses[j]) is str:
+					self.evalHypotheses[j] = np.array([self.evalHypotheses[j]])
+
 				buff = list()
 				for k in range(len(self.evalHypotheses[j])):
+
 
 					##### HERE IS WHERE IT IS MESSED UP
 					buff.append(self.getPolicySwitch(i,self.evalHypotheses[j][k], self.states[i]))
@@ -218,7 +238,7 @@ class InferenceMachine():
 		"""
 
 		"""
-		self.prior = [1/(i) for i in self.primHypotheses]
+		self.prior = [1.0/(i) for i in self.primHypotheses]
 		self.prior /= np.sum(self.prior)
 
 	def buildBiasEngine(self):
@@ -244,29 +264,32 @@ class InferenceMachine():
 		"""
 
 		likelihood = list()
-
+		temp2 = list()
 		
+
 		for i in range(len(policySwitch)):
-			
+			temp1 = list()
 			p_sum = 0
 			for k in range(len(policySwitch[i])):
-
+				
 				p = 1
 				for j in range(len(policySwitch[0][0])-1):
 
-					if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects[self.policySwitch[i][k][j]]):
-						p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+					if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
+						p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
 					else:
-						p *= self.sims[gridIndex][self.grid[gridIndex].objects.keys().index(policySwitch[i][k][j])].policy[states[j]][actions[j]]
+						p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[states[j]][actions[j]]
 
 
 				p *= self.evalHypothesesSM[gridIndex][i][k]
 				p_sum += p
+				temp1.append(p)
 
 			likelihood.append(p_sum)
+			temp2.append(temp1)
 
 		self.likelihoods.append(likelihood)
-
+		self.temp = temp2
 
 	def inferPosterior(self, likelihood):
 		"""
@@ -281,10 +304,13 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = True
-test2 = False
+test1 = False
+test2 = True
 test3 = False
 test4 = False
+test5 = False
+test6 = False
+test7 = False
 
 
 if test1:
@@ -293,10 +319,10 @@ if test1:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,10]
-	actions = [[0,0],[3,3,0,0,3]]
+	start = [8,8]
+	actions = [[0,0],[3,0,0,3]]
 
-	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
 
 if test2:
 	""" Test 2 """
@@ -304,7 +330,7 @@ if test2:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,10]
+	start = [8,8]
 	actions = [[0,0],[0,0]]
 
 	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
@@ -331,4 +357,61 @@ if test4:
 
 	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
 
+if test5:
+	""" Test 5 """
+	# Testing 'Then(Or(A,B),C)'
+
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8,8]
+	actions = [[0,0,3,1,1,3],[0,0,3,1,1,3]]
+
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
+
+if test6:
+	""" Test 6 """
+	# Testing 'Then(Then(A,Then(B,C)),Then(C,A))
+
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8]
+	actions = [[0,0,3,3,3,1,1,2,0,2]]
+
+	infer = InferenceMachine(3000, [testGrid], start, actions)
+
+if test7:
+	""" Test 7 """
+	# Testing 'Then(Then(A,Then(B,C)),Then(C,A))
+
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8]
+	actions = [[0,0,3,3,3,1,1,2,0,2]]
+
+	infer = InferenceMachine(1000, [testGrid], start, actions)
+
 # top 10 hypotheses
+# Mcakay
+# Chapter26
+# thomas elements of information theory
+# kevin murphy machine learning
+
+# 612 644 3356
+
+# adverbs
+
+# Writing tools: 50 essential strategies
+
+
+# martha
+# poster
+# slideshow
+# presentation
+# sacnas
+# abrcms - julian will speak
+
+# tshirt size
+# for me,  
+
+# desires are not states of the world, but given a desire i can infer the states
+# of the world

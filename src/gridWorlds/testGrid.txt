@@ -1,7 +1,7 @@
 3
-A
-B
-C
+Orange
+Yellow
+Red
 
 O--O
 ----

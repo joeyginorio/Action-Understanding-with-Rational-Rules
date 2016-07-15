@@ -40,7 +40,7 @@ class Grid():
 		
 		# Load in the .txt gridworld
 		gridBuffer = np.loadtxt(fileName, dtype=str)
-
+		
 		# Find out how many objects to look for
 		numObjects = int(gridBuffer[0])
 

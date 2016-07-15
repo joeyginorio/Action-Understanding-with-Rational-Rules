@@ -30,7 +30,7 @@ class Hypothesis():
 			- Then
 
 	"""
-	def __init__(self, grid, occam=.4):		
+	def __init__(self, grid, occam=.7):		
 		self.grid = grid
 		self.hypotheses = None
 		self.occam = occam
@@ -56,23 +56,35 @@ class Hypothesis():
 
 		self.setBetaDistribution()
 
-	def sampleHypotheses(self, samples):
+	def sampleHypotheses(self, samples=None, hypotheses=None):
 		"""
 
 		"""
 
 		self.hypotheses = list()
+		self.primHypotheses = list()
 
-		while len(self.hypotheses) != samples:
+		if hypotheses is None:
+			while len(self.hypotheses) != samples:
 
-			self.resetPrimCount()
-			self.setBetaDistribution()
+				self.resetPrimCount()
+				self.setBetaDistribution()
 
-			hypothesis = self.hGenerator()
+				hypothesis = self.hGenerator()
 
-			if hypothesis not in self.hypotheses: 
-				self.hypotheses.append(hypothesis)
-				self.primHypotheses.append((self.primCount / self.occam)+1)
+				if hypothesis not in self.hypotheses: 
+					self.hypotheses.append(hypothesis)
+					self.primHypotheses.append((self.primCount / self.occam)+1)
+
+		else:
+			for i in range(len(hypotheses)):
+				primCount = 0
+				self.hypotheses.append(hypotheses[i])
+				primCount += (hypotheses[i].count("And"))
+				primCount += hypotheses[i].count("Or")
+				primCount += hypotheses[i].count("Then")
+				primCount += 1
+				self.primHypotheses.append(primCount)
 
 
 		self.evalHypotheses = [eval(i) for i in self.hypotheses]
@@ -93,7 +105,7 @@ class Hypothesis():
 
 		self.primCount += self.occam
 		if arg == self.And:
-			self.primCount += self.occam
+			self.primCount += (self.occam*2)
 
 		self.setBetaDistribution()
 
@@ -129,6 +141,9 @@ class Hypothesis():
 			in the grid!
 			*****
 		"""
+
+		if type(graphList) is not np.ndarray:
+			graphList = np.array([graphList],dtype='S32')
 
 		# Attach graphs to start node
 		graphList = self.linkGraphStrings(graphList)
@@ -191,9 +206,9 @@ class Hypothesis():
 
 		# If input is a char, turn into numpy array
 		if type(A) is not np.ndarray:
-			A = np.array([A])
+			A = np.array([A],dtype='S32')
 		if type(B) is not np.ndarray:
-			B = np.array([B])
+			B = np.array([B],dtype='S32')
 
 		return np.append(A,B)
 		 
@@ -209,12 +224,12 @@ class Hypothesis():
 
 		# If input is a char, turn into numpy array
 		if type(A) is not np.ndarray:
-			A = np.array([A])
+			A = np.array([A],dtype='S32')
 		if type(B) is not np.ndarray:
-			B = np.array([B])
+			B = np.array([B],dtype='S32')
 
 		# C will hold all combinations of A->B
-		C = np.array([])
+		C = np.array([],dtype='S32')
 		for i in range(len(A)):
 			for j in range(len(B)):
 
@@ -236,9 +251,9 @@ class Hypothesis():
 
 		# If input is a char, turn into numpy array
 		if type(A) is not np.ndarray:
-			A = np.array([A])
+			A = np.array([A],dtype='S32')
 		if type(B) is not np.ndarray:
-			B = np.array([B])
+			B = np.array([B],dtype='S32')
 
 		return self.Or(self.Then(A,B), self.Then(B,A))
 
@@ -276,6 +291,9 @@ class Hypothesis():
 			cost.
 		"""
 
+		for i in range(len(self.objects)):
+			graphString = graphString.replace(self.objects[i],str(i))
+
 		# Check distance between 2 Goals at a time, add to
 		# running sum of cost. e.g. 'ABC' = cost('AB') + cost('BC')
 		cost = 0
@@ -299,8 +317,7 @@ class Hypothesis():
 		"""
 
 		# Find index of object, to use for indexing distance matrix
-		objIndex1 = self.grid.objects.keys().index(edgeString[0])
-		objIndex2 = self.grid.objects.keys().index(edgeString[1])
+		return self.dist[int(edgeString[0])][int(edgeString[1])]
 
-		return self.dist[objIndex1][objIndex2]
+
 

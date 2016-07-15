@@ -1,10 +1,10 @@
 3
-B
-A
-C
+Yellow
+Orange
+Red
 
-O---O
------
-----O
+O--O
+----
+---O
 
 
