@@ -60,6 +60,12 @@ class InferenceMachine():
 
 		self.objectGrids = objectGrids
 
+		# Rewards for objects
+		self.rewards = list()
+		for i in range(len(self.objectGrids[0])):
+			self.rewards.append(10)
+
+
 		# Simulates the MDP's needed to begin the inference process
 		# In this case, one for each object in the map
 		# Subpolicies for each objectGrid done here.
@@ -333,7 +339,7 @@ if test2:
 	start = [8,8]
 	actions = [[0,0],[0,0]]
 
-	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(3, [testGrid,testGrid2], start, actions)
 
 if test3:
 	""" Test 3 """
