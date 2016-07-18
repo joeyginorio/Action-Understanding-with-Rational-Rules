@@ -310,8 +310,8 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = False
-test2 = True
+test1 = True
+test2 = False
 test3 = False
 test4 = False
 test5 = False
@@ -328,7 +328,8 @@ if test1:
 	start = [8,8]
 	actions = [[0,0],[3,0,0,3]]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions,
+		hypotheses=["'Orange'","self.Or('Orange','Red')"])
 
 if test2:
 	""" Test 2 """
