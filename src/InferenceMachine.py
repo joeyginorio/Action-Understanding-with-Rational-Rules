@@ -26,7 +26,7 @@ class InferenceMachine():
 		
 	"""
 
-	def __init__(self, samples, grid, start, action, reward=100, hypotheses = None, discount=.99, tau=.01, epsilon=.01, tauChoice=1):
+	def __init__(self, samples, grid, start, action, reward=100, hypotheses = None, discount=.99, tau=.01, epsilon=.01, tauChoice=100):
 		self.sims = list()
 		self.temp = list()
 
@@ -313,11 +313,11 @@ class InferenceMachine():
 #################### Testing ############################
 
 test1 = False
-test2 = False
+test2 = True
 test3 = False
 test4 = False
 test5 = False
-test6 = True
+test6 = False
 test7 = False
 
 

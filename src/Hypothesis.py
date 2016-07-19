@@ -62,6 +62,7 @@ class Hypothesis():
 		"""
 
 		self.hypotheses = list()
+		self.evalHypotheses = list()
 		self.primHypotheses = list()
 
 		if hypotheses is None:
@@ -71,24 +72,29 @@ class Hypothesis():
 				self.setBetaDistribution()
 
 				hypothesis = self.hGenerator()
+				evalHypothesis = eval(hypothesis)
+				if type(evalHypothesis) is not str:
+					evalHypothesis = evalHypothesis.tolist()
 
-				if hypothesis not in self.hypotheses: 
+				if hypothesis not in self.hypotheses and evalHypothesis not in self.evalHypotheses: 
 					self.hypotheses.append(hypothesis)
+					self.evalHypotheses.append(evalHypothesis)
 					self.primHypotheses.append((self.primCount / self.occam)+1)
 
 		else:
 			for i in range(len(hypotheses)):
 				primCount = 0
 				self.hypotheses.append(hypotheses[i])
+				self.evalHypotheses.append(eval(hypotheses[i]))
 				primCount += (hypotheses[i].count("And"))
 				primCount += hypotheses[i].count("Or")
 				primCount += hypotheses[i].count("Then")
 				primCount += 1
+
 				self.primHypotheses.append(primCount)
 
-
-		self.evalHypotheses = [eval(i) for i in self.hypotheses]
 		self.hypotheses = [i.replace('self.','') for i in self.hypotheses]
+		self.evalHypotheses = [np.array(i) if type(i) is list else i for i in self.evalHypotheses]
 
 	def resetPrimCount(self):
 		self.primCount = 0
@@ -210,7 +216,7 @@ class Hypothesis():
 		if type(B) is not np.ndarray:
 			B = np.array([B],dtype='S32')
 
-		return np.append(A,B)
+		return np.unique(np.append(A,B))
 		 
 
 	def Then(self, A, B):
