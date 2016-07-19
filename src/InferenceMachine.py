@@ -26,7 +26,7 @@ class InferenceMachine():
 		
 	"""
 
-	def __init__(self, samples, grid, start, action, hypotheses = None,discount=.99, tau=.01, epsilon=.01, tauChoice=1):
+	def __init__(self, samples, grid, start, action, reward=100, hypotheses = None, discount=.99, tau=.01, epsilon=.01, tauChoice=1):
 		self.sims = list()
 		self.temp = list()
 
@@ -40,6 +40,8 @@ class InferenceMachine():
 		self.tau = tau
 		self.tauChoice = tauChoice
 		self.epsilon = epsilon
+
+		self.reward = reward
 
 		self.grid = grid
 
@@ -195,8 +197,8 @@ class InferenceMachine():
 
 		for i in range(len(evalHypothesesCost)):
 			for j in range(len(evalHypothesesCost[i])):
-				evalHypothesesCost[i][j] = abs(evalHypothesesCost[i][j] - max(evalHypothesesCost[i][j]))
-				evalHypothesesCost[i][j] = evalHypothesesCost[i][j] - max(evalHypothesesCost[i][j])
+				evalHypothesesCost[i][j] = self.reward - evalHypothesesCost[i][j]
+				evalHypothesesCost[i][j][-1] = 0.0
 				evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j]/self.tauChoice)
 				evalHypothesesCost[i][j] /= np.sum(evalHypothesesCost[i][j])
 
@@ -310,12 +312,12 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = True
+test1 = False
 test2 = False
 test3 = False
 test4 = False
 test5 = False
-test6 = False
+test6 = True
 test7 = False
 
 
@@ -328,8 +330,7 @@ if test1:
 	start = [8,8]
 	actions = [[0,0],[3,0,0,3]]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions,
-		hypotheses=["'Orange'","self.Or('Orange','Red')"])
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
 
 if test2:
 	""" Test 2 """
@@ -340,7 +341,7 @@ if test2:
 	start = [8,8]
 	actions = [[0,0],[0,0]]
 
-	infer = InferenceMachine(3, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
 
 if test3:
 	""" Test 3 """
@@ -348,10 +349,10 @@ if test3:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,9]
-	actions = [[0,0,3],[0,2,2]]
+	start = [8,8]
+	actions = [[0,0,3],[0,0,3]]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(1000, [testGrid,testGrid], start, actions)
 
 if test4:
 	""" Test 4 """
@@ -359,7 +360,7 @@ if test4:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,10]
+	start = [8,8]
 	actions = [[0,0,3],[0,0,3]]
 
 	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
@@ -421,4 +422,4 @@ if test7:
 # for me,  
 
 # desires are not states of the world, but given a desire i can infer the states
-# of the world
+# of the world #

@@ -104,8 +104,8 @@ class Hypothesis():
 			return "'" + arg + "'"
 
 		self.primCount += self.occam
-		if arg == self.And:
-			self.primCount += (self.occam*2)
+		# if arg == self.And:
+		# 	self.primCount += (self.occam*2)
 
 		self.setBetaDistribution()
 
@@ -150,7 +150,7 @@ class Hypothesis():
 
 		# Find cheapest path
 		graphString = self.minCostGraphString(graphList)
-
+		graphString = np.append(graphString,0.0)
 		return graphString 
 
 
