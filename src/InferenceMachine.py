@@ -111,6 +111,10 @@ class InferenceMachine():
 		# Cycle through all actions, store the states they take you to
 		for i in np.arange(0,len(actions)):
 
+			if type(actions[i]) is str:
+				states.append(self.sims[gridIndex][0].coordToScalar(nextState))
+				continue
+
 			# State that an action in current state takes me to
 			nextState = self.sims[gridIndex][0].takeAction(self.sims[gridIndex][0].scalarToCoord(states[i]),actions[i])
 			states.append(self.sims[gridIndex][0].coordToScalar(nextState))
@@ -119,7 +123,7 @@ class InferenceMachine():
 		self.actions.append(actions)
 
 
-	def getPolicySwitch(self, gridIndex, hypothesis, states):
+	def getPolicySwitch(self, gridIndex, hypothesis, states, actions):
 		"""
 			Generates a vector detailing, according to a hypothesis, when
 			to switch policies when iterating across a vector of states.
@@ -146,10 +150,15 @@ class InferenceMachine():
 		switchCount = 0
 		for i, state in enumerate(states):
 			if state == goalIndex[hypothesis[switchCount]] and switchCount + 1 < len(hypothesis):
-				switchCount += 1
+				if switchCount <= len(hypothesis)-1 and i < len(states)-1 and actions[i] != 'take':
+					if i > 0:
+						if actions[i-1] == 'take':
+							switchCount += 1
 
 			switch[i] = hypothesis[switchCount]
 
+		if actions[-1] == 'stop' and actions.count('take') < len(hypothesis):
+			switch[-1] = str(int(switch[-1]) + 1)
 
 		return switch
 
@@ -222,7 +231,7 @@ class InferenceMachine():
 
 
 					##### HERE IS WHERE IT IS MESSED UP
-					buff.append(self.getPolicySwitch(i,self.evalHypotheses[j][k], self.states[i]))
+					buff.append(self.getPolicySwitch(i,self.evalHypotheses[j][k], self.states[i],self.actions[i]))
 				self.policySwitch.append(buff)
 				
 			# Compute the likelihood for all hypotheses
@@ -274,6 +283,7 @@ class InferenceMachine():
 		likelihood = list()
 		temp2 = list()
 		
+		actions = [4 if type(i) is str else i for i in actions]
 
 		for i in range(len(policySwitch)):
 			temp1 = list()
@@ -284,10 +294,15 @@ class InferenceMachine():
 				for j in range(len(policySwitch[0][0])-1):
 
 					if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
-						p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+						if actions[j] != 4: 
+							p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+
 					else:
 						p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[states[j]][actions[j]]
 
+				if policySwitch[i][k][j] != policySwitch[i][k][j+1]:
+					p *= 0
+ 
 
 				p *= self.evalHypothesesSM[gridIndex][i][k]
 				p_sum += p
@@ -313,12 +328,12 @@ class InferenceMachine():
 #################### Testing ############################
 
 test1 = False
-test2 = True
+test2 = False
 test3 = False
 test4 = False
 test5 = False
 test6 = False
-test7 = False
+test7 = True
 
 
 if test1:
@@ -327,10 +342,10 @@ if test1:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,8]
-	actions = [[0,0],[3,0,0,3]]
+	start = [8]
+	actions = [[0,0,'take','stop']]
 	
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(100, [testGrid], start, actions)
 
 if test2:
 	""" Test 2 """
@@ -339,9 +354,9 @@ if test2:
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8,8]
-	actions = [[0,0],[0,0]]
+	actions = [[0,0,'take','stop'],[0,0,'take','stop']]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
 
 if test3:
 	""" Test 3 """
@@ -349,10 +364,10 @@ if test3:
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,8]
-	actions = [[0,0,3],[0,0,3]]
+	start = [8]
+	actions = [[0,0,'take',3,3,3,'stop']]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid], start, actions)
+	infer = InferenceMachine(10, [testGrid], start, actions)
 
 if test4:
 	""" Test 4 """
@@ -361,9 +376,9 @@ if test4:
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8,8]
-	actions = [[0,0,3],[0,0,3]]
+	actions = [[0,0,'take',3,3,3,'take','stop'],[0,0,'take',3,3,3,'take','stop']]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
 
 if test5:
 	""" Test 5 """
@@ -389,14 +404,14 @@ if test6:
 
 if test7:
 	""" Test 7 """
-	# Testing 'Then(Then(A,Then(B,C)),Then(C,A))
+	# Rando tests
 
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8]
-	actions = [[0,0,3,3,3,1,1,2,0,2]]
+	actions = [[0,0,'stop']]
 
-	infer = InferenceMachine(1000, [testGrid], start, actions)
+	infer = InferenceMachine(100, [testGrid], start, actions)
 
 # top 10 hypotheses
 # Mcakay
@@ -423,3 +438,12 @@ if test7:
 
 # desires are not states of the world, but given a desire i can infer the states
 # of the world #
+"""
+
+1.) up,up, right: d(a) should go away
+2.) up,up, take: D(B) should go away [PASS]
+*****3.) up,up,take,stop: D(A) should be the best, And/Then should not be there
+4.) up,up,take,right: D(a) should go away [PASS]
+5.) Up, up, stop: Model should break
+
+"""

@@ -76,6 +76,9 @@ class Hypothesis():
 				if type(evalHypothesis) is not str:
 					evalHypothesis = evalHypothesis.tolist()
 
+				if type(evalHypothesis) is not list:
+					evalHypothesis = [evalHypothesis]
+
 				if hypothesis not in self.hypotheses and evalHypothesis not in self.evalHypotheses: 
 					self.hypotheses.append(hypothesis)
 					self.evalHypotheses.append(evalHypothesis)
@@ -119,8 +122,8 @@ class Hypothesis():
 		arg1 = self.hGenerator()
 		arg2 = self.hGenerator()
 
-		while arg1 == arg2:
-			arg2 = self.hGenerator()
+		# while arg1 == arg2:
+		# 	arg2 = self.hGenerator()
 		
 		return 'self.' + arg.__name__ + '(' + arg1 + ',' + arg2 + ')'
 
@@ -217,7 +220,7 @@ class Hypothesis():
 			B = np.array([B],dtype='S32')
 
 		return np.unique(np.append(A,B))
-		 
+		
 
 	def Then(self, A, B):
 		"""

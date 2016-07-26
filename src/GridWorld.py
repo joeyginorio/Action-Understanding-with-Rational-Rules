@@ -169,7 +169,7 @@ class GridWorld(MDP):
 		self.s = np.arange(self.grid.row*self.grid.col + 1)
 
 		# 4 Actions {Up, Down, Left, Right}
-		self.a = np.arange(4)
+		self.a = np.arange(5)
 
 		# Reward Zones
 		self.r = np.zeros(len(self.s))
@@ -186,7 +186,12 @@ class GridWorld(MDP):
 			if self.isTerminal(state):
 
 				for i in range(len(self.a)):
-					self.t[state][i][len(self.s)-1] = 1.0
+
+					if i == 4:
+						self.t[state][4][state]=1.0
+
+					else:
+						self.t[state][i][len(self.s)-1] = 1.0
 
 				continue
 
@@ -221,6 +226,9 @@ class GridWorld(MDP):
 
 					nextState = self.takeAction(currentState, 3)
 					self.t[state][action][self.coordToScalar(nextState)] = 1.0
+
+				if action == 4:
+					self.t[state][action][state] = 1.0
 
 
 	def simulate(self, state):
