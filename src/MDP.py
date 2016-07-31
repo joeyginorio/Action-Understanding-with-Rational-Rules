@@ -135,9 +135,16 @@ class MDP(object):
 						np.dot(self.t[i][:][:], self.values)
 
 			# Softmax the policy			
-			state_policy -= np.max(state_policy)
-			state_policy = np.exp(state_policy / float(self.tau))
-			state_policy /= state_policy.sum()
+			# state_policy -= np.max(state_policy)
+			# state_policy = np.exp(state_policy / float(self.tau))
+			# state_policy /= state_policy.sum()
+
+			state_policy /= self.tau
+			maxVal = max(state_policy)
+			arg = maxVal + np.log((np.exp(state_policy - maxVal).sum()))
+			state_policy -= arg
+			state_policy = np.exp(state_policy)
+			
 
 			self.policy[i] = state_policy
 

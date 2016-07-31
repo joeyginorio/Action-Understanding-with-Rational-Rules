@@ -26,7 +26,10 @@ class InferenceMachine():
 		
 	"""
 
-	def __init__(self, samples, grid, start, action, reward=100, hypotheses = None, discount=.99, tau=.01, epsilon=.01, tauChoice=100):
+	def __init__(self, samples, grid, start, action, reward=100, 
+		hypotheses = None, discount=.99, tau=.01, epsilon=.01, 
+		tauChoice=.01, rationalAction=1, rationalChoice=1):
+
 		self.sims = list()
 		self.temp = list()
 
@@ -37,8 +40,6 @@ class InferenceMachine():
 
 		# Modify the GridWorld solver
 		self.discount = discount
-		self.tau = tau
-		self.tauChoice = tauChoice
 		self.epsilon = epsilon
 
 		self.reward = reward
@@ -47,6 +48,20 @@ class InferenceMachine():
 
 		self.states = list()
 		self.actions = list()
+
+		# Alternate models
+		if rationalChoice == 0:
+			self.tauChoice = 100000
+		else:
+			self.tauChoice = tauChoice
+
+		if rationalAction == 0:
+			self.tau = 100000
+		else:
+			self.tau = tau
+
+
+
 
 		# Generate separate grids, one for each goal in the original map
 		# This will be used later to generate subpolicies for each goal
@@ -93,6 +108,17 @@ class InferenceMachine():
 
 		for i in range(limit):
 			print "Hypothesis {}: {} : {}".format(i+1,self.maxHyp[i],self.hypPosterior[self.maxHyp[i]])
+
+		names = self.maxHyp[0:10]
+		data = [self.hypPosterior[i] for i in self.maxHyp[0:10]]
+
+		ax = plt.subplot(111)
+		width=0.8
+		bins = map(lambda x: x-width/2,range(1,len(data)+1))
+		ax.bar(bins,data,width=width)
+		ax.set_xticks(map(lambda x: x, range(1,len(data)+1)))
+		ax.set_xticklabels(names,rotation=45, rotation_mode="anchor", ha="right")
+		plt.show()
 
 
 
@@ -148,16 +174,57 @@ class InferenceMachine():
 		# as your objective.
 		# Essentially, if goals are 'ABC', stay in A until you hit A, then make B the goal
 		switchCount = 0
+		tCounter = 0
 		for i, state in enumerate(states):
+
 			if state == goalIndex[hypothesis[switchCount]] and switchCount + 1 < len(hypothesis):
-				if switchCount <= len(hypothesis)-1 and i < len(states)-1 and actions[i] != 'take':
-					if i > 0:
-						if actions[i-1] == 'take':
-							switchCount += 1
 
+				# if switchCount <= len(hypothesis)-1 and i < len(states)-1 and actions[i] != 'take':
+				# 	if i > 1:
+				# 		j = 1
+				# 		while i-j >= 0 and switchCount + 1 < len(hypothesis):
+
+				# 			if actions[i-j] == 'take':
+				# 				print 'switch + 1'
+				# 				switchCount += 1
+				# 				j += 1
+				# 				if hypothesis[switchCount] != hypothesis[switchCount-1]:
+				# 					break
+
+				# 			else:
+				# 				break
+
+				# 		if j > 2:
+				# 			if hypothesis[switchCount-1] != hypothesis[switchCount-2]:
+				# 				print 'switch - 1'
+				# 				print 'switchCount: {}'.format(switchCount)
+				# 				print 'j: {}'.format(j)
+				# 				switchCount -= j-1
+
+				# 		if j == 2 and actions[i-1] == actions[i-2]:
+				# 			print 'switch - 1'
+				# 			switchCount -= 1
+
+				# 		if switchCount > 0 and j-1 < actions[0:i].count('take'):
+				# 			print 'switch - 1'
+				# 			switchCount -= 1
+
+
+
+				# 		print switchCount
+
+
+				if i < len(states)-1 and switchCount <= len(hypothesis)-1:
+					if actions[i] == 'take':
+						switchCount += 1
+							
 			switch[i] = hypothesis[switchCount]
+			
+		
+		temp = copy.deepcopy(switch[:-1])
+		switch[1:] = temp
 
-		if actions[-1] == 'stop' and actions.count('take') < len(hypothesis):
+		if actions[-1] == 'stop' and actions.count('take') < len(hypothesis) or actions.count('take') > len(hypothesis):
 			switch[-1] = str(int(switch[-1]) + 1)
 
 		return switch
@@ -208,8 +275,15 @@ class InferenceMachine():
 			for j in range(len(evalHypothesesCost[i])):
 				evalHypothesesCost[i][j] = self.reward - evalHypothesesCost[i][j]
 				evalHypothesesCost[i][j][-1] = 0.0
-				evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j]/self.tauChoice)
-				evalHypothesesCost[i][j] /= np.sum(evalHypothesesCost[i][j])
+
+				evalHypothesesCost[i][j] /= self.tauChoice
+				maxCost = max(evalHypothesesCost[i][j])
+				arg = maxCost + np.log((np.exp(evalHypothesesCost[i][j] - maxCost).sum()))
+				evalHypothesesCost[i][j] -= arg
+				evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j])
+
+				# evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j]/self.tauChoice)
+				# evalHypothesesCost[i][j] /= np.sum(evalHypothesesCost[i][j])
 
 		self.evalHypotheses = h.evalHypotheses
 		self.evalHypothesesSM = evalHypothesesCost
@@ -327,123 +401,175 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = False
+test1 = True
 test2 = False
 test3 = False
 test4 = False
 test5 = False
 test6 = False
-test7 = True
+test7 = False
+test8 = False
+test9 = False
 
 
 if test1:
 	""" Test 1 """
 	# Testing 'A'
 
+	print '\n--------------------------------------------------------'
+	print 'Test 1:'
+	print 'Degree Compositionality: 0'
+	print 'Degree Rationality: 1'
+	print 'Testing D(Charmander)'
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8]
 	actions = [[0,0,'take','stop']]
 	
-	infer = InferenceMachine(100, [testGrid], start, actions)
+	infer = InferenceMachine(500, [testGrid], start, actions)
+
 
 if test2:
 	""" Test 2 """
-	# Testing Or(A,B)
-
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8,8]
-	actions = [[0,0,'take','stop'],[0,0,'take','stop']]
-
-	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
-
-if test3:
-	""" Test 3 """
 	# Testing 'Then(A,B)'
 
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8]
-	actions = [[0,0,'take',3,3,3,'stop']]
-
-	infer = InferenceMachine(10, [testGrid], start, actions)
-
-if test4:
-	""" Test 4 """
-	# Testing 'And(A,B)'
-
+	print '\n--------------------------------------------------------'
+	print 'Test 2:'
+	print 'Degree Compositionality: 1'
+	print 'Degree Rationality: 1'
+	print 'Testing D(Then(Charmander,Squirtle))'
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8,8]
 	actions = [[0,0,'take',3,3,3,'take','stop'],[0,0,'take',3,3,3,'take','stop']]
 
-	infer = InferenceMachine(100, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(500, [testGrid,testGrid], start, actions)
 
-if test5:
-	""" Test 5 """
-	# Testing 'Then(Or(A,B),C)'
+if test3:
+	""" Test 3 """
+	# Testing Or(A,B)
 
+	print '\n--------------------------------------------------------'
+	print 'Test 3:'
+	print 'Degree Compositionality: 1'
+	print 'Degree Rationality: 2'
+	print 'Testing D(Or(Charmander,Squirtle))'
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8,8]
-	actions = [[0,0,3,1,1,3],[0,0,3,1,1,3]]
+	actions = [[0,0,'take','stop'],[0,0,'take','stop']]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(500, [testGrid,testGrid2], start, actions)
+
+if test4:
+	""" Test 4 """
+	# Testing 'And(A,B)'
+
+	print '\n--------------------------------------------------------'
+	print 'Test 4:'
+	print 'Degree Compositionality: 1'
+	print 'Degree Rationality: 2'
+	print 'Testing D(And(Charmander,Squirtle))'
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8,8]
+	actions = [[0,0,'take',3,3,3,'take','stop'],[0,0,'take',3,3,3,'take','stop']]
+
+	infer = InferenceMachine(500, [testGrid,testGrid2], start, actions)
+
+if test5:
+	""" Test 5 """
+	# Testing 'Then(Then(A,B),C)'
+
+	print '\n--------------------------------------------------------'
+	print 'Test 5:'
+	print 'Degree Compositionality: 2'
+	print 'Degree Rationality: 1'
+	print 'Testing D(Then(Charmander,Then(Squirtle,Bulbasaur)))'
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	start = [8]
+	# actions = [[0,0,'take','take','take',3]]
+	actions = [[0,0,'take',3,3,3,'take',1,1,'take','stop']]
+
+	infer = InferenceMachine(1000, [testGrid], start, actions, 
+		rationalAction=1, rationalChoice=1)
 
 if test6:
 	""" Test 6 """
-	# Testing 'Then(Then(A,Then(B,C)),Then(C,A))
+	# Testing 'Then(Or(A,B),C)'
 
+	print '\n--------------------------------------------------------'
+	print 'Test 6:'
+	print 'Degree Compositionality: 2'
+	print 'Degree Rationality: 2'
+	print 'Testing D(Then(Or(Charmander,Squirtle),Bulbasaur))'
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8]
-	actions = [[0,0,3,3,3,1,1,2,0,2]]
+	start = [8,8]
+	# actions = [[0,0,'take','take','take',3]]
+	actions = [[0,0,'take',3,1,3,1,3,'take'],[0,0,'take',3,1,3,1,3,'take']]
 
-	infer = InferenceMachine(3000, [testGrid], start, actions)
+	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions, 
+		rationalAction=1, rationalChoice=1)
 
 if test7:
 	""" Test 7 """
-	# Rando tests
+	# Testing 'Then(Then(A,Then(B,C)),Then(C,A))
 
+	print '\n--------------------------------------------------------'
+	print 'Test 7:'
+	print 'Degree Compositionality: 3'
+	print 'Degree Rationality: 1'
+	print 'Testing D(Then(Then(Charmander,Then(Squirtle, Bulbasaur)),Charmander)'
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8]
-	actions = [[0,0,'stop']]
+	actions = [[0,0,'take',3,3,3,'take',1,1,'take',2,0,2]]
 
-	infer = InferenceMachine(100, [testGrid], start, actions)
+	infer = InferenceMachine(2000, [testGrid], start, actions)
 
-# top 10 hypotheses
-# Mcakay
-# Chapter26
-# thomas elements of information theory
-# kevin murphy machine learning
+if test8:
+	""" Test 8 """
+	# Rando tests
 
-# 612 644 3356
+	print '\n--------------------------------------------------------'
+	print 'Test 8:'
+	print 'Degree Compositionality: 3'
+	print 'Degree Rationality: 2'
+	print 'Testing D(And(Then(Charmander,Squirtle),Then(Bulbasaur,MewTwo)))'
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	bookGrid = Grid('bookGrid')
+	start = [20,20]
+	# actions = [[0,0,'take','take','take',3]]
+	actions = [[0,0,0,0,'take',3,3,3,3,'take',1,1,1,1,'take',0,0,'take','stop'],
+	[3,3,3,3,'take',0,0,'take',2,2,0,0,2,2,'take',3,3,3,3,'take','stop']]
 
-# adverbs
+	infer = InferenceMachine(3000, [bookGrid,bookGrid], start, actions, 
+		rationalAction=1, rationalChoice=1)
 
-# Writing tools: 50 essential strategies
+if test9:
+	""" Test 9 """
+	# Rando tests
 
+	print '\n--------------------------------------------------------'
+	print 'Test 9:'
+	print 'Degree Compositionality: 3'
+	print 'Degree Rationality: 3'
+	print 'Testing D(Then(Or(Charmander,Or(Squirtle, Bulbasaur)),MewTwo)'
 
-# martha
-# poster
-# slideshow
-# presentation
-# sacnas
-# abrcms - julian will speak
+	testGrid = Grid('testGrid')
+	testGrid2 = Grid('testGrid2')
+	bookGrid = Grid('bookGrid')
+	start = [20,20,20]
+	# actions = [[0,0,'take','take','take',3]]
+	actions = [[0,0,0,0,'take',3,1,1,3,3,3,'take','stop'],
+	[0,3,0,3,0,0,3,3,'take',1,1,'take','stop'],[3,3,3,3,'take',0,0,'take','stop']]
 
-# tshirt size
-# for me,  
+	infer = InferenceMachine(3000, [bookGrid,bookGrid,bookGrid], start, actions, 
+		rationalAction=1, rationalChoice=1)
+
 
 # desires are not states of the world, but given a desire i can infer the states
 # of the world #
-"""
-
-1.) up,up, right: d(a) should go away
-2.) up,up, take: D(B) should go away [PASS]
-*****3.) up,up,take,stop: D(A) should be the best, And/Then should not be there
-4.) up,up,take,right: D(a) should go away [PASS]
-5.) Up, up, stop: Model should break
-
-"""

@@ -79,6 +79,15 @@ class Hypothesis():
 				if type(evalHypothesis) is not list:
 					evalHypothesis = [evalHypothesis]
 
+				if evalHypothesis in self.evalHypotheses:
+					currentCount = (self.primCount / self.occam)+1
+					index = self.evalHypotheses.index(evalHypothesis)
+					if currentCount < self.primHypotheses[index]:
+						self.hypotheses[index] = hypothesis
+						self.evalHypotheses[index] = evalHypothesis
+						self.primHypotheses[index] = currentCount
+						continue
+
 				if hypothesis not in self.hypotheses and evalHypothesis not in self.evalHypotheses: 
 					self.hypotheses.append(hypothesis)
 					self.evalHypotheses.append(evalHypothesis)
@@ -241,12 +250,12 @@ class Hypothesis():
 		C = np.array([],dtype='S32')
 		for i in range(len(A)):
 			for j in range(len(B)):
+				
+				# if A[i][-1] == B[j][0]:
+				# 	C = np.append(C, A[i]+B[j][1:])
 
-				if A[i][-1] == B[j][0]:
-					C = np.append(C, A[i]+B[j][1:])
-
-				else:
-					C = np.append(C, A[i] + B[j])
+				# else:
+				C = np.append(C, A[i] + B[j])
 
 		return C
 
