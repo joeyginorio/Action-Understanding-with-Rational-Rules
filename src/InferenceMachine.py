@@ -179,41 +179,6 @@ class InferenceMachine():
 
 			if state == goalIndex[hypothesis[switchCount]] and switchCount + 1 < len(hypothesis):
 
-				# if switchCount <= len(hypothesis)-1 and i < len(states)-1 and actions[i] != 'take':
-				# 	if i > 1:
-				# 		j = 1
-				# 		while i-j >= 0 and switchCount + 1 < len(hypothesis):
-
-				# 			if actions[i-j] == 'take':
-				# 				print 'switch + 1'
-				# 				switchCount += 1
-				# 				j += 1
-				# 				if hypothesis[switchCount] != hypothesis[switchCount-1]:
-				# 					break
-
-				# 			else:
-				# 				break
-
-				# 		if j > 2:
-				# 			if hypothesis[switchCount-1] != hypothesis[switchCount-2]:
-				# 				print 'switch - 1'
-				# 				print 'switchCount: {}'.format(switchCount)
-				# 				print 'j: {}'.format(j)
-				# 				switchCount -= j-1
-
-				# 		if j == 2 and actions[i-1] == actions[i-2]:
-				# 			print 'switch - 1'
-				# 			switchCount -= 1
-
-				# 		if switchCount > 0 and j-1 < actions[0:i].count('take'):
-				# 			print 'switch - 1'
-				# 			switchCount -= 1
-
-
-
-				# 		print switchCount
-
-
 				if i < len(states)-1 and switchCount <= len(hypothesis)-1:
 					if actions[i] == 'take':
 						switchCount += 1
