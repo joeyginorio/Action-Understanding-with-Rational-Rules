@@ -1,7 +1,7 @@
 3
-O
-Y
-R
+PostOffice
+Pharmacy
+FriendsHome
 
 O--O
 ----

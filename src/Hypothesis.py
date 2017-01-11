@@ -15,6 +15,7 @@ import itertools
 # TODO LIST:
 # 1.) Randomly Sample Hypotheses
 # 2.) Form prior
+# 3.) Tell Felix You Love Him
 # Write a function for multinomial for each derivation, stop symbol
 # write a recursive function till it calls a terminal function
 
@@ -30,7 +31,7 @@ class Hypothesis():
 			- Then
 
 	"""
-	def __init__(self, grid, occam=.7):		
+	def __init__(self, grid, occam=2.0):		
 		self.grid = grid
 		self.hypotheses = None
 		self.occam = occam
@@ -106,7 +107,7 @@ class Hypothesis():
 				self.primHypotheses.append(primCount)
 
 		self.hypotheses = [i.replace('self.','') for i in self.hypotheses]
-		self.evalHypotheses = [np.array(i) if type(i) is list else i for i in self.evalHypotheses]
+		self.evalHypotheses = [np.array(i,dtype=object) if type(i) is list else i for i in self.evalHypotheses]
 
 	def resetPrimCount(self):
 		self.primCount = 0
@@ -127,14 +128,224 @@ class Hypothesis():
 
 		self.setBetaDistribution()
 
-
 		arg1 = self.hGenerator()
 		arg2 = self.hGenerator()
 
 		# while arg1 == arg2:
 		# 	arg2 = self.hGenerator()
 		
-		return 'self.' + arg.__name__ + '(' + arg1 + ',' + arg2 + ')'
+		return 'self.' + arg.__name__ + '(' + arg1 + ',' + self.hGenerator() + ',' + arg2 + ')'
+
+	
+	def BFSampler(self, depth):
+		"""
+		Breadth-first-search sampler.
+		"""
+
+		# Edge Case
+		if depth == 1:
+			return self.objects
+
+		baseHyp = []
+		final = set()
+		finalEval = set()
+
+		objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
+		evalObjects = [eval(i) for i in objects]
+
+
+		self.hypotheses = list()
+		self.evalHypotheses = list()
+		self.primHypotheses = list()
+
+		for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
+		for i in evalObjects: 
+			self.evalHypotheses.append(i)
+			self.primHypotheses.append(1.0)
+			finalEval.add(tuple(i))
+
+		for i in range(2, depth+1):
+
+			temp = list(itertools.product(self.objects, repeat=i))
+			temp = [list(e) for e in temp]
+			temp += baseHyp
+			
+			for j in temp:
+
+				# Set we will use to check if evaluated hypothesis is same
+				if callable(j[0]):
+					bufferEval = set()
+					parsed = self.parse(j,len(j)-1)
+					# print i, j
+					# print parsed
+					bufferEval.add(tuple(np.sort(eval(parsed))))
+					if len(finalEval.intersection(bufferEval)) == 0:
+						final.add(tuple(j))
+						self.hypotheses.append(parsed.replace('self.',''))
+						self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
+						self.primHypotheses.append(1.0 + len([k for k in j if callable(k)]))
+						finalEval.add(tuple(np.sort(eval(parsed))))
+
+				for k in self.helper(list(j), i):
+					bufferEval = set()
+					parsed = self.parse(k,len(k)-1)
+					# print parsed, i, k
+					bufferEval.add(tuple(np.sort(eval(parsed))))
+					if len(finalEval.intersection(bufferEval)) == 0:
+						final.add(tuple(k))
+						self.hypotheses.append(parsed.replace('self.',''))
+						self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
+						self.primHypotheses.append(1.0 + len([m for m in k if callable(m)]))
+						finalEval.add(tuple(np.sort(eval(parsed))))
+				
+			baseHyp = final
+
+		# 	################
+		# self.hypotheses = [i.replace('self.','') for i in finalHypList]
+		# self.evalHypotheses = [eval(i) for i in finalHypList]
+		
+		# self.primHypotheses = list()
+		# for i in fullHypList:
+		# 	self.primHypotheses.append(1.0 + len([j for j in i if callable(j)]))
+		# 	################
+
+		self.finalEval = list(finalEval)
+		self.finalHypList = list(final)
+
+		# self.hypParser(list(final))
+
+
+
+	def helper(self, hypList, depth):
+		"""
+			takes in a list of arguments, returns all of them with primitives
+			mixed in.
+		"""
+
+		hypLimit = len(hypList) - 2
+		temp = list()
+		finalHypList = list()
+
+		if hypLimit < 2 and callable(hypList[0]):
+			finalHypList.append(hypList)
+			return finalHypList
+
+
+		# Loop through all primitives to add
+
+		# primitive at first index
+		# FIX THIS DUUUUUUUUUUUUUUUDDDEEEEEEEE
+		if(callable(hypList[0])):
+			
+			for i in self.primitives:
+				j = 1
+
+				while(j <= hypLimit):
+
+					temp = hypList[:]
+					temp.insert(j, i)
+					if temp not in finalHypList:
+						finalHypList.append(temp)
+					j += 1
+
+		# No primitive at first index
+		else:	
+			for i in self.primitives:
+				temp = hypList[:]
+				temp.insert(0,i)
+				if temp not in finalHypList:
+					finalHypList.append(temp)
+
+
+		return finalHypList
+
+	def parse(self, hypothesis, depth):
+		hyp = ""
+
+		temp = np.array([])
+		primCount = 0
+		for i in range(len(hypothesis)):
+			if callable(hypothesis[i]):
+				temp = np.append(temp, 1 + i + depth)
+				depth -= 2
+
+		for i in range(len(hypothesis)):
+
+			if(callable(hypothesis[i])):
+				hyp += 'self.' + hypothesis[i].__name__ + '('
+				temp -= 1
+				if any([i == 0 for i in temp]):
+					hyp += ')'
+
+			else:
+				if i != (len(hypothesis) - 1):
+					hyp += "'" + hypothesis[i] + "',"
+					temp -= 1
+					if any([i == 0 for i in temp]):
+						hyp = list(hyp)
+						hyp[-1] = ')'
+						hyp += ','
+						hyp = ''.join(hyp)
+				else:
+					hyp += "'" + hypothesis[i] + "'"
+					temp -= 1
+					if any([i == 0 for i in temp]):
+						hyp += ')'
+
+		offset = hyp.count('(') - hyp.count(')')
+		for i in range(offset):
+			hyp += ')'
+
+		return hyp
+
+			
+	def hypParser(self, fullHypList):
+		"""
+		Converts the hypotheses generated by BFSampler to eval ready form
+		"""
+
+		finalHypList = list()
+
+		for hypothesis in fullHypList:
+			hyp = ""
+			paren = ""
+			for j in range(len(hypothesis)):
+				if(callable(hypothesis[j])):
+					hyp += 'self.' + hypothesis[j].__name__ + '('
+					paren += ')'
+				else:
+					if j != (len(hypothesis) - 1):
+						hyp += "'" + hypothesis[j] + "'," 
+					else:
+						hyp += "'" + hypothesis[j] + "'"
+
+			hyp += paren
+			finalHypList.append(hyp)
+
+		objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
+		evalObjects = [eval(i) for i in objects]
+
+
+		self.hypotheses = [i.replace('self.','') for i in finalHypList]
+		self.evalHypotheses = [eval(i) for i in finalHypList]
+		
+		self.primHypotheses = list()
+		for i in fullHypList:
+			self.primHypotheses.append(1.0 + len([j for j in i if callable(j)]))
+
+		for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
+		for i in evalObjects: self.evalHypotheses.append(i)
+		for i in evalObjects: self.primHypotheses.append(1.0)
+
+
+
+	def BFS(self, primitive):
+		"""
+
+		"""
+		pass		
+
+
 
 	def setBetaDistribution(self):
 		"""
@@ -211,69 +422,114 @@ class Hypothesis():
 		# Count num. of steps to get to obj from start, that is the distance
 		dist = objectWorld.simulate(objectWorld.coordToScalar(startCoord))
 
+
+
 		return dist 
+	
 
-	def Or(self, A, B):
-		"""
-			Primitive function to do the 'Or' operation. 
-			Essentially throws the contents of A and B into
-			one list (of subgraphs). 
+	# Testing new stuff
 
-			e.g. A:['A'], B:['A,B'] ; Or(A,B):['A','A','B']
-		"""
+	#  
+	def Or(self, *args):
 
-		# If input is a char, turn into numpy array
-		if type(A) is not np.ndarray:
-			A = np.array([A],dtype='S32')
-		if type(B) is not np.ndarray:
-			B = np.array([B],dtype='S32')
+		vector = np.array([],dtype=object)
 
-		return np.unique(np.append(A,B))
+		for arg in args:
+			if type(arg) is tuple:
+				vector = np.append(vector, np.array(arg,dtype=object))
+			else:
+				vector = np.append(vector, arg)
+
+		return np.unique(vector)
+
+	def Then(self,*args):
+ 		args = np.array(args,dtype=object)
+ 		for i in range(len(args)):
+ 			if type(args[i]) is not np.ndarray:
+ 				args[i] = np.array([args[i]],dtype=object)
+
+		return np.array([''.join(s) for s in list(itertools.product(*args))], dtype=object)
+
+
+	def And(self, *args):
+		
+ 		args = np.array(args,dtype=object)
+ 		for i in range(len(args)):
+ 			if type(args[i]) is not np.ndarray:
+ 				args[i] = np.array([args[i]],dtype=object)
+
+		final = np.array([])
+		temp = list(itertools.permutations(args))
+		for arg in temp:
+			final = np.append(final, np.array([''.join(s) for s in list(itertools.product(*arg))], dtype=object))
+
+		return final
+		# return np.array([''.join(s) for s in list(itertools.permutations(final_args))], dtype=object)
+
+
+	# def Then(self, A, B):
+	# 	"""
+	# 		Primitive function to do the 'Then' operation.
+	# 		Adds every possible combination of A->B for all content
+	# 		within A and B to a list. 
+
+	# 		e.g. A:['A'], B:['A,B'] ; Then(A,B):['AA','AB']
+	# 	"""
+
+	# 	# If input is a char, turn into numpy array
+	# 	if type(A) is not np.ndarray:
+	# 		A = np.array([A],dtype='S32')
+	# 	if type(B) is not np.ndarray:
+	# 		B = np.array([B],dtype='S32')
+
+	# 	# C will hold all combinations of A->B
+	# 	C = np.array([],dtype='S32')
+	# 	for i in range(len(A)):
+	# 		for j in range(len(B)):
+				
+	# 			# if A[i][-1] == B[j][0]:
+	# 			# 	C = np.append(C, A[i]+B[j][1:])
+
+	# 			# else:
+	# 			C = np.append(C, A[i] + B[j])
+
+	# 	return C
+
+
+	# def Or(self, A, B):
+	# 	"""
+	# 		Primitive function to do the 'Or' operation. 
+	# 		Essentially throws the contents of A and B into
+	# 		one list (of subgraphs). 
+
+	# 		e.g. A:['A'], B:['A,B'] ; Or(A,B):['A','A','B']
+	# 	"""
+
+	# 	# If input is a char, turn into numpy array
+	# 	if type(A) is not np.ndarray:
+	# 		A = np.array([A],dtype='S32')
+	# 	if type(B) is not np.ndarray:
+	# 		B = np.array([B],dtype='S32')
+
+	# 	return np.unique(np.append(A,B))
 		
 
-	def Then(self, A, B):
-		"""
-			Primitive function to do the 'Then' operation.
-			Adds every possible combination of A->B for all content
-			within A and B to a list. 
 
-			e.g. A:['A'], B:['A,B'] ; Then(A,B):['AA','AB']
-		"""
+	# def And(self, A, B):
+	# 	"""
+	# 		Primitive function to do the 'And' operation.
+	# 		Defined as a composition of Or and Then.
 
-		# If input is a char, turn into numpy array
-		if type(A) is not np.ndarray:
-			A = np.array([A],dtype='S32')
-		if type(B) is not np.ndarray:
-			B = np.array([B],dtype='S32')
+	# 		And(A,B) = Or(Then(A,B),Then(B,A))
+	# 	"""
 
-		# C will hold all combinations of A->B
-		C = np.array([],dtype='S32')
-		for i in range(len(A)):
-			for j in range(len(B)):
-				
-				# if A[i][-1] == B[j][0]:
-				# 	C = np.append(C, A[i]+B[j][1:])
+	# 	# If input is a char, turn into numpy array
+	# 	if type(A) is not np.ndarray:
+	# 		A = np.array([A],dtype='S32')
+	# 	if type(B) is not np.ndarray:
+	# 		B = np.array([B],dtype='S32')
 
-				# else:
-				C = np.append(C, A[i] + B[j])
-
-		return C
-
-	def And(self, A, B):
-		"""
-			Primitive function to do the 'And' operation.
-			Defined as a composition of Or and Then.
-
-			And(A,B) = Or(Then(A,B),Then(B,A))
-		"""
-
-		# If input is a char, turn into numpy array
-		if type(A) is not np.ndarray:
-			A = np.array([A],dtype='S32')
-		if type(B) is not np.ndarray:
-			B = np.array([B],dtype='S32')
-
-		return self.Or(self.Then(A,B), self.Then(B,A))
+	# 	return self.Or(self.Then(A,B), self.Then(B,A))
 
 
 	def minCostGraphString(self, graphList):
@@ -337,5 +593,34 @@ class Hypothesis():
 		# Find index of object, to use for indexing distance matrix
 		return self.dist[int(edgeString[0])][int(edgeString[1])]
 
+
+
+
+"""
+
+Depth 1: A, B, C
+	- arg = 0
+
+Depth 2: A, B, C, Or(A,B), And(A,B), Then(A,B)
+	- arg = 2
+
+	Or, A , B -> 3 length
+
+
+Depth 3: A, B, C, Or(A,B), And(A,B,C), Or(A,B,C))
+	- arg = 3
+
+
+And, A, B,  C -> 4 length
+
+Depth 4: Or
+
+	Or(And(A,B),C)
+
+	Or, And, A, B, C -> 5 length
+	Or, A, B, C, D   -> 5 length
+
+
+"""
 
 

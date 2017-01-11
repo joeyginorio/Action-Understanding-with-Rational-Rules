@@ -26,8 +26,8 @@ class InferenceMachine():
 		
 	"""
 
-	def __init__(self, samples, grid, start, action, reward=100, 
-		hypotheses = None, discount=.99, tau=.01, epsilon=.01, 
+	def __init__(self, depth, grid, start, action, reward=100, 
+		hypotheses = None, discount=.99, tau=.01, epsilon=.001, 
 		tauChoice=.01, rationalAction=1, rationalChoice=1):
 
 		self.sims = list()
@@ -87,7 +87,7 @@ class InferenceMachine():
 		# In this case, one for each object in the map
 		# Subpolicies for each objectGrid done here.
 		self.buildBiasEngine()
-		self.inferSummary(samples,start,action,hypotheses)
+		self.inferSummary(depth,start,action,hypotheses)
 
 		maxH = np.argwhere(self.posteriors[len(self.posteriors)-1] == np.amax(
 			self.posteriors[len(self.posteriors)-1]))
@@ -112,6 +112,8 @@ class InferenceMachine():
 		names = self.maxHyp[0:10]
 		data = [self.hypPosterior[i] for i in self.maxHyp[0:10]]
 
+		fig = plt.figure(figsize=(25,25))
+		fig.subplots_adjust(bottom=0.39)
 		ax = plt.subplot(111)
 		width=0.8
 		bins = map(lambda x: x-width/2,range(1,len(data)+1))
@@ -195,7 +197,7 @@ class InferenceMachine():
 		return switch
 
 
-	def inferSummary(self, samples=None, start=None, actions=None, hypotheses=None):
+	def inferSummary(self, depth=None, start=None, actions=None, hypotheses=None):
 		"""
 			Provide the prior, likelihood, and posterior distributions 
 			for a set of hypotheses. 
@@ -204,7 +206,7 @@ class InferenceMachine():
 
 		"""
 		h = Hypothesis(self.grid[0])
-		h.sampleHypotheses(samples,hypotheses)
+		h.BFSampler(depth)
 		self.hypotheses = h.hypotheses
 		self.primHypotheses = h.primHypotheses
 
@@ -366,14 +368,14 @@ class InferenceMachine():
 
 #################### Testing ############################
 
-test1 = True
+test1 = False
 test2 = False
 test3 = False
 test4 = False
 test5 = False
 test6 = False
 test7 = False
-test8 = False
+test8 = True
 test9 = False
 
 
@@ -389,9 +391,10 @@ if test1:
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8]
-	actions = [[0,0,'take','stop']]
+	actions = [[3,0,3,0,3,'take','stop']]
 	
-	infer = InferenceMachine(500, [testGrid], start, actions)
+	infer = InferenceMachine(3, [testGrid], start, actions,
+		rationalAction=1, rationalChoice=1)
 
 
 if test2:
@@ -405,10 +408,11 @@ if test2:
 	print 'Testing D(Then(Charmander,Squirtle))'
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
-	start = [8,8]
-	actions = [[0,0,'take',3,3,3,'take','stop'],[0,0,'take',3,3,3,'take','stop']]
+	start = [8]
+	actions = [[0,3,0,3,3,'take',2,2,2,'take','stop']]
 
-	infer = InferenceMachine(500, [testGrid,testGrid], start, actions)
+	infer = InferenceMachine(3, [testGrid], start, actions,
+		rationalAction=0,rationalChoice=0)
 
 if test3:
 	""" Test 3 """
@@ -422,9 +426,10 @@ if test3:
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8,8]
-	actions = [[0,0,'take','stop'],[0,0,'take','stop']]
+	actions = [[0,0,'take','stop'],[3,3,3,'take','stop']]
 
-	infer = InferenceMachine(500, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(3, [testGrid,testGrid], start, actions,
+		rationalAction=0,rationalChoice=0)
 
 if test4:
 	""" Test 4 """
@@ -440,7 +445,8 @@ if test4:
 	start = [8,8]
 	actions = [[0,0,'take',3,3,3,'take','stop'],[0,0,'take',3,3,3,'take','stop']]
 
-	infer = InferenceMachine(500, [testGrid,testGrid2], start, actions)
+	infer = InferenceMachine(3, [testGrid,testGrid2], start, actions,
+		rationalAction=1,rationalChoice=1)
 
 if test5:
 	""" Test 5 """
@@ -457,7 +463,7 @@ if test5:
 	# actions = [[0,0,'take','take','take',3]]
 	actions = [[0,0,'take',3,3,3,'take',1,1,'take','stop']]
 
-	infer = InferenceMachine(1000, [testGrid], start, actions, 
+	infer = InferenceMachine(4, [testGrid], start, actions, 
 		rationalAction=1, rationalChoice=1)
 
 if test6:
@@ -473,9 +479,9 @@ if test6:
 	testGrid2 = Grid('testGrid2')
 	start = [8,8]
 	# actions = [[0,0,'take','take','take',3]]
-	actions = [[0,0,'take',3,1,3,1,3,'take'],[0,0,'take',3,1,3,1,3,'take']]
+	actions = [[0,3,3,0,3,'take',1,1,'take','stop'],[0,3,3,0,3,'take',2,2,2,'take','stop']]
 
-	infer = InferenceMachine(1000, [testGrid,testGrid2], start, actions, 
+	infer = InferenceMachine(5, [testGrid,testGrid], start, actions, 
 		rationalAction=1, rationalChoice=1)
 
 if test7:
@@ -490,9 +496,10 @@ if test7:
 	testGrid = Grid('testGrid')
 	testGrid2 = Grid('testGrid2')
 	start = [8]
-	actions = [[0,0,'take',3,3,3,'take',1,1,'take',2,0,2]]
+	actions = [[0,0,'take',3,3,3,'take',1,1,'take',2,0,2,0,2,'take','stop']]
 
-	infer = InferenceMachine(2000, [testGrid], start, actions)
+	infer = InferenceMachine(5, [testGrid], start, actions,
+		rationalAction=1,rationalChoice=1)
 
 if test8:
 	""" Test 8 """
@@ -511,7 +518,7 @@ if test8:
 	actions = [[0,0,0,0,'take',3,3,3,3,'take',1,1,1,1,'take',0,0,'take','stop'],
 	[3,3,3,3,'take',0,0,'take',2,2,0,0,2,2,'take',3,3,3,3,'take','stop']]
 
-	infer = InferenceMachine(3000, [bookGrid,bookGrid], start, actions, 
+	infer = InferenceMachine(5, [bookGrid,bookGrid], start, actions, 
 		rationalAction=1, rationalChoice=1)
 
 if test9:
@@ -532,9 +539,17 @@ if test9:
 	actions = [[0,0,0,0,'take',3,1,1,3,3,3,'take','stop'],
 	[0,3,0,3,0,0,3,3,'take',1,1,'take','stop'],[3,3,3,3,'take',0,0,'take','stop']]
 
-	infer = InferenceMachine(3000, [bookGrid,bookGrid,bookGrid], start, actions, 
+	infer = InferenceMachine(6, [bookGrid,bookGrid,bookGrid], start, actions, 
 		rationalAction=1, rationalChoice=1)
 
 
 # desires are not states of the world, but given a desire i can infer the states
 # of the world #
+
+"""
+- Option 1: Including test5
+- Option 2: Not including test5
+- Option 3: 
+highschool art class pretty lightds
+
+"""

@@ -1,3 +1,11 @@
-OOOR
-OWOR
-OOOO
+4
+PostOffice
+Pharmacy
+University
+Home
+
+O---O
+-----
+----O
+-----
+----O
