@@ -1,4 +1,4 @@
-# Joey Velez-Ginorio
+	# Joey Velez-Ginorio
 # Gridworld Implementation
 # ---------------------------------
 
@@ -27,7 +27,7 @@ class InferenceMachine():
 	"""
 
 	def __init__(self, depth, grid, start, action, reward=100, 
-		hypotheses = None, discount=.99, tau=.01, epsilon=.001, 
+		hypotheses = None, discount=.9, tau=.01, epsilon=.001, 
 		tauChoice=.01, rationalAction=1, rationalChoice=1):
 
 		self.sims = list()
@@ -120,7 +120,7 @@ class InferenceMachine():
 		ax.bar(bins,data,width=width)
 		ax.set_xticks(map(lambda x: x, range(1,len(data)+1)))
 		ax.set_xticklabels(names,rotation=45, rotation_mode="anchor", ha="right")
-		plt.show()
+		# plt.show(block=False)
 
 
 
@@ -205,10 +205,18 @@ class InferenceMachine():
 			Utilizes Bayes' Rule, P(H|D) ~ P(D|H)P(H)
 
 		"""
-		h = Hypothesis(self.grid[0])
-		h.BFSampler(depth)
-		self.hypotheses = h.hypotheses
-		self.primHypotheses = h.primHypotheses
+
+		if hypotheses is None:
+			h = Hypothesis(self.grid[0])
+			h.BFSampler(depth)
+			self.hypotheses = h.hypotheses
+			self.primHypotheses = h.primHypotheses
+
+		else:
+			h = hypotheses
+			self.hypotheses = h.hypotheses
+			self.primHypotheses = h.primHypotheses
+
 
 		# Add starting object to map
 
@@ -366,190 +374,7 @@ class InferenceMachine():
 		self.posteriors.append(posterior)
 
 
-#################### Testing ############################
-
-test1 = False
-test2 = False
-test3 = False
-test4 = False
-test5 = False
-test6 = False
-test7 = False
-test8 = True
-test9 = False
-
-
-if test1:
-	""" Test 1 """
-	# Testing 'A'
-
-	print '\n--------------------------------------------------------'
-	print 'Test 1:'
-	print 'Degree Compositionality: 0'
-	print 'Degree Rationality: 1'
-	print 'Testing D(Charmander)'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8]
-	actions = [[3,0,3,0,3,'take','stop']]
-	
-	infer = InferenceMachine(3, [testGrid], start, actions,
-		rationalAction=1, rationalChoice=1)
-
-
-if test2:
-	""" Test 2 """
-	# Testing 'Then(A,B)'
-
-	print '\n--------------------------------------------------------'
-	print 'Test 2:'
-	print 'Degree Compositionality: 1'
-	print 'Degree Rationality: 1'
-	print 'Testing D(Then(Charmander,Squirtle))'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8]
-	actions = [[0,3,0,3,3,'take',2,2,2,'take','stop']]
-
-	infer = InferenceMachine(3, [testGrid], start, actions,
-		rationalAction=0,rationalChoice=0)
-
-if test3:
-	""" Test 3 """
-	# Testing Or(A,B)
-
-	print '\n--------------------------------------------------------'
-	print 'Test 3:'
-	print 'Degree Compositionality: 1'
-	print 'Degree Rationality: 2'
-	print 'Testing D(Or(Charmander,Squirtle))'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8,8]
-	actions = [[0,0,'take','stop'],[3,3,3,'take','stop']]
-
-	infer = InferenceMachine(3, [testGrid,testGrid], start, actions,
-		rationalAction=0,rationalChoice=0)
-
-if test4:
-	""" Test 4 """
-	# Testing 'And(A,B)'
-
-	print '\n--------------------------------------------------------'
-	print 'Test 4:'
-	print 'Degree Compositionality: 1'
-	print 'Degree Rationality: 2'
-	print 'Testing D(And(Charmander,Squirtle))'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8,8]
-	actions = [[0,0,'take',3,3,3,'take','stop'],[0,0,'take',3,3,3,'take','stop']]
-
-	infer = InferenceMachine(3, [testGrid,testGrid2], start, actions,
-		rationalAction=1,rationalChoice=1)
-
-if test5:
-	""" Test 5 """
-	# Testing 'Then(Then(A,B),C)'
-
-	print '\n--------------------------------------------------------'
-	print 'Test 5:'
-	print 'Degree Compositionality: 2'
-	print 'Degree Rationality: 1'
-	print 'Testing D(Then(Charmander,Then(Squirtle,Bulbasaur)))'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8]
-	# actions = [[0,0,'take','take','take',3]]
-	actions = [[0,0,'take',3,3,3,'take',1,1,'take','stop']]
-
-	infer = InferenceMachine(4, [testGrid], start, actions, 
-		rationalAction=1, rationalChoice=1)
-
-if test6:
-	""" Test 6 """
-	# Testing 'Then(Or(A,B),C)'
-
-	print '\n--------------------------------------------------------'
-	print 'Test 6:'
-	print 'Degree Compositionality: 2'
-	print 'Degree Rationality: 2'
-	print 'Testing D(Then(Or(Charmander,Squirtle),Bulbasaur))'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8,8]
-	# actions = [[0,0,'take','take','take',3]]
-	actions = [[0,3,3,0,3,'take',1,1,'take','stop'],[0,3,3,0,3,'take',2,2,2,'take','stop']]
-
-	infer = InferenceMachine(5, [testGrid,testGrid], start, actions, 
-		rationalAction=1, rationalChoice=1)
-
-if test7:
-	""" Test 7 """
-	# Testing 'Then(Then(A,Then(B,C)),Then(C,A))
-
-	print '\n--------------------------------------------------------'
-	print 'Test 7:'
-	print 'Degree Compositionality: 3'
-	print 'Degree Rationality: 1'
-	print 'Testing D(Then(Then(Charmander,Then(Squirtle, Bulbasaur)),Charmander)'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	start = [8]
-	actions = [[0,0,'take',3,3,3,'take',1,1,'take',2,0,2,0,2,'take','stop']]
-
-	infer = InferenceMachine(5, [testGrid], start, actions,
-		rationalAction=1,rationalChoice=1)
-
-if test8:
-	""" Test 8 """
-	# Rando tests
-
-	print '\n--------------------------------------------------------'
-	print 'Test 8:'
-	print 'Degree Compositionality: 3'
-	print 'Degree Rationality: 2'
-	print 'Testing D(And(Then(Charmander,Squirtle),Then(Bulbasaur,MewTwo)))'
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	bookGrid = Grid('bookGrid')
-	start = [20,20]
-	# actions = [[0,0,'take','take','take',3]]
-	actions = [[0,0,0,0,'take',3,3,3,3,'take',1,1,1,1,'take',0,0,'take','stop'],
-	[3,3,3,3,'take',0,0,'take',2,2,0,0,2,2,'take',3,3,3,3,'take','stop']]
-
-	infer = InferenceMachine(5, [bookGrid,bookGrid], start, actions, 
-		rationalAction=1, rationalChoice=1)
-
-if test9:
-	""" Test 9 """
-	# Rando tests
-
-	print '\n--------------------------------------------------------'
-	print 'Test 9:'
-	print 'Degree Compositionality: 3'
-	print 'Degree Rationality: 3'
-	print 'Testing D(Then(Or(Charmander,Or(Squirtle, Bulbasaur)),MewTwo)'
-
-	testGrid = Grid('testGrid')
-	testGrid2 = Grid('testGrid2')
-	bookGrid = Grid('bookGrid')
-	start = [20,20,20]
-	# actions = [[0,0,'take','take','take',3]]
-	actions = [[0,0,0,0,'take',3,1,1,3,3,3,'take','stop'],
-	[0,3,0,3,0,0,3,3,'take',1,1,'take','stop'],[3,3,3,3,'take',0,0,'take','stop']]
-
-	infer = InferenceMachine(6, [bookGrid,bookGrid,bookGrid], start, actions, 
-		rationalAction=1, rationalChoice=1)
 
 
 # desires are not states of the world, but given a desire i can infer the states
 # of the world #
-
-"""
-- Option 1: Including test5
-- Option 2: Not including test5
-- Option 3: 
-highschool art class pretty lightds
-
-"""

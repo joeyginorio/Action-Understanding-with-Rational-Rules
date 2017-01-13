@@ -1,6 +1,6 @@
 3
-PostOffice
 Pharmacy
+PostOffice
 FriendsHome
 
 O--O

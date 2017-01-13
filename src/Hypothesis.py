@@ -15,7 +15,6 @@ import itertools
 # TODO LIST:
 # 1.) Randomly Sample Hypotheses
 # 2.) Form prior
-# 3.) Tell Felix You Love Him
 # Write a function for multinomial for each derivation, stop symbol
 # write a recursive function till it calls a terminal function
 
@@ -137,82 +136,82 @@ class Hypothesis():
 		return 'self.' + arg.__name__ + '(' + arg1 + ',' + self.hGenerator() + ',' + arg2 + ')'
 
 	
-	def BFSampler(self, depth):
-		"""
-		Breadth-first-search sampler.
-		"""
+	# def BFSampler(self, depth):
+	# 	"""
+	# 	Breadth-first-search sampler.
+	# 	"""
 
-		# Edge Case
-		if depth == 1:
-			return self.objects
+	# 	# Edge Case
+	# 	if depth == 1:
+	# 		return self.objects
 
-		baseHyp = []
-		final = set()
-		finalEval = set()
+	# 	baseHyp = []
+	# 	final = set()
+	# 	finalEval = set()
 
-		objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
-		evalObjects = [eval(i) for i in objects]
+	# 	objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
+	# 	evalObjects = [eval(i) for i in objects]
 
 
-		self.hypotheses = list()
-		self.evalHypotheses = list()
-		self.primHypotheses = list()
+	# 	self.hypotheses = list()
+	# 	self.evalHypotheses = list()
+	# 	self.primHypotheses = list()
 
-		for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
-		for i in evalObjects: 
-			self.evalHypotheses.append(i)
-			self.primHypotheses.append(1.0)
-			finalEval.add(tuple(i))
+	# 	for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
+	# 	for i in evalObjects: 
+	# 		self.evalHypotheses.append(i)
+	# 		self.primHypotheses.append(1.0)
+	# 		finalEval.add(tuple(i))
 
-		for i in range(2, depth+1):
+	# 	for i in range(2, depth+1):
 
-			temp = list(itertools.product(self.objects, repeat=i))
-			temp = [list(e) for e in temp]
-			temp += baseHyp
+	# 		temp = list(itertools.product(self.objects, repeat=i))
+	# 		temp = [list(e) for e in temp]
+	# 		temp += baseHyp
 			
-			for j in temp:
+	# 		for j in temp:
 
-				# Set we will use to check if evaluated hypothesis is same
-				if callable(j[0]):
-					bufferEval = set()
-					parsed = self.parse(j,len(j)-1)
-					# print i, j
-					# print parsed
-					bufferEval.add(tuple(np.sort(eval(parsed))))
-					if len(finalEval.intersection(bufferEval)) == 0:
-						final.add(tuple(j))
-						self.hypotheses.append(parsed.replace('self.',''))
-						self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
-						self.primHypotheses.append(1.0 + len([k for k in j if callable(k)]))
-						finalEval.add(tuple(np.sort(eval(parsed))))
+	# 			# Set we will use to check if evaluated hypothesis is same
+	# 			if callable(j[0]):
+	# 				bufferEval = set()
+	# 				parsed = self.parse(j,len(j)-1)
+	# 				# print i, j
+	# 				# print parsed
+	# 				bufferEval.add(tuple(np.sort(eval(parsed))))
+	# 				if len(finalEval.intersection(bufferEval)) == 0:
+	# 					final.add(tuple(j))
+	# 					self.hypotheses.append(parsed.replace('self.',''))
+	# 					self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
+	# 					self.primHypotheses.append(1.0 + len([k for k in j if callable(k)]))
+	# 					finalEval.add(tuple(np.sort(eval(parsed))))
 
-				for k in self.helper(list(j), i):
-					bufferEval = set()
-					parsed = self.parse(k,len(k)-1)
-					# print parsed, i, k
-					bufferEval.add(tuple(np.sort(eval(parsed))))
-					if len(finalEval.intersection(bufferEval)) == 0:
-						final.add(tuple(k))
-						self.hypotheses.append(parsed.replace('self.',''))
-						self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
-						self.primHypotheses.append(1.0 + len([m for m in k if callable(m)]))
-						finalEval.add(tuple(np.sort(eval(parsed))))
+	# 			for k in self.helper(list(j), i):
+	# 				bufferEval = set()
+	# 				parsed = self.parse(k,len(k)-1)
+	# 				# print parsed, i, k
+	# 				bufferEval.add(tuple(np.sort(eval(parsed))))
+	# 				if len(finalEval.intersection(bufferEval)) == 0:
+	# 					final.add(tuple(k))
+	# 					self.hypotheses.append(parsed.replace('self.',''))
+	# 					self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
+	# 					self.primHypotheses.append(1.0 + len([m for m in k if callable(m)]))
+	# 					finalEval.add(tuple(np.sort(eval(parsed))))
 				
-			baseHyp = final
+	# 		baseHyp = final
 
-		# 	################
-		# self.hypotheses = [i.replace('self.','') for i in finalHypList]
-		# self.evalHypotheses = [eval(i) for i in finalHypList]
+	# 	# 	################
+	# 	# self.hypotheses = [i.replace('self.','') for i in finalHypList]
+	# 	# self.evalHypotheses = [eval(i) for i in finalHypList]
 		
-		# self.primHypotheses = list()
-		# for i in fullHypList:
-		# 	self.primHypotheses.append(1.0 + len([j for j in i if callable(j)]))
-		# 	################
+	# 	# self.primHypotheses = list()
+	# 	# for i in fullHypList:
+	# 	# 	self.primHypotheses.append(1.0 + len([j for j in i if callable(j)]))
+	# 	# 	################
 
-		self.finalEval = list(finalEval)
-		self.finalHypList = list(final)
+	# 	self.finalEval = list(finalEval)
+	# 	self.finalHypList = list(final)
 
-		# self.hypParser(list(final))
+	# 	# self.hypParser(list(final))
 
 
 
@@ -259,44 +258,75 @@ class Hypothesis():
 
 		return finalHypList
 
-	def parse(self, hypothesis, depth):
-		hyp = ""
+	def parse(self, hypothesis, coord):
+		hyp = ''
 
-		temp = np.array([])
-		primCount = 0
-		for i in range(len(hypothesis)):
-			if callable(hypothesis[i]):
-				temp = np.append(temp, 1 + i + depth)
-				depth -= 2
+		# temp = np.array([])
+		# for i in range(len(hypothesis)):
+		# 	if callable(hypothesis[i]):
+		# 		temp = np.append(temp, 1 + i + depth)
+		# 		depth -= 2
+
+		hypothesis = hypothesis[:]
+
+		offset = 0
+		for i in coord:
+			hypothesis.insert(i+1+offset,')')
+			offset += 1
+		hypothesis += ')'
 
 		for i in range(len(hypothesis)):
 
 			if(callable(hypothesis[i])):
 				hyp += 'self.' + hypothesis[i].__name__ + '('
-				temp -= 1
-				if any([i == 0 for i in temp]):
-					hyp += ')'
+				# temp -= 1
+				# if any([i == 0 for i in temp]):
+					# hyp += ')'
 
 			else:
 				if i != (len(hypothesis) - 1):
-					hyp += "'" + hypothesis[i] + "',"
-					temp -= 1
-					if any([i == 0 for i in temp]):
-						hyp = list(hyp)
-						hyp[-1] = ')'
-						hyp += ','
-						hyp = ''.join(hyp)
+
+					if i != ')':
+						hyp += "'" + hypothesis[i] + "',"
+					else:
+						hyp += hypothesis[i]
+					# temp -= 1
+					# if any([i == 0 for i in temp]):
+						# hyp = list(hyp)
+						# hyp[-1] = ')'
+						# hyp += ','
+						# hyp = ''.join(hyp)
 				else:
 					hyp += "'" + hypothesis[i] + "'"
-					temp -= 1
-					if any([i == 0 for i in temp]):
-						hyp += ')'
+					# temp -= 1
+					# if any([i == 0 for i in temp]):
+						# hyp += ')'
 
-		offset = hyp.count('(') - hyp.count(')')
-		for i in range(offset):
-			hyp += ')'
+		# offset = hyp.count('(') - hyp.count(')')
+		# for i in range(offset):
+			# hyp += ')'
+
+		hyp = hyp.replace("')'",')')
+		hyp = hyp.replace(",)",")")
 
 		return hyp
+
+	def fullParse(self, hypothesis):
+		coords = self.validCoords(hypothesis)
+		parseList = list()
+		for coord in coords:
+			parseList.append(self.parse(hypothesis,coord))
+
+		return parseList
+
+	def validCoords(self,hypothesis):
+		numPrim = [i for i in range(1,len(hypothesis)) if callable(hypothesis[i])]
+		coords = list()
+		for i in range(len(numPrim)):
+			numPrim[i] = range(numPrim[i]+2, len(hypothesis))
+
+		return list(itertools.product(*tuple(numPrim)))
+
 
 			
 	def hypParser(self, fullHypList):
@@ -338,13 +368,68 @@ class Hypothesis():
 		for i in evalObjects: self.primHypotheses.append(1.0)
 
 
-
-	def BFS(self, primitive):
+	def BFSampler(self, depth):
 		"""
 
 		"""
-		pass		
 
+		final = set()
+		finalEval = set()
+
+		objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
+		evalObjects = [eval(i) for i in objects]
+
+		self.hypotheses = list()
+		self.evalHypotheses = list()
+		self.primHypotheses = list()
+
+		for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
+		for i in evalObjects: 
+			self.evalHypotheses.append(i)
+			self.primHypotheses.append(1.0)
+			finalEval.add(np.array_str(i))
+
+		space = self.objects + self.primitives
+
+		# Drop crap expressions from iterator using 
+		eSpace = itertools.product(space, repeat=3)
+		for i in range(3,depth+1):
+			eSpace = itertools.chain(eSpace, itertools.product(space, repeat=i+1))
+		check = lambda x: callable(x[0]) and not callable(x[-1]) and not callable(x[-2])
+		eSpace = list(itertools.ifilter(check, eSpace))
+
+		hSpace = []
+		hypSpace = []
+
+		for e in eSpace:
+			try:
+				
+				# Implement a set to remove duplicates
+				hypList = self.fullParse(list(e))
+				
+				for hyp in hypList:
+
+					hBuffer = set()
+					hEvalBuffer = set()
+
+					temp = eval(hyp)
+					temp = np.sort(temp)
+
+					hBuffer.add(hyp)
+					hEvalBuffer.add(np.array_str(temp))
+
+					if type(temp) is np.ndarray and finalEval.isdisjoint(hEvalBuffer):
+						hSpace += [temp]
+						hypSpace += [hyp.replace('self.','')]
+						finalEval.add(np.array_str(temp))
+						final.add(hyp)
+						self.primHypotheses.append(1.0 + float(len(e)))
+			
+			except SyntaxError:
+				pass
+
+		self.hypotheses += hypSpace
+		self.evalHypotheses += hSpace
 
 
 	def setBetaDistribution(self):
@@ -432,6 +517,10 @@ class Hypothesis():
 	#  
 	def Or(self, *args):
 
+		if len(args) < 2:
+			raise SyntaxError('Not enough arguments to function.')
+
+
 		vector = np.array([],dtype=object)
 
 		for arg in args:
@@ -443,6 +532,10 @@ class Hypothesis():
 		return np.unique(vector)
 
 	def Then(self,*args):
+
+		if len(args) < 2:
+			raise SyntaxError('Not enough arguments to function.')
+
  		args = np.array(args,dtype=object)
  		for i in range(len(args)):
  			if type(args[i]) is not np.ndarray:
@@ -452,6 +545,9 @@ class Hypothesis():
 
 
 	def And(self, *args):
+
+		if len(args) < 2:
+			raise SyntaxError('Not enough arguments to function.')
 		
  		args = np.array(args,dtype=object)
  		for i in range(len(args)):
