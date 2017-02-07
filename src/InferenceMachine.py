@@ -11,7 +11,11 @@ from scipy.stats import expon
 import numpy as np
 import copy
 import pyprind
+import csv
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
+import sys
 
 class InferenceMachine():
 	"""
@@ -28,14 +32,23 @@ class InferenceMachine():
 
 	def __init__(self, depth, grid, start, action, reward=100, 
 		hypotheses = None, discount=.9, tau=.01, epsilon=.001, 
-		tauChoice=.01, rationalAction=1, rationalChoice=1):
+		tauChoice=.01, rationalAction=1, rationalChoice=1,MCMCOn=True, trials=-1):
+
+		self.trials=trials
 
 		self.sims = list()
 		self.temp = list()
 
+		self.depth = depth
+		self.start = start
+		self.action = action
+		self.rationalAction = rationalAction
+		self.rationalChoice = rationalChoice
+
 		# Key elements of Bayes' Rule
 		self.likelihoods = list()
 		self.posteriors = list()
+		self.posteriorsMCMC = list()
 		self.prior = None
 
 		# Modify the GridWorld solver
@@ -51,16 +64,14 @@ class InferenceMachine():
 
 		# Alternate models
 		if rationalChoice == 0:
-			self.tauChoice = 100000
+			self.tauChoice = 100000000000
 		else:
 			self.tauChoice = tauChoice
 
 		if rationalAction == 0:
-			self.tau = 100000
+			self.tau = 1000000000000
 		else:
 			self.tau = tau
-
-
 
 
 		# Generate separate grids, one for each goal in the original map
@@ -87,39 +98,44 @@ class InferenceMachine():
 		# In this case, one for each object in the map
 		# Subpolicies for each objectGrid done here.
 		self.buildBiasEngine()
-		self.inferSummary(depth,start,action,hypotheses)
+		self.inferSummary(depth,start,action,hypotheses,MCMCOn)
 
-		maxH = np.argwhere(self.posteriors[len(self.posteriors)-1] == np.amax(
-			self.posteriors[len(self.posteriors)-1]))
+		maxH = np.argwhere(self.posteriorsMCMC[len(self.posteriorsMCMC)-1] == np.amax(
+			self.posteriorsMCMC[len(self.posteriorsMCMC)-1]))
 		maxH = maxH.flatten().tolist()
 
-		print "\n"
-		for i,index in enumerate(maxH):
-			print "Max Hypothesis {}: {}".format(i,self.hypotheses[index])
+		if MCMCOn:
+			print "\n"
+			for i,index in enumerate(maxH):
+				print "Max Hypothesis {}: {}".format(i,self.hypMCMC[index])
 
 		self.hypPosterior = dict(zip(self.hypotheses,self.posteriors[len(self.posteriors)-1]))
 		self.maxHyp = sorted(self.hypPosterior,key=self.hypPosterior.get,reverse=True)
 
-		print "\n"
+		self.hypPosteriorMCMC = dict(zip(self.hypMCMC,self.posteriorsMCMC[-1]))
+		# print self.hypPosteriorMCMC
+		self.maxHypMCMC = sorted(self.hypPosteriorMCMC, key=self.hypPosteriorMCMC.get, reverse=True)
 
-		limit = 10
-		if len(self.hypotheses) < 10:
-			limit = len(self.hypotheses)
 
-		for i in range(limit):
-			print "Hypothesis {}: {} : {}".format(i+1,self.maxHyp[i],self.hypPosterior[self.maxHyp[i]])
 
-		names = self.maxHyp[0:10]
-		data = [self.hypPosterior[i] for i in self.maxHyp[0:10]]
+		# limit = 1
+		# if len(self.hypotheses) < 1:
+		# 	limit = len(self.hypotheses)
 
-		fig = plt.figure(figsize=(25,25))
-		fig.subplots_adjust(bottom=0.39)
-		ax = plt.subplot(111)
-		width=0.8
-		bins = map(lambda x: x-width/2,range(1,len(data)+1))
-		ax.bar(bins,data,width=width)
-		ax.set_xticks(map(lambda x: x, range(1,len(data)+1)))
-		ax.set_xticklabels(names,rotation=45, rotation_mode="anchor", ha="right")
+		# for i in range(limit):
+		# 	print "Hypothesis {}: {} : {}".format(i+1,self.maxHypMCMC[i],self.hypPosteriorMCMC[self.maxHypMCMC[i]])
+
+		self.maxNames = self.maxHypMCMC[0:3]
+		self.maxData = [self.hypPosteriorMCMC[i] for i in self.maxHypMCMC[0:3]]
+
+		# fig = plt.figure(figsize=(25,25))
+		# fig.subplots_adjust(bottom=0.39)
+		# ax = plt.subplot(111)
+		# width=0.8
+		# bins = map(lambda x: x-width/2,range(1,len(self.maxData)+1))
+		# ax.bar(bins,self.maxData,width=width)
+		# ax.set_xticks(map(lambda x: x, range(1,len(self.maxData)+1)))
+		# ax.set_xticklabels(self.maxNames,rotation=45, rotation_mode="anchor", ha="right")
 		# plt.show(block=False)
 
 
@@ -197,7 +213,7 @@ class InferenceMachine():
 		return switch
 
 
-	def inferSummary(self, depth=None, start=None, actions=None, hypotheses=None):
+	def inferSummary(self, depth=None, start=None, actions=None, hypotheses=None, MCMCOn=True):
 		"""
 			Provide the prior, likelihood, and posterior distributions 
 			for a set of hypotheses. 
@@ -244,6 +260,7 @@ class InferenceMachine():
 		# since cost of each graph has been computed
 
 		evalHypothesesCost = evalHypotheses
+		self.evalHypothesesLogSM = np.copy(evalHypotheses)
 		self.hypCost = np.copy(evalHypothesesCost)
 
 		for i in range(len(evalHypothesesCost)):
@@ -255,7 +272,20 @@ class InferenceMachine():
 				maxCost = max(evalHypothesesCost[i][j])
 				arg = maxCost + np.log((np.exp(evalHypothesesCost[i][j] - maxCost).sum()))
 				evalHypothesesCost[i][j] -= arg
+
+				self.evalHypothesesLogSM[i][j] = np.copy(evalHypothesesCost[i][j])
 				evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j])
+
+				if self.tauChoice > 100:
+					evalHypotheses[i][j] = np.ones(len(evalHypotheses[i][j]))
+					evalHypotheses[i][j] /= len(evalHypotheses[i][j])
+
+				if evalHypothesesCost[i][j][-1] != 0:
+					temp = evalHypothesesCost[i][j][-1]
+					temp /= len(evalHypothesesCost[i][j])-1
+					evalHypothesesCost[i][j] += temp
+					evalHypothesesCost[i][j][-1] = 0
+
 
 				# evalHypothesesCost[i][j] = np.exp(evalHypothesesCost[i][j]/self.tauChoice)
 				# evalHypothesesCost[i][j] /= np.sum(evalHypothesesCost[i][j])
@@ -297,7 +327,8 @@ class InferenceMachine():
 			for j in range(i+1):
 				likelihood *= np.array(self.likelihoods[j])
 
-			self.inferPosterior(likelihood)
+		self.inferPosterior(likelihood,MCMCOn)
+
 
 
 	def inferPrior(self):
@@ -305,7 +336,7 @@ class InferenceMachine():
 
 		"""
 		self.prior = [1.0/(i) for i in self.primHypotheses]
-		self.prior /= np.sum(self.prior)
+		# self.prior /= np.sum(self.prior)
 
 	def buildBiasEngine(self):
 		""" 
@@ -342,6 +373,7 @@ class InferenceMachine():
 				p = 1
 				for j in range(len(policySwitch[0][0])-1):
 
+					# Take outside model version
 					if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
 						if actions[j] != 4: 
 							p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
@@ -351,7 +383,7 @@ class InferenceMachine():
 
 				if policySwitch[i][k][j] != policySwitch[i][k][j+1]:
 					p *= 0
- 
+
 
 				p *= self.evalHypothesesSM[gridIndex][i][k]
 				p_sum += p
@@ -361,20 +393,190 @@ class InferenceMachine():
 			temp2.append(temp1)
 
 		self.likelihoods.append(likelihood)
+		# self.likelihoods = [np.around(i,4) for i in self.likelihoods]
 		self.temp = temp2
 
-	def inferPosterior(self, likelihood):
+	def inferPosterior(self, likelihood,MCMCOn=True):
 		"""
 			Uses inference engine to compute posterior probability from the 
 			likelihood and prior (beta distribution).
 		"""
 
 		posterior = likelihood * self.prior
-		posterior /= posterior.sum()
+		# print posterior.sum()
+		# posterior /= posterior.sum()
+		# posterior = [np.around(i,4) for i in posterior]
+		if MCMCOn:
+			samples, h = self.MCMC(posterior,1000)
+			hypMCMC = list(set(h))
+			posteriorMCMC = [h.count(i)/float(len(h)) for i in hypMCMC]
+			self.hypMCMC = hypMCMC
+			self.posteriorsMCMC.append(posteriorMCMC)
+
+			self.evalHypMCMC = list()
+			H = Hypothesis(Grid('testGrid'))
+			for h in self.hypMCMC:
+					h = h.replace('Then','H.Then')
+					h = h.replace('And','H.And')
+					h = h.replace('Or','H.Or')
+					self.evalHypMCMC.append(eval(h))
+
+		else:
+			self.hypMCMC = self.hypotheses
+			self.posteriorsMCMC.append(posterior)
+
 		self.posteriors.append(posterior)
+
+		# temp = 
+
+	def unormalizedPosterior(self, hypothesis):
+		pass
+
+
+	def MCMC(self, target, samples):
+
+		outFile = open('model_samples'+str(self.trials)+'_'+str(self.rationalAction)+'_'+str(self.rationalChoice)+'.csv','w')
+		CSVo = csv.writer(outFile)
+
+		hypotheses = list()
+		final = list()
+		ev = list()
+
+		check = []
+		old_s_p = None
+
+
+		while old_s_p is None:
+
+			hSampler = Hypothesis(Grid('testGrid'))
+			hSampler.sampleHypotheses(1)
+
+			check = [np.array_equal(hSampler.evalHypotheses[0],samp) for samp in self.evalHypotheses]
+			checkNames = [np.array_equal(hSampler.hypotheses[0],hypo) for hypo in self.hypotheses]
+
+			if not any(check):
+				inferSampler = InferenceMachine(self.depth, self.grid, self.start,self.action,
+				rationalAction=self.rationalAction,rationalChoice=self.rationalChoice,MCMCOn=False,hypotheses=hSampler)
+				old_s = inferSampler.hypotheses[0]
+				old_s_p = inferSampler.posteriors[-1][0]
+				self.hypotheses.append(old_s)
+				self.evalHypotheses.append(hSampler.evalHypotheses[0])
+				self.primHypotheses.append(hSampler.primHypotheses[0])
+				target = np.append(target,old_s_p)
+				# check[0] = True
+
+			else:
+				if any(checkNames):
+					c = checkNames.index(True)
+					old_s = self.hypotheses[c]
+					old_s_p = target[c]
+					# check[0] = True
+				else:
+					continue
+					
+				# hypotheses.append(old_s)
+				# final.append(old_s_p)
+				# ev.append(self.evalHypotheses[c])
+
+		temp = list()
+		for i in range(samples):
+			if i % 1000 == 0:
+				print 'At Sample: ' + str(i)
+				sys.stdout.flush()
+
+			
+			check = []
+			new_s_p = None
+			while new_s_p is None:
+
+				hSampler = Hypothesis(Grid('testGrid'))
+				hSampler.sampleHypotheses(1)
+
+				check = [np.array_equal(hSampler.evalHypotheses[0],samp) for samp in self.evalHypotheses]
+				checkNames = [np.array_equal(hSampler.hypotheses[0],hypo) for hypo in self.hypotheses]
+				
+				if not any(check):
+					inferSampler = InferenceMachine(self.depth, self.grid, self.start,self.action,
+					rationalAction=self.rationalAction,rationalChoice=self.rationalChoice,MCMCOn=False,hypotheses=hSampler)
+					new_s = inferSampler.hypotheses[0]
+					new_s_p = inferSampler.posteriors[-1][0]
+					self.hypotheses.append(new_s)
+					self.evalHypotheses.append(hSampler.evalHypotheses[0])
+					self.primHypotheses.append(hSampler.primHypotheses[0])
+
+					target = np.append(target,new_s_p)
+					# check[0] = True
+
+				else:
+					if any(checkNames):
+						c = check.index(True)
+						new_s = self.hypotheses[c]
+						new_s_p = target[c]
+						# check[0] = True
+					else:
+						continue
+
+				
+
+			# Calculate acceptance prob
+			if old_s_p == 0:
+				alpha = 1
+
+			else:
+	 			alpha = min( 1, (new_s_p*hSampler.computeP(new_s)) / (old_s_p*hSampler.computeP(old_s))  ) 
+			
+			# print new_s
+			# print old_s, new_s
+			# print alpha
+			# See if you keep new sample
+			temp = new_s
+			new_s = np.random.choice([new_s,old_s],p=[alpha,1-alpha])
+			if temp == new_s:
+				new_s_p = new_s_p
+			else:
+				new_s_p = old_s_p
+
+			final.append(new_s_p)
+			hypotheses.append(new_s)
+			# temp.append(new_s)
+			CSVo.writerow([new_s])
+
+			if i % 1000 == 0:
+				outFile.flush()
+				# CSVo.writerow(temp)	
+				# temp = []
+				# outFile.flush()
+
+
+
+			# New value becomes old value
+			old_s_p = new_s_p
+			old_s = new_s
+
+
+
+		return final, hypotheses
+		# return target, self.hypotheses
+
+
 
 
 
 
 # desires are not states of the world, but given a desire i can infer the states
 # of the world #
+# 9.012
+# language instinct
+# the stuff of thougt
+# roger levy - new guy in linguistics
+# inference and information - grad
+# introduction to inference - undergrad
+# hierarchical rl
+
+"""
+Learning about novel environments by observing agent actions.
+Learning about novel topics by observing linguistic actions.
+
+"""
+
+

@@ -1,9 +1,10 @@
 3
-Pharmacy
-PostOffice
-FriendsHome
+A
+B
+C
 
 O--O
+----
 ----
 ---O
 

@@ -9,6 +9,7 @@ from GridWorld import GridWorld
 from Grid import Grid
 from scipy.stats import uniform
 from scipy.stats import beta
+from scipy.stats import poisson
 
 import itertools
 
@@ -31,6 +32,7 @@ class Hypothesis():
 
 	"""
 	def __init__(self, grid, occam=2.0):		
+		# test = Hypothesis('testGrid')
 		self.grid = grid
 		self.hypotheses = None
 		self.occam = occam
@@ -64,6 +66,8 @@ class Hypothesis():
 		self.hypotheses = list()
 		self.evalHypotheses = list()
 		self.primHypotheses = list()
+		self.numPrim = list()
+		self.numArg = list()
 
 		if hypotheses is None:
 			while len(self.hypotheses) != samples:
@@ -73,6 +77,11 @@ class Hypothesis():
 
 				hypothesis = self.hGenerator()
 				evalHypothesis = eval(hypothesis)
+				numPrim = hypothesis.count('self.And') + hypothesis.count('self.Or')+\
+							hypothesis.count('self.Or')
+				numArg = hypothesis.count("'"+self.objects[0]+"'") + hypothesis.count("'"+self.objects[1]+"'")+\
+							hypothesis.count("'"+self.objects[2]+"'")
+
 				if type(evalHypothesis) is not str:
 					evalHypothesis = evalHypothesis.tolist()
 
@@ -80,28 +89,36 @@ class Hypothesis():
 					evalHypothesis = [evalHypothesis]
 
 				if evalHypothesis in self.evalHypotheses:
-					currentCount = (self.primCount / self.occam)+1
+					currentCount = (self.primCount / self.occam)
 					index = self.evalHypotheses.index(evalHypothesis)
 					if currentCount < self.primHypotheses[index]:
 						self.hypotheses[index] = hypothesis
 						self.evalHypotheses[index] = evalHypothesis
 						self.primHypotheses[index] = currentCount
+						self.numPrim[index] = numPrim
+						self.numArg[index] = numArg
 						continue
 
 				if hypothesis not in self.hypotheses and evalHypothesis not in self.evalHypotheses: 
 					self.hypotheses.append(hypothesis)
 					self.evalHypotheses.append(evalHypothesis)
-					self.primHypotheses.append((self.primCount / self.occam)+1)
-
+					self.primHypotheses.append((self.primCount / self.occam))
+					self.numPrim.append(numPrim)
+					self.numArg.append(numArg)
 		else:
 			for i in range(len(hypotheses)):
 				primCount = 0
 				self.hypotheses.append(hypotheses[i])
 				self.evalHypotheses.append(eval(hypotheses[i]))
+				numPrim = hypothesis.count('self.And') + hypothesis.count('self.Or')+\
+							hypothesis.count('self.Or')
+				numArg = hypothesis.count(self.objects[0],self.objects[1],self.objects[2])
+				self.numPrim.append(numPrim)
+				self.numArg.append(numArg)
 				primCount += (hypotheses[i].count("And"))
 				primCount += hypotheses[i].count("Or")
 				primCount += hypotheses[i].count("Then")
-				primCount += 1
+				# primCount += 1
 
 				self.primHypotheses.append(primCount)
 
@@ -114,105 +131,36 @@ class Hypothesis():
 	def hGenerator(self, arg=None):
 		"""
 		"""
-		choice = np.random.choice([0,1],p=self.choosePrimObj)
+		choice = np.random.choice([0,1],p=[.2,.8])
 		arg = np.random.choice(self.space[choice],p=self.p[choice])
 
+		self.primCount += self.occam
 
 		if choice == 1:
 			return "'" + arg + "'"
 
-		self.primCount += self.occam
+		# self.primCount += self.occam
 		# if arg == self.And:
 		# 	self.primCount += (self.occam*2)
 
-		self.setBetaDistribution()
-
-		arg1 = self.hGenerator()
-		arg2 = self.hGenerator()
+		# self.setBetaDistribution()
 
 		# while arg1 == arg2:
 		# 	arg2 = self.hGenerator()
-		
-		return 'self.' + arg.__name__ + '(' + arg1 + ',' + self.hGenerator() + ',' + arg2 + ')'
+		buff = 'self.'+arg.__name__+'('
 
-	
-	# def BFSampler(self, depth):
-	# 	"""
-	# 	Breadth-first-search sampler.
-	# 	"""
+		numArgs = 0
+		while numArgs < 2:
+			# print numArgs
+			numArgs = poisson.rvs(.3)
 
-	# 	# Edge Case
-	# 	if depth == 1:
-	# 		return self.objects
+		for i in range(numArgs):
+			if i == numArgs-1:
+				buff += self.hGenerator() + ')'
+			else:
+				buff += self.hGenerator() + ','
 
-	# 	baseHyp = []
-	# 	final = set()
-	# 	finalEval = set()
-
-	# 	objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
-	# 	evalObjects = [eval(i) for i in objects]
-
-
-	# 	self.hypotheses = list()
-	# 	self.evalHypotheses = list()
-	# 	self.primHypotheses = list()
-
-	# 	for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
-	# 	for i in evalObjects: 
-	# 		self.evalHypotheses.append(i)
-	# 		self.primHypotheses.append(1.0)
-	# 		finalEval.add(tuple(i))
-
-	# 	for i in range(2, depth+1):
-
-	# 		temp = list(itertools.product(self.objects, repeat=i))
-	# 		temp = [list(e) for e in temp]
-	# 		temp += baseHyp
-			
-	# 		for j in temp:
-
-	# 			# Set we will use to check if evaluated hypothesis is same
-	# 			if callable(j[0]):
-	# 				bufferEval = set()
-	# 				parsed = self.parse(j,len(j)-1)
-	# 				# print i, j
-	# 				# print parsed
-	# 				bufferEval.add(tuple(np.sort(eval(parsed))))
-	# 				if len(finalEval.intersection(bufferEval)) == 0:
-	# 					final.add(tuple(j))
-	# 					self.hypotheses.append(parsed.replace('self.',''))
-	# 					self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
-	# 					self.primHypotheses.append(1.0 + len([k for k in j if callable(k)]))
-	# 					finalEval.add(tuple(np.sort(eval(parsed))))
-
-	# 			for k in self.helper(list(j), i):
-	# 				bufferEval = set()
-	# 				parsed = self.parse(k,len(k)-1)
-	# 				# print parsed, i, k
-	# 				bufferEval.add(tuple(np.sort(eval(parsed))))
-	# 				if len(finalEval.intersection(bufferEval)) == 0:
-	# 					final.add(tuple(k))
-	# 					self.hypotheses.append(parsed.replace('self.',''))
-	# 					self.evalHypotheses.append(np.array(np.sort(eval(parsed)),dtype=object))
-	# 					self.primHypotheses.append(1.0 + len([m for m in k if callable(m)]))
-	# 					finalEval.add(tuple(np.sort(eval(parsed))))
-				
-	# 		baseHyp = final
-
-	# 	# 	################
-	# 	# self.hypotheses = [i.replace('self.','') for i in finalHypList]
-	# 	# self.evalHypotheses = [eval(i) for i in finalHypList]
-		
-	# 	# self.primHypotheses = list()
-	# 	# for i in fullHypList:
-	# 	# 	self.primHypotheses.append(1.0 + len([j for j in i if callable(j)]))
-	# 	# 	################
-
-	# 	self.finalEval = list(finalEval)
-	# 	self.finalHypList = list(final)
-
-	# 	# self.hypParser(list(final))
-
+		return buff
 
 
 	def helper(self, hypList, depth):
@@ -372,6 +320,17 @@ class Hypothesis():
 		"""
 
 		"""
+		self.hypotheses = list()
+		self.evalHypotheses = list()
+		self.primHypotheses = list()
+
+		if depth==1:
+			self.hypotheses = ['"' + i + '"' for i in self.objects]
+			objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
+			self.primHypotheses = [1.0 for i in self.hypotheses]
+			self.evalHypotheses = [eval(i) for i in objects]
+			return None
+
 
 		final = set()
 		finalEval = set()
@@ -379,9 +338,6 @@ class Hypothesis():
 		objects = ["np.array([" + "'" + i + "'"  + "],dtype=object)" for i in self.objects]
 		evalObjects = [eval(i) for i in objects]
 
-		self.hypotheses = list()
-		self.evalHypotheses = list()
-		self.primHypotheses = list()
 
 		for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
 		for i in evalObjects: 
@@ -423,7 +379,7 @@ class Hypothesis():
 						hypSpace += [hyp.replace('self.','')]
 						finalEval.add(np.array_str(temp))
 						final.add(hyp)
-						self.primHypotheses.append(1.0 + float(len(e)))
+						self.primHypotheses.append(float(len(e)))
 			
 			except SyntaxError:
 				pass
@@ -559,73 +515,9 @@ class Hypothesis():
 		for arg in temp:
 			final = np.append(final, np.array([''.join(s) for s in list(itertools.product(*arg))], dtype=object))
 
-		return final
+		return np.sort(final)
 		# return np.array([''.join(s) for s in list(itertools.permutations(final_args))], dtype=object)
 
-
-	# def Then(self, A, B):
-	# 	"""
-	# 		Primitive function to do the 'Then' operation.
-	# 		Adds every possible combination of A->B for all content
-	# 		within A and B to a list. 
-
-	# 		e.g. A:['A'], B:['A,B'] ; Then(A,B):['AA','AB']
-	# 	"""
-
-	# 	# If input is a char, turn into numpy array
-	# 	if type(A) is not np.ndarray:
-	# 		A = np.array([A],dtype='S32')
-	# 	if type(B) is not np.ndarray:
-	# 		B = np.array([B],dtype='S32')
-
-	# 	# C will hold all combinations of A->B
-	# 	C = np.array([],dtype='S32')
-	# 	for i in range(len(A)):
-	# 		for j in range(len(B)):
-				
-	# 			# if A[i][-1] == B[j][0]:
-	# 			# 	C = np.append(C, A[i]+B[j][1:])
-
-	# 			# else:
-	# 			C = np.append(C, A[i] + B[j])
-
-	# 	return C
-
-
-	# def Or(self, A, B):
-	# 	"""
-	# 		Primitive function to do the 'Or' operation. 
-	# 		Essentially throws the contents of A and B into
-	# 		one list (of subgraphs). 
-
-	# 		e.g. A:['A'], B:['A,B'] ; Or(A,B):['A','A','B']
-	# 	"""
-
-	# 	# If input is a char, turn into numpy array
-	# 	if type(A) is not np.ndarray:
-	# 		A = np.array([A],dtype='S32')
-	# 	if type(B) is not np.ndarray:
-	# 		B = np.array([B],dtype='S32')
-
-	# 	return np.unique(np.append(A,B))
-		
-
-
-	# def And(self, A, B):
-	# 	"""
-	# 		Primitive function to do the 'And' operation.
-	# 		Defined as a composition of Or and Then.
-
-	# 		And(A,B) = Or(Then(A,B),Then(B,A))
-	# 	"""
-
-	# 	# If input is a char, turn into numpy array
-	# 	if type(A) is not np.ndarray:
-	# 		A = np.array([A],dtype='S32')
-	# 	if type(B) is not np.ndarray:
-	# 		B = np.array([B],dtype='S32')
-
-	# 	return self.Or(self.Then(A,B), self.Then(B,A))
 
 
 	def minCostGraphString(self, graphList):
@@ -689,6 +581,83 @@ class Hypothesis():
 		# Find index of object, to use for indexing distance matrix
 		return self.dist[int(edgeString[0])][int(edgeString[1])]
 
+
+	def parseToEnglish(self):
+		self.englishHypotheses = list()
+		for h in self.hypotheses:
+			h = h.replace('Then','self.T')
+			h = h.replace('And','self.A')
+			h = h.replace('Or','self.O')
+			evalH = eval(h)
+			if evalH[0] == '(':
+				evalH = evalH[1:len(evalH)-1]
+			self.englishHypotheses.append(evalH)
+
+
+
+
+	def A(self, *args):
+		a = "("
+		for i in range(len(args)):
+			if i == len(args)-1:
+				a += args[i] 
+			else:
+				a += args[i] + ' and '
+		return a + ')'
+
+	def O(self, *args):
+		a = "("
+		for i in range(len(args)):
+			if i == len(args)-1:
+				a += args[i] 
+			else:
+				a += args[i] + ' or '
+		return a + ')'
+
+	def T(self, *args):
+		a = "("
+		for i in range(len(args)):
+			if i == len(args)-1:
+				a += args[i] 
+			else:
+				a += args[i] + ' then '
+		return a + ')'	
+
+
+	def computeP(self, h):
+		if '(' not in h:
+			h = 'self.pHyp' + '(' + h + ')'
+		if 'self' not in h:
+			h = h.replace('And','self.pHyp')
+			h = h.replace('Or','self.pHyp')
+			h = h.replace('Then','self.pHyp')
+		else:
+			h = h.replace('self.And','self.pHyp')
+			h = h.replace('self.Or','self.pHyp')
+			h = h.replace('self.Then','self.pHyp')
+		return eval(h)
+
+	def pHyp(self, *args):
+
+		dProb = 1
+
+		if len(args) == 1:
+			return .8
+
+		# print 'dProb *= .2'
+		dProb *= .2
+
+		# print 'dProb  *= ',poisson.pmf(len(args),1)
+		dProb *=  poisson.pmf(len(args),.3)
+
+		for arg in args:
+			if type(arg) is not str:
+				# dProb *= .2
+				dProb *= arg
+				# print 'here'
+				# print 'dProb *= ', arg
+
+		return dProb
 
 
 

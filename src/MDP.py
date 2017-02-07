@@ -3,7 +3,8 @@
 # ---------------------------------
 # - Includes BettingGame example
 
-
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import random
@@ -126,6 +127,7 @@ class MDP(object):
 		"""
 
 		self.policy = np.zeros([len(self.s),len(self.a)])
+		self.logpolicy = np.zeros([len(self.s),len(self.a)])
 
 		for i in range(len(self.s)-1):
 
@@ -143,9 +145,13 @@ class MDP(object):
 			maxVal = max(state_policy)
 			arg = maxVal + np.log((np.exp(state_policy - maxVal).sum()))
 			state_policy -= arg
+			self.logpolicy[i] = state_policy
 			state_policy = np.exp(state_policy)
 			
-
+			if self.tau > 100:
+				state_policy = np.ones(len(state_policy))
+				state_policy /= len(state_policy)
+				
 			self.policy[i] = state_policy
 
 	def extractDeterministicPolicy(self):
@@ -449,7 +455,7 @@ class InferenceMachine():
 		plt.xlabel('Bias')
 		plt.title('Prior Probability')
 		plt.tight_layout()
-		plt.show()
+		# plt.show()
 
 
 	def expectedPosterior(self):
