@@ -31,6 +31,7 @@ class Hypothesis():
 			- Then
 
 	"""
+
 	def __init__(self, grid, occam=2.0):		
 		# test = Hypothesis('testGrid')
 		self.grid = grid
@@ -78,7 +79,7 @@ class Hypothesis():
 				hypothesis = self.hGenerator()
 				evalHypothesis = eval(hypothesis)
 				numPrim = hypothesis.count('self.And') + hypothesis.count('self.Or')+\
-							hypothesis.count('self.Or')
+							hypothesis.count('self.Then')
 				numArg = hypothesis.count("'"+self.objects[0]+"'") + hypothesis.count("'"+self.objects[1]+"'")+\
 							hypothesis.count("'"+self.objects[2]+"'")
 
@@ -110,12 +111,12 @@ class Hypothesis():
 				primCount = 0
 				self.hypotheses.append(hypotheses[i])
 				self.evalHypotheses.append(eval(hypotheses[i]))
-				numPrim = hypothesis.count('self.And') + hypothesis.count('self.Or')+\
-							hypothesis.count('self.Or')
-				numArg = hypothesis.count(self.objects[0],self.objects[1],self.objects[2])
+				numPrim = hypotheses[i].count('self.And') + hypotheses[i].count('self.Or')+\
+							hypotheses[i].count('self.Then')
+				numArg = hypotheses[i].count(self.objects[0]) + hypotheses[i].count(self.objects[1]) + hypotheses[i].count(self.objects[2])
 				self.numPrim.append(numPrim)
 				self.numArg.append(numArg)
-				primCount += (hypotheses[i].count("And"))
+				primCount += hypotheses[i].count("And")
 				primCount += hypotheses[i].count("Or")
 				primCount += hypotheses[i].count("Then")
 				# primCount += 1
@@ -128,6 +129,41 @@ class Hypothesis():
 	def resetPrimCount(self):
 		self.primCount = 0
 
+	# def hGenerator(self, arg=None):
+	# 	"""
+	# 	"""
+	# 	choice = np.random.choice([0,1],p=[.2,.8])
+	# 	arg = np.random.choice(self.space[choice],p=self.p[choice])
+
+	# 	self.primCount += self.occam
+
+	# 	if choice == 1:
+	# 		return "'" + arg + "'"
+
+	# 	# self.primCount += self.occam
+	# 	# if arg == self.And:
+	# 	# 	self.primCount += (self.occam*2)
+
+	# 	# self.setBetaDistribution()
+
+	# 	# while arg1 == arg2:
+	# 	# 	arg2 = self.hGenerator()
+	# 	buff = 'self.'+arg.__name__+'('
+
+	# 	numArgs = 0
+	# 	while numArgs < 2:
+	# 		# print numArgs
+	# 		numArgs = poisson.rvs(1)
+
+	# 	for i in range(numArgs):
+	# 		if i == numArgs-1:
+	# 			buff += self.hGenerator() + ')'
+	# 		else:
+	# 			buff += self.hGenerator() + ','
+
+	# 	return buff
+
+
 	def hGenerator(self, arg=None):
 		"""
 		"""
@@ -139,28 +175,20 @@ class Hypothesis():
 		if choice == 1:
 			return "'" + arg + "'"
 
-		# self.primCount += self.occam
 		# if arg == self.And:
 		# 	self.primCount += (self.occam*2)
 
 		# self.setBetaDistribution()
 
+
+		arg1 = self.hGenerator()
+		arg2 = self.hGenerator()
+
 		# while arg1 == arg2:
 		# 	arg2 = self.hGenerator()
-		buff = 'self.'+arg.__name__+'('
+		
+		return 'self.' + arg.__name__ + '(' + arg1 + ',' + arg2 + ')'
 
-		numArgs = 0
-		while numArgs < 2:
-			# print numArgs
-			numArgs = poisson.rvs(.3)
-
-		for i in range(numArgs):
-			if i == numArgs-1:
-				buff += self.hGenerator() + ')'
-			else:
-				buff += self.hGenerator() + ','
-
-		return buff
 
 
 	def helper(self, hypList, depth):
@@ -342,7 +370,7 @@ class Hypothesis():
 		for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
 		for i in evalObjects: 
 			self.evalHypotheses.append(i)
-			self.primHypotheses.append(1.0)
+			self.primHypotheses.append(2.0)
 			finalEval.add(np.array_str(i))
 
 		space = self.objects + self.primitives
@@ -463,8 +491,6 @@ class Hypothesis():
 		# Count num. of steps to get to obj from start, that is the distance
 		dist = objectWorld.simulate(objectWorld.coordToScalar(startCoord))
 
-
-
 		return dist 
 	
 
@@ -515,7 +541,7 @@ class Hypothesis():
 		for arg in temp:
 			final = np.append(final, np.array([''.join(s) for s in list(itertools.product(*arg))], dtype=object))
 
-		return np.sort(final)
+		return np.unique(np.sort(final))
 		# return np.array([''.join(s) for s in list(itertools.permutations(final_args))], dtype=object)
 
 
@@ -594,8 +620,6 @@ class Hypothesis():
 			self.englishHypotheses.append(evalH)
 
 
-
-
 	def A(self, *args):
 		a = "("
 		for i in range(len(args)):
@@ -638,27 +662,74 @@ class Hypothesis():
 		return eval(h)
 
 	def pHyp(self, *args):
-
+		# print args
 		dProb = 1
 
 		if len(args) == 1:
-			return .8
+			# print 'times .8'
+			return .8 / 3
 
-		# print 'dProb *= .2'
-		dProb *= .2
+		# # print 'dProb *= .2
+		# print 'times .2'
+		# dProb *= .2
 
 		# print 'dProb  *= ',poisson.pmf(len(args),1)
-		dProb *=  poisson.pmf(len(args),.3)
-
+		# dProb *=  poisson.pmf(len(args),1)
+		dProb *= .2 / 3
+		# print 'times .2'
 		for arg in args:
 			if type(arg) is not str:
 				# dProb *= .2
+				# dProb *= .2
 				dProb *= arg
+				# print 'times ',arg
 				# print 'here'
 				# print 'dProb *= ', arg
+			else:
+				# print 'times .8'
+				dProb *= .8 / 3
 
 		return dProb
 
+	def flattenAll(self):
+		for i in range(len(self.hypotheses)):
+			self.hypotheses[i] = self.flatten(self.hypotheses[i])
+
+	def flatten(self, h):
+		""" 
+		Converts redundancies to inf arg form
+		e.g. Then(A,Then(B,C)) -> Then(A,B,C)
+		"""
+		
+		temp = [h.split('(')[i] + '(' for i in range(len(h.split('('))) if i < len(h.split('('))]
+		temp[-1] = temp[-1][0:-1]
+
+		indAnd = list()
+		indOr = list()
+		indThen = list()
+
+		for i in range(len(temp)-1):
+			if 'Then' in temp[i] and 'Then' in temp[i+1]:
+				indThen.append(i+1)
+			if 'Or' in temp[i] and 'Or' in temp[i+1]:
+				indOr.append(i+1)
+			if 'And' in temp[i] and 'And' in temp[i+1]:
+				indAnd.append(i+1)
+
+		for i in indAnd:
+			temp[i] = temp[i].replace('And(','')
+			temp[i+1] = temp[i+1].replace(')','',1)
+
+		for i in indThen:
+			temp[i] = temp[i].replace('Then(','')
+			temp[i+1] = temp[i+1].replace(')','',1)
+
+
+		for i in indOr:
+			temp[i] = temp[i].replace('Or(','')
+			temp[i+1] = temp[i+1].replace(')','',1)
+
+		return ''.join(temp)
 
 
 """
@@ -687,5 +758,4 @@ Depth 4: Or
 
 
 """
-
 

@@ -14,16 +14,22 @@ import sys
 
 use = False
 trials = [use for i in range(19)]
-# trials[2] = True
+
+trials[8] = True
+trialOn = 0
+
 if len(sys.argv) > 1:
 	trialOn = int(sys.argv[1])
 	trials[trialOn-1] = True
-	ra = [int(sys.argv[2])]
-	rc = [int(sys.argv[3])]
+	ra = [1]
+	rc = [0,1]
 else:
 	sys.argv.append('-1')
-	ra = range(2)
-	rc = range(2)
+	sys.argv.append('-1')
+	sys.argv.append('-1')
+	ra = [1]
+	rc = [0,1]
+
 
 actions = [
 [[0,0,0,'take','stop']],
@@ -47,31 +53,56 @@ actions = [
 [[0,0,0,'take',3,1,3,1,3,1,'take','stop'],[0,3,0,3,0,3,'take',1,1,1,'take','stop']]
 ]
 
+# old
+# chek = [
+# ["'A'", "Or('A','B')", "Or('A',And('A','C'))"],
+# ["'B'", "Or('B',Then('B','C'))", "Or('B',Then('C','A'))"],
+# ["Then('A','B')", "And('A','B')", "Then('A',Or('B','C'))"],
+# ["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
+# ["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
+# ["Then('A','B','C')", "Then(And('A','B'),'C')", "And('C',Then('A','B'))"],
+# ["Then('A','C','B')", "And('B',Then('A','C'))", "Then('A','C',Or('A','B'))"],
+# ["Then('B','A','C')", "Then('B',And('A','C'))", "Then(Or('B','C'),'A','C')"],
+# ["Or('A','C')", "Or('A','B','C')", "Or('A','C',And('B','C'))"],
+# ["Then(Or('A','C'),'B')", "And('B',Or('A','C'))", "Or(And('B','C'),Then('A','B'))"],
+# ["Then(Or('B','C'),'A')", "Or(And('A','C'),Then('B','A'))", "Then('C','A','B',Or('A','B'))"],
+# ["And('A','C')", "Or(And('A','C'),Then('B','C'))", "Or(And('A','C'),Then('B','A'))"],
+# ["'A'", "Or('A','B')", "Or('A',And('A','C'))"],
+# ["Then('A','B')", "And('A','B')", "Then('A',Or('B','C'))"],
+# ["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
+# ["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
+# ["Or(Then('A','C'),Then('B','A'))", "Or(And('A','C'),Then('B','A'))", "Or(And('A','B'),Then('A','C'))"],
+# ["Then('B',Or('A','C'))", "Then('C','A','B',Or('A','B'))", "And('B',Or('A','C'))"],
+# ["Then(Or('A','B'),'C')", "Or(And('A','C'),Then('B','C'))", "And('C',Or('A','B'))"]
+# ]
+
 chek = [
-["'A'", "Or('A','B')", "Or('A',And('A','C'))"],
-["'B'", "Or('B',Then('B','C'))", "Or('B',Then('C','A'))"],
-["Then('A','B')", "And('A','B')", "Then('A',Or('B','C'))"],
+["'A'", "Or('A','B')", "Or('A','C')"],
+["'B'", "Or('B',Then('B','A'))", "Or('B',Then('B','C'))"],
+["Then('A','B')", "And('A','B')", "And('A',Or('B','C'))"],
 ["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
 ["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
-["Then('A','B','C')", "Then(And('A','B'),'C')", "And('C',Then('A','B'))"],
-["Then('A','C','B')", "And('B',Then('A','C'))", "Then('A','C',Or('A','B'))"],
+["Then('A','B','C')", "And('A','B','C')", "And('C',Then('A','B'))"],
+["Then('A','C','B')", "And('B',Then('A','C'))", "Then(And('A','C'),'B')"],
 ["Then('B','A','C')", "Then('B',And('A','C'))", "Then(Or('B','C'),'A','C')"],
-["Or('A','C')", "Or('A','B','C')", "Or('A','C',And('B','C'))"],
-["Then(Or('A','C'),'B')", "And('B',Or('A','C'))", "Or(And('B','C'),Then('A','B'))"],
-["Then(Or('B','C'),'A')", "Or(And('A','C'),Then('B','A'))", "Then('C','A','B',Or('A','B'))"],
+["Or('A','C')", "Or('A','B','C')", "Or('A','C',Then('B','A'))"],
+["And('B',Or('A','C'))", "Then(Or('A','C'),'B')", "Then(Or('A','B','C'),'B')"],
+["Then(Or('B','C'),'A')", "Or(And('A','C'),Then('B','A'))", "And('A',Or('B','C'))"],
 ["And('A','C')", "Or(And('A','C'),Then('B','C'))", "Or(And('A','C'),Then('B','A'))"],
-["'A'", "Or('A','B')", "Or('A',And('A','C'))"],
-["Then('A','B')", "And('A','B')", "Then('A',Or('B','C'))"],
+["'A'", "Or('A','B')", "Or('A','C')"],
+["Then('A','B')", "And('A','B')", "And('A',Or('B','C'))"],
 ["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
 ["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
-["Or(Then('A','C'),Then('B','A'))", "Or(And('A','C'),Then('B','A'))", "Or(And('A','B'),Then('A','C'))"],
-["Then('B',Or('A','C'))", "Then('C','A','B',Or('A','B'))", "And('B',Or('A','C'))"],
+["Or(Then('A','C'),Then('B','A'))", "Or(And('A','C'),Then('B','A'))","And('A',Or('B','C'))"],
+["Then('B',Or('A','C'))", "And('B',Or('A','C'))", "Then('B',Or('A','B','C'))"],
 ["Then(Or('A','B'),'C')", "Or(And('A','C'),Then('B','C'))", "And('C',Or('A','B'))"]
 ]
 
+
+	
 testGrid = Grid('testGrid')
 grid1 = [[testGrid] for i in range(8)]
-grid2 = [[testGrid,testGrid] for i in range(8,19) ]
+grid2 = [[testGrid,testGrid] for i in range(8,19)]
 grid = grid1 + grid2
 start1 = [[12] for i in range(8)]
 start2 = [[12,12] for i in range(8,19)]
@@ -106,14 +137,18 @@ def getDepthPosterior(posterior, primHypotheses, depth):
 
 
 H = Hypothesis(Grid('testGrid'))
-depth = 4
-H.sampleHypotheses(500)
+depth = 6
+# H.sampleHypotheses(5000)
+
+H.BFSampler(depth)
 H.parseToEnglish()
 
-oFile = open('model_results'+sys.argv[1]+'_'+sys.argv[2]+'_'+sys.argv[3]+'_'+'.csv','w')
+# H.flattenAll()
+
+oFile = open('model_results'+sys.argv[1]+'_'+'.csv','w')
 CSV = csv.writer(oFile)
-CSV.writerow(['Trial','Rational Action', 'Rational Choice', 'Hypothesis Rank',
-				'Hypothesis','Posterior'])
+# CSV.writerow(['Trial','Rational Action', 'Rational Choice', 'Hypothesis Rank',
+				# 'Hypothesis','Posterior'])
 # oFile2 = open('parsed_english.csv','w')
 # CSV2 = csv.writer(oFile2)
 
@@ -125,13 +160,14 @@ stimCounter = 1
 
 lesion = ['RA/RC Lesion', 'RA Lesion','RC Lesion','Full Model']
 
+cfull = list()
 
 for trial in range(len(trials)):
 
 	if trials[trial]:
 		print '\n_______________'
 		print 'TRIAL ',trial
-		print '_______________\n'
+		print '_______________'
 	# plt.rcParams.update({'font.size': 100})
 	# plt.rcParams['xtick.major.pad']='15'
 	# plt.rcParams['ytick.major.pad']='15'
@@ -147,46 +183,93 @@ for trial in range(len(trials)):
 			if trials[trial]:
 
 				print '\n--------------------------------------------------------'
-				print 'Test single_1:'
+				# print 'Test single_1:'
 				print 'Rational Action: ',i
 				print 'Rational Choice: ',j
+				print '\n'
 				
-				infer = InferenceMachine(3, grid[trial], start[trial], actions[trial],
-					rationalAction=i, rationalChoice=j, hypotheses=H,MCMCOn=True,trials=trialOn)
+				infer = InferenceMachine(3, grid[trial], start[trial], actions[trial], tauChoice=.01,
+					rationalAction=i, rationalChoice=j, hypotheses=H,MCMCOn=False,trials=trialOn)
+
+				c = list()
+
+				for k in range(3):
+
+					ind = infer.hypotheses.index(chek[trial][k])
+
+					if i == 1 and j == 1:
+						CSV.writerow([trial+1,'Full Model',k+1,H.englishHypotheses[ind],infer.posteriors[-1][ind]])
+						c.append(H.englishHypotheses[ind])
+
+					elif i == 1 and j == 0:
+						CSV.writerow([trial+1,'Alternate Model',k+1,H.englishHypotheses[ind],infer.posteriors[-1][ind]])
+				if i ==1 and j==1:
+					cfull.append(c)
 
 				# allMaxHyp = set(infer.maxHypMCMC[0:3])`
-				allData.append(infer.hypPosteriorMCMC)
-				allEval.append(infer.evalHypMCMC)
+				# allData.append(infer.hypPosteriorMCMC)
+				# allEval.append(infer.evalHypMCMC)
 
-				# CSV3.writerow([stimCounter,lesion[i*2+1*j]] + getDepthPosterior(infer.posteriors, infer.primHypotheses, depth))
-
-	allMaxHyp = chek[trial]
-	allResults = list()
-	if trials[trial]:
-
-		for i in range(len(allData)):
-			# allMaxHyp = list(allMaxHyp)
-			results = dict()
-			for h in allMaxHyp:
-				if h in allData[i].keys():
-					results.update({h:allData[i][h]})
-				else:
-					ht = h
-					ht = ht.replace('And','H.And')
-					ht = ht.replace('Or','H.Or')
-					ht = ht.replace('Then','H.Then')
-					evalH = eval(ht)
-					check = [np.array_equal(evalH,c) for c in allEval[i]]
-					if any(check):
-						ind = check.index(True)
-						# print ind
-						results.update( {h: allData[i][allData[i].keys()[ind]] } )
-					else:
-						results.update({h:0.0})
+				# CSV
 
 
+				# OLD 
+				# unblock below this line
+				# print '\n--------------------------------------------------------'
+				# # print 'Test single_1:'
+				# print 'Rational Action: ',i
+				# print 'Rational Choice: ',j
+				# print '\n'
+				
+				# infer = InferenceMachine(3, grid[trial], start[trial], actions[trial], tauChoice=.01,
+				# 	rationalAction=i, rationalChoice=j, hypotheses=H,MCMCOn=False,trials=trialOn)
 
-			allResults.append(results)
+				# for k in range(3):
+
+				# 	ind = infer.hypotheses.index(chek[trial][k])
+
+				# 	if i == 1 and j == 1:
+				# 		CSV.writerow([trial+1,'Full Model',k+1,H.englishHypotheses[ind],infer.posteriors[-1][ind]])
+				# 	elif i == 1 and j == 0:
+				# 		CSV.writerow([trial+1,'Alternate Model',k+1,H.englishHypotheses[ind],infer.posteriors[-1][ind]])
+
+				# # allMaxHyp = set(infer.maxHypMCMC[0:3])`
+				# # allData.append(infer.hypPosteriorMCMC)
+				# # allEval.append(infer.evalHypMCMC)
+
+				# # CSV3.writerow([stimCounter,lesion[i*2+1*j]] + getDepthPosterior(infer.posteriors, infer.primHypotheses, depth))
+
+
+
+
+
+	# allMaxHyp = chek[trial]
+	# allResults = list()
+	# if trials[trial]:
+
+	# 	for i in range(len(allData)):
+	# 		# allMaxHyp = list(allMaxHyp)
+	# 		results = dict()
+	# 		for h in allMaxHyp:
+	# 			if h in allData[i].keys():
+	# 				results.update({h:allData[i][h]})
+	# 			else:
+	# 				ht = h
+	# 				ht = ht.replace('And','H.And')
+	# 				ht = ht.replace('Or','H.Or')
+	# 				ht = ht.replace('Then','H.Then')
+	# 				evalH = eval(ht)
+	# 				check = [np.array_equal(evalH,c) for c in allEval[i]]
+	# 				if any(check):
+	# 					ind = check.index(True)
+	# 					# print ind
+	# 					results.update( {h: allData[i][allData[i].keys()[ind]] } )
+	# 				else:
+	# 					results.update({h:0.0})
+
+
+
+	# 		allResults.append(results)
 					# print 'here'
 					# checkH = h
 
@@ -248,31 +331,31 @@ for trial in range(len(trials)):
 
 		# print 'allMAXHYP'
 		# print allMaxHyp
-		englishMaxHyp = list()
-		for h in allMaxHyp:
-			h = h.replace('Then','H.T')
-			h = h.replace('And','H.A')
-			h = h.replace('Or','H.O')
+		# englishMaxHyp = list()
+		# for h in allMaxHyp:
+		# 	h = h.replace('Then','H.T')
+		# 	h = h.replace('And','H.A')
+		# 	h = h.replace('Or','H.O')
 
-			# print h
-			hEval = eval(h)
-			if hEval[0] == '(':
-				hEval = hEval[1:len(hEval)-1]
-			englishMaxHyp.append(hEval)
+		# 	# print h
+		# 	hEval = eval(h)
+		# 	if hEval[0] == '(':
+		# 		hEval = hEval[1:len(hEval)-1]
+		# 	englishMaxHyp.append(hEval)
 
-		# print englishMaxHyp
-		for i in ra:
-			for j in rc:
-				for k in range(len(allMaxHyp)):
-					if k < 3:	
-						# print englishMaxHyp
-						CSV.writerow([stimCounter, True if i is 1 else False, True if j is 1 else False, 
-							englishMaxHyp[k],allResults[0][allMaxHyp[k]]])
+		# # print englishMaxHyp
+		# for i in ra:
+		# 	for j in rc:
+		# 		for k in range(len(allMaxHyp)):
+		# 			if k < 3:	
+		# 				# print englishMaxHyp
+		# 				CSV.writerow([stimCounter, True if i is 1 else False, True if j is 1 else False, 
+		# 					englishMaxHyp[k],allResults[0][allMaxHyp[k]]])
 
 
-		allResultsCopy = allResults
-		allDataCopy = allData
-		allMaxHypCopy = allMaxHyp
+		# allResultsCopy = allResults
+		# allDataCopy = allData
+		# allMaxHypCopy = allMaxHyp
 						# except:
 						# 	aMaxHyp = allMaxHyp[k]
 						# 	if 'H.' not in aMaxHyp:
@@ -335,3 +418,11 @@ oFile.close()
 # oFile2.close()
 # oFile3.close()
 
+
+
+"""
+Parents turned around, any effecct?
+Was it mentioned why parents peeking is a problem?
+
+
+"""

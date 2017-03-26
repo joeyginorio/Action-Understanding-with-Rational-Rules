@@ -16,6 +16,8 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
+from pympler import asizeof
+import math
 
 class InferenceMachine():
 	"""
@@ -118,12 +120,12 @@ class InferenceMachine():
 
 
 
-		# limit = 1
-		# if len(self.hypotheses) < 1:
-		# 	limit = len(self.hypotheses)
+		limit = 3
+		if len(self.hypotheses) < 1:
+			limit = len(self.hypotheses)
 
-		# for i in range(limit):
-		# 	print "Hypothesis {}: {} : {}".format(i+1,self.maxHypMCMC[i],self.hypPosteriorMCMC[self.maxHypMCMC[i]])
+		for i in range(limit):
+			print "Hypothesis {}: {} : {}".format(i+1,self.maxHypMCMC[i],self.hypPosteriorMCMC[self.maxHypMCMC[i]])
 
 		self.maxNames = self.maxHypMCMC[0:3]
 		self.maxData = [self.hypPosteriorMCMC[i] for i in self.maxHypMCMC[0:3]]
@@ -138,7 +140,8 @@ class InferenceMachine():
 		# ax.set_xticklabels(self.maxNames,rotation=45, rotation_mode="anchor", ha="right")
 		# plt.show(block=False)
 
-
+	def getSize(self):
+		print 'Current memory usage: ',asizeof.asizeof(self)
 
 	def getStateActionVectors(self,gridIndex,start,actions):
 		"""
@@ -211,7 +214,6 @@ class InferenceMachine():
 			switch[-1] = str(int(switch[-1]) + 1)
 
 		return switch
-
 
 	def inferSummary(self, depth=None, start=None, actions=None, hypotheses=None, MCMCOn=True):
 		"""
@@ -335,7 +337,7 @@ class InferenceMachine():
 		"""
 
 		"""
-		self.prior = [1.0/(i) for i in self.primHypotheses]
+		self.prior = [math.exp(-i*3.0)*self.primHypotheses.count(i) for i in self.primHypotheses]
 		# self.prior /= np.sum(self.prior)
 
 	def buildBiasEngine(self):
@@ -374,16 +376,15 @@ class InferenceMachine():
 				for j in range(len(policySwitch[0][0])-1):
 
 					# Take outside model version
-					if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
-						if actions[j] != 4: 
-							p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+					# if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
+						# if actions[j] != 4: 
+						# p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
 
-					else:
-						p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[states[j]][actions[j]]
+					# else:
+					p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[states[j]][actions[j]]
 
 				if policySwitch[i][k][j] != policySwitch[i][k][j+1]:
 					p *= 0
-
 
 				p *= self.evalHypothesesSM[gridIndex][i][k]
 				p_sum += p
@@ -407,7 +408,7 @@ class InferenceMachine():
 		# posterior /= posterior.sum()
 		# posterior = [np.around(i,4) for i in posterior]
 		if MCMCOn:
-			samples, h = self.MCMC(posterior,1000)
+			samples, h = self.MCMC(posterior,200000)
 			hypMCMC = list(set(h))
 			posteriorMCMC = [h.count(i)/float(len(h)) for i in hypMCMC]
 			self.hypMCMC = hypMCMC
@@ -423,10 +424,11 @@ class InferenceMachine():
 
 		else:
 			self.hypMCMC = self.hypotheses
+			self.evalHypMCMC = list()
+			self.evalHypMCMC = self.evalHypotheses
 			self.posteriorsMCMC.append(posterior)
 
 		self.posteriors.append(posterior)
-
 		# temp = 
 
 	def unormalizedPosterior(self, hypothesis):
@@ -450,6 +452,7 @@ class InferenceMachine():
 
 			hSampler = Hypothesis(Grid('testGrid'))
 			hSampler.sampleHypotheses(1)
+			# hSampler.flattenAll()
 
 			check = [np.array_equal(hSampler.evalHypotheses[0],samp) for samp in self.evalHypotheses]
 			checkNames = [np.array_equal(hSampler.hypotheses[0],hypo) for hypo in self.hypotheses]
@@ -484,6 +487,7 @@ class InferenceMachine():
 				print 'At Sample: ' + str(i)
 				sys.stdout.flush()
 
+			# self.getSize()
 			
 			check = []
 			new_s_p = None
@@ -491,6 +495,7 @@ class InferenceMachine():
 
 				hSampler = Hypothesis(Grid('testGrid'))
 				hSampler.sampleHypotheses(1)
+				# hSampler.flattenAll()
 
 				check = [np.array_equal(hSampler.evalHypotheses[0],samp) for samp in self.evalHypotheses]
 				checkNames = [np.array_equal(hSampler.hypotheses[0],hypo) for hypo in self.hypotheses]
@@ -523,7 +528,7 @@ class InferenceMachine():
 				alpha = 1
 
 			else:
-	 			alpha = min( 1, (new_s_p*hSampler.computeP(new_s)) / (old_s_p*hSampler.computeP(old_s))  ) 
+	 			alpha = min( 1, (new_s_p*hSampler.computeP(old_s)) / (old_s_p*hSampler.computeP(new_s))  ) 
 			
 			# print new_s
 			# print old_s, new_s
@@ -555,6 +560,7 @@ class InferenceMachine():
 
 
 
+		outFile.close()
 		return final, hypotheses
 		# return target, self.hypotheses
 
