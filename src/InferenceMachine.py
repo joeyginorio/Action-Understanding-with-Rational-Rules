@@ -3,6 +3,7 @@
 # ---------------------------------
 
 from GridWorld import GridWorld
+from copy import deepcopy
 from Hypothesis import Hypothesis
 from Grid import Grid
 from scipy.stats import uniform
@@ -100,7 +101,33 @@ class InferenceMachine():
 		# In this case, one for each object in the map
 		# Subpolicies for each objectGrid done here.
 		self.buildBiasEngine()
+
+		hypotheses = deepcopy(hypotheses)
+		###### PRIOR MOD ######
+		# for i in range(len(hypotheses.hypotheses)):
+		# 	if hypotheses.hypotheses[i].count('And') > 0:
+		# 		# print hypotheses.hypotheses[i]
+		# 		hypotheses.primHypotheses[i] += hypotheses.hypotheses[i].count('And')
+
+		#######################
+
+
 		self.inferSummary(depth,start,action,hypotheses,MCMCOn)
+
+		########### SINGLE TAKE MODIFIER
+		for i in range(len(self.hypotheses)):
+			for j in range(len(self.evalHypotheses[i])):
+				if self.evalHypotheses[i][j].count('A') > 1:
+					self.posteriors[-1][i] = 0.0
+					continue
+				if self.evalHypotheses[i][j].count('B') > 1:
+					self.posteriors[-1][i] = 0.0
+					continue
+				if self.evalHypotheses[i][j].count('C') > 1:
+					self.posteriors[-1][i] = 0.0
+					continue
+
+		################
 
 		maxH = np.argwhere(self.posteriorsMCMC[len(self.posteriorsMCMC)-1] == np.amax(
 			self.posteriorsMCMC[len(self.posteriorsMCMC)-1]))
@@ -238,6 +265,20 @@ class InferenceMachine():
 
 		# Add starting object to map
 
+		##############################################ANDORTHEN###############################################
+		self.And = list()
+		self.Then = list()
+		self.Or = list()
+		self.args = list()
+		for i in range(len(self.hypotheses)):
+			self.And.append(self.hypotheses[i].count('And'))
+			self.Or.append(self.hypotheses[i].count('Or'))
+			self.Then.append(self.hypotheses[i].count('Then'))
+			self.args.append(self.hypotheses[i].count("'A'")+self.hypotheses[i].count("'B'")+self.hypotheses[i].count("'C'"))
+
+		#########################################################################################################
+
+
 		self.H = list()
 		for i in range(len(self.grid)):
 
@@ -337,7 +378,8 @@ class InferenceMachine():
 		"""
 
 		"""
-		self.prior = [math.exp(-i*3.0)*self.primHypotheses.count(i) for i in self.primHypotheses]
+
+		self.prior = [(math.exp(-3*(self.And[i]*1.0+self.Then[i]*1.0+self.Or[i]*1.0+self.args[i]))*self.primHypotheses.count(self.primHypotheses[i]))+.05 for i in range(len(self.primHypotheses))]
 		# self.prior /= np.sum(self.prior)
 
 	def buildBiasEngine(self):
@@ -375,13 +417,24 @@ class InferenceMachine():
 				p = 1
 				for j in range(len(policySwitch[0][0])-1):
 
-					# Take outside model version
-					# if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
-						# if actions[j] != 4: 
-						# p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+					# # Take inside model version
+					# # if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
+					# 	# if actions[j] != 4: 
+					# 	# p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
 
-					# else:
-					p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[states[j]][actions[j]]
+					# # else:
+					# p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[states[j]][actions[j]]
+
+					# Take outside model version
+					if states[j] == self.sims[gridIndex][0].coordToScalar(self.grid[gridIndex].objects.values()[int(self.policySwitch[i][k][j])]):
+						if actions[j] != 4: 
+							p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[self.sims[gridIndex][0].s[len(self.sims[gridIndex][0].s)-1]][actions[j]]
+
+					else:
+						if actions[j] == 4:
+							p*= 0
+						p *= self.sims[gridIndex][int(policySwitch[i][k][j])].policy[states[j]][actions[j]]
+
 
 				if policySwitch[i][k][j] != policySwitch[i][k][j+1]:
 					p *= 0

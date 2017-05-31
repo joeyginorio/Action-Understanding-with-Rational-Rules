@@ -65,6 +65,21 @@ class GridWorld(MDP):
 		if action is 3:
 			return self.right(sCoord)
 
+		if action is 4:
+			return sCoord
+
+		if action is 5:
+			return self.upleft(sCoord)
+
+		if action is 6:
+			return self.upright(sCoord)
+
+		if action is 7:
+			return self.downleft(sCoord)
+
+		if action is 8:
+			return self.downright(sCoord)
+
 
 	def up(self, sCoord):
 		"""
@@ -80,6 +95,39 @@ class GridWorld(MDP):
 		# You hit a wall, return original coord
 		else:
 			return sCoord
+	
+	def upright(self, sCoord):
+		"""
+			Move agent up and right, uses state coordinate.
+		"""
+		newCoord = np.copy(sCoord)
+		newCoord[0] -= 1
+		newCoord[1] += 1
+
+		# Check if action takes you to a wall/obstacle
+		if not self.isObstacle(newCoord):
+			return newCoord
+
+		# You hit a wall, return original coord
+		else:
+			return sCoord
+
+	def upleft(self, sCoord):
+		"""
+			Move agent up and left, uses state coordinate.
+		"""
+		newCoord = np.copy(sCoord)
+		newCoord[0] -= 1
+		newCoord[1] -= 1
+
+		# Check if action takes you to a wall/obstacle
+		if not self.isObstacle(newCoord):
+			return newCoord
+
+		# You hit a wall, return original coord
+		else:
+			return sCoord
+
 
 	def down(self, sCoord):
 		"""
@@ -87,6 +135,38 @@ class GridWorld(MDP):
 		"""
 		newCoord = np.copy(sCoord)
 		newCoord[0] += 1
+
+		# Check if action takes you to a wall/obstacle
+		if not self.isObstacle(newCoord):
+			return newCoord
+
+		# You hit a wall, return original coord
+		else:
+			return sCoord
+
+	def downleft(self, sCoord):
+		"""
+			Move agent down, uses state coordinate.
+		"""
+		newCoord = np.copy(sCoord)
+		newCoord[0] += 1
+		newCoord[1] -= 1
+
+		# Check if action takes you to a wall/obstacle
+		if not self.isObstacle(newCoord):
+			return newCoord
+
+		# You hit a wall, return original coord
+		else:
+			return sCoord
+
+	def downright(self, sCoord):
+		"""
+			Move agent down, uses state coordinate.
+		"""
+		newCoord = np.copy(sCoord)
+		newCoord[0] += 1
+		newCoord[1] += 1
 
 		# Check if action takes you to a wall/obstacle
 		if not self.isObstacle(newCoord):
@@ -157,9 +237,19 @@ class GridWorld(MDP):
 		if self.right(sCoord) is not sCoord:
 			possibleActions.append(3)
 		
-		return possibleActions
+		if self.upleft(sCoord) is not sCoord:
+			possibleActions.append(5)
 
-	
+		if self.upright(sCoord) is not sCoord:
+			possibleActions.append(6)
+
+		if self.downleft(sCoord) is not sCoord:
+			possibleActions.append(7)
+
+		if self.downright(sCoord) is not sCoord:
+			possibleActions.append(8)
+		
+		return possibleActions
 	def setGridWorld(self):
 		"""
 			Initializes states, actions, rewards, transition matrix.
@@ -169,13 +259,23 @@ class GridWorld(MDP):
 		self.s = np.arange(self.grid.row*self.grid.col + 1)
 
 		# 4 Actions {Up, Down, Left, Right}
-		self.a = np.arange(5)
+		self.a = np.arange(9)
 
 		# Reward Zones
 		self.r = np.zeros(len(self.s))
-		
 		for i in range(len(self.grid.objects)):
 			self.r[self.coordToScalar(self.grid.objects.values()[i])] = self.goalVals[i]
+
+		self.r_sa = np.zeros([len(self.s),len(self.a)])
+		for i in range(len(self.s)):
+			for j in range(len(self.a)):
+				if j <= 4:
+					self.r_sa[i][j] = self.r[self.coordToScalar(self.takeAction(self.scalarToCoord(i),j))]-1.0
+				else:
+					self.r_sa[i][j] = self.r[self.coordToScalar(self.takeAction(self.scalarToCoord(i),j))]-np.sqrt(2)
+
+		self.r = self.r_sa
+
 
 		# Transition Matrix
 		self.t = np.zeros([len(self.s),len(self.a),len(self.s)])
@@ -230,6 +330,36 @@ class GridWorld(MDP):
 				if action == 4:
 					self.t[state][action][state] = 1.0
 
+				if action == 5:
+
+					currentState = self.scalarToCoord(state)
+
+					nextState = self.takeAction(currentState, 5)
+					self.t[state][action][self.coordToScalar(nextState)] = 1.0
+
+				if action == 6:
+
+					currentState = self.scalarToCoord(state)
+
+					nextState = self.takeAction(currentState, 6)
+					self.t[state][action][self.coordToScalar(nextState)] = 1.0
+
+				if action == 7:
+
+					currentState = self.scalarToCoord(state)
+
+					nextState = self.takeAction(currentState, 7)
+					self.t[state][action][self.coordToScalar(nextState)] = 1.0
+
+				if action == 8:
+
+					currentState = self.scalarToCoord(state)
+
+					nextState = self.takeAction(currentState, 8)
+					self.t[state][action][self.coordToScalar(nextState)] = 1.0
+
+
+
 
 	def simulate(self, state):
 
@@ -248,7 +378,6 @@ class GridWorld(MDP):
 
 		while not self.isTerminal(state):
 
-			count += 1
 			# Determine which policy to use (non-deterministic)
 			policy = self.policy[np.where(self.s == state)[0][0]]
 			p_policy = self.policy[np.where(self.s == state)[0][0]] / \
@@ -258,6 +387,12 @@ class GridWorld(MDP):
 			stateIndex = np.where(self.s == state)[0][0]
 			policyChoice = np.random.choice(policy, p=p_policy)
 			actionIndex = np.random.choice(np.array(np.where(self.policy[state][:] == policyChoice)).ravel())
+			
+			# print actionIndex
+			if actionIndex <= 3:
+				count += 1
+			else:
+				count += np.sqrt(2)
 
 			# Take an action, move to next state
 			nextState = self.takeAction(self.scalarToCoord(int(stateIndex)), int(actionIndex))

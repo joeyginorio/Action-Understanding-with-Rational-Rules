@@ -370,7 +370,7 @@ class Hypothesis():
 		for i in ["'" + j + "'" for j in self.objects]: self.hypotheses.append(i)
 		for i in evalObjects: 
 			self.evalHypotheses.append(i)
-			self.primHypotheses.append(2.0)
+			self.primHypotheses.append(1.0)
 			finalEval.add(np.array_str(i))
 
 		space = self.objects + self.primitives

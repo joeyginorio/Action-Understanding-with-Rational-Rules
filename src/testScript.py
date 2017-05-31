@@ -12,48 +12,48 @@ import sys
 
 #################### Testing ############################
 
-use = False
+use = True
 trials = [use for i in range(19)]
 
-trials[8] = True
+# trials[5] = True
 trialOn = 0
 
 if len(sys.argv) > 1:
 	trialOn = int(sys.argv[1])
+
 	trials[trialOn-1] = True
-	ra = [1]
+	ra = [0,1]
 	rc = [0,1]
 else:
 	sys.argv.append('-1')
 	sys.argv.append('-1')
 	sys.argv.append('-1')
-	ra = [1]
+	ra = [0,1]
 	rc = [0,1]
-
 
 actions = [
 [[0,0,0,'take','stop']],
-[[0,3,0,3,0,3,'take','stop']],
+[[6,6,6,'take','stop']],
 [[0,0,0,'take',3,3,3,'take','stop']],
-[[0,3,0,3,0,3,'take',2,2,2,'take','stop']],
-[[0,0,0,'take',3,1,3,1,3,1,'take','stop']],
+[[6,6,6,'take',2,2,2,'take','stop']],
+[[0,0,0,'take',8,8,8,'take','stop']],
 [[0,0,0,'take',3,3,3,'take',1,1,1,'take','stop']],
-[[0,0,0,'take',3,1,3,1,3,1,'take',0,0,0,'take','stop']],
-[[0,3,0,3,0,3,'take',2,2,2,'take',1,3,1,3,1,3,'take','stop']],
+[[0,0,0,'take',8,8,8,'take',0,0,0,'take','stop']],
+[[6,6,6,'take',2,2,2,'take',8,8,8,'take','stop']],
 [[3,3,3,'take','stop'],[0,0,0,'take','stop']],
 [[0,0,0,'take',3,3,3,'take','stop'],[3,3,3,'take',0,0,0,'take','stop']],
-[[0,3,0,3,0,3,'take',2,2,2,'take','stop'],[3,3,3,'take',0,2,0,2,0,2,'take','stop']],
-[[0,0,0,'take',3,1,3,1,3,1,'take','stop'],[3,3,3,'take',0,2,0,2,0,2,'take','stop']],
+[[6,6,6,'take',2,2,2,'take','stop'],[3,3,3,'take',5,5,5,'take','stop']],
+[[0,0,0,'take',8,8,8,'take','stop'],[3,3,3,'take',5,5,5,'take','stop']],
 [[0,0,0,'take','stop'],[0,0,0,'take','stop']],
 [[0,0,0,'take',3,3,3,'take','stop'],[0,0,0,'take',3,3,3,'take','stop']],
-[[0,3,0,3,0,3,'take',2,2,2,'take','stop'],[0,3,0,3,0,3,'take',2,2,2,'take','stop']],
-[[0,0,0,'take',3,1,3,1,3,1,'take','stop'],[0,0,0,'take',3,1,3,1,3,1,'take','stop']],
-[[0,3,0,3,0,3,'take',2,2,2,'take','stop'],[0,0,0,'take',3,1,3,1,3,1,'take','stop']],
-[[0,3,0,3,0,3,'take',2,2,2,'take','stop'],[0,3,0,3,0,3,'take',1,1,1,'take','stop']],
-[[0,0,0,'take',3,1,3,1,3,1,'take','stop'],[0,3,0,3,0,3,'take',1,1,1,'take','stop']]
+[[6,6,6,'take',2,2,2,'take','stop'],[6,6,6,'take',2,2,2,'take','stop']],
+[[0,0,0,'take',8,8,8,'take','stop'],[0,0,0,'take',8,8,8,'take','stop']],
+[[6,6,6,'take',2,2,2,'take','stop'],[0,0,0,'take',8,8,8,'take','stop']],
+[[6,6,6,'take',2,2,2,'take','stop'],[6,6,6,'take',1,1,1,'take','stop']],
+[[0,0,0,'take',8,8,8,'take','stop'],[6,6,6,'take',1,1,1,'take','stop']]
 ]
 
-# old
+# old v1
 # chek = [
 # ["'A'", "Or('A','B')", "Or('A',And('A','C'))"],
 # ["'B'", "Or('B',Then('B','C'))", "Or('B',Then('C','A'))"],
@@ -76,29 +76,91 @@ actions = [
 # ["Then(Or('A','B'),'C')", "Or(And('A','C'),Then('B','C'))", "And('C',Or('A','B'))"]
 # ]
 
+# old v2
+# chek = [
+# ["'A'", "Or('A','B')", "Or('A','C')"],
+# ["'B'", "Or('B',Then('B','A'))", "Or('B',Then('B','C'))"],
+# ["Then('A','B')", "And('A','B')", "And('A',Or('B','C'))"],
+# ["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
+# ["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
+# ["Then('A','B','C')", "And('A','B','C')", "And('C',Then('A','B'))"],
+# ["Then('A','C','B')", "And('B',Then('A','C'))", "Then(And('A','C'),'B')"],
+# ["Then('B','A','C')", "Then('B',And('A','C'))", "Then(Or('B','C'),'A','C')"],
+# ["Or('A','C')", "Or('A','B','C')", "Or('A','C',Then('B','A'))"],
+# ["And('B',Or('A','C'))", "Then(Or('A','C'),'B')", "Or(And('B','C'),Then('A','B'))"],
+# ["Then(Or('B','C'),'A')", "Or(And('A','C'),Then('B','A'))", "And('A',Or('B','C'))"],
+# ["And('A','C')", "Or(And('A','C'),Then('B','C'))", "Or(And('A','C'),Then('B','A'))"],
+# ["'A'", "Or('A','B')", "Or('A','C')"],
+# ["Then('A','B')", "And('A','B')", "And('A',Or('B','C'))"],
+# ["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
+# ["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
+# ["Or(Then('A','C'),Then('B','A'))", "Or(And('A','C'),Then('B','A'))","And('A',Or('B','C'))"],
+# ["Then('B',Or('A','C'))", "And('B',Or('A','C'))", "Or(And('A','B'),Then('B','C'))"],
+# ["Then(Or('A','B'),'C')", "Or(And('A','C'),Then('B','C'))", "And('C',Or('A','B'))"]
+# ]
+
+# chek = [['A', 'A or B', 'A or C'],
+#  ['B', 'B or (B then A)', 'B or (B then C)'],
+#  ['A then B', 'A and B', 'A then (B or C)'],
+#  ['B then A', 'B then (A or C)', '(B or C) then A'],
+#  ['A then C', 'A and C', '(A or B) then C'],
+#  ['A then B then C', 'A and B and C', 'C and (A then B)'],
+#  ['A then C then B', 'B and (A then C)', '(A and C) then B'],
+#  ['B then A then C', 'B then (A and C)', '(B or C) then A then C'],
+#  ['A or C', 'A or B or C', 'A or C or (B then A)'],
+#  ['B and (A or C)', '(A or C) then B', '(B and C) or (A then B)'],
+#  ['(B or C) then A', '(A and C) or (B then A)', '(A or B or C) then A'],
+#  ['A and C', '(A and C) or (B then C)', '(A and C) or (B then A)'],
+#  ['A', 'A or B', 'A or C'],
+#  ['A then B', 'A and B', 'A then (B or C)'],
+#  ['B then A', 'B then (A or C)', '(B or C) then A'],
+#  ['A then C', 'A and C', '(A or B) then C'],
+#  ['(A then C) or (B then A)', '(A and C) or (B then A)', 'A and (A or B or C)'],
+#  ['B then (A or C)', 'B and (A or C)', 'B then (A or B or C)'],
+#  ['(A or B) then C', '(A and C) or (B then C)', '(A or B or C) then C']]
+
+# chek = [
+# ['A', 'A or B', 'A or C'],
+# ['B', 'B or (B then A)', 'B or (B then C)'],
+# ['A then B', 'A and B', 'A then (B or C)'],
+# ['B then A', 'B then (A or C)', '(B or C) then A'],
+# ['A then C', 'A and C', '(A or B) then C'],
+# ['A then B then C', 'A and B and C', 'C and (A then B)'],
+# ['A then C then B', 'B and (A then C)', '(A and C) then B'],
+# ['B then A then C', 'B then (A and C)', 'B and (A then C)'],
+# ['A or C', 'A or B or C', 'A or C or (B then A)'],
+# ['B and (A or C)', '(A or C) then B', '(B and C) or (A then B)'],
+# ['(B or C) then A', '(A and C) or (B then A)', '(A and B) or (C then A)'],
+# ['A and C', '(A and C) or (B then C)', '(A and C) or (B then A)'],
+# ['A', 'A or B', 'A or C'], 
+# ['A then B', 'A and B', 'A then (B or C)'], 
+# ['B then A', 'B then (A or C)','(B or C) then A'],
+# ['A then C', 'A and C','(A or B) then C'],
+# ['(A then C) or (B then A)','(A and C) or (B then A)','(A and B) or (A then C)'],
+# ['B then (A or C)','B and (A or C)','(A and B) or (B then C)'],
+# ['(A or B) then C', '(A and C) or (B then C)', '(B and C) or (A then C)']]
+
 chek = [
-["'A'", "Or('A','B')", "Or('A','C')"],
-["'B'", "Or('B',Then('B','A'))", "Or('B',Then('B','C'))"],
-["Then('A','B')", "And('A','B')", "And('A',Or('B','C'))"],
-["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
-["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
-["Then('A','B','C')", "And('A','B','C')", "And('C',Then('A','B'))"],
-["Then('A','C','B')", "And('B',Then('A','C'))", "Then(And('A','C'),'B')"],
-["Then('B','A','C')", "Then('B',And('A','C'))", "Then(Or('B','C'),'A','C')"],
-["Or('A','C')", "Or('A','B','C')", "Or('A','C',Then('B','A'))"],
-["And('B',Or('A','C'))", "Then(Or('A','C'),'B')", "Then(Or('A','B','C'),'B')"],
-["Then(Or('B','C'),'A')", "Or(And('A','C'),Then('B','A'))", "And('A',Or('B','C'))"],
-["And('A','C')", "Or(And('A','C'),Then('B','C'))", "Or(And('A','C'),Then('B','A'))"],
-["'A'", "Or('A','B')", "Or('A','C')"],
-["Then('A','B')", "And('A','B')", "And('A',Or('B','C'))"],
-["Then('B','A')", "Then('B',Or('A','C'))", "Then(Or('B','C'),'A')"],
-["Then('A','C')", "And('A','C')", "Then(Or('A','B'),'C')"],
-["Or(Then('A','C'),Then('B','A'))", "Or(And('A','C'),Then('B','A'))","And('A',Or('B','C'))"],
-["Then('B',Or('A','C'))", "And('B',Or('A','C'))", "Then('B',Or('A','B','C'))"],
-["Then(Or('A','B'),'C')", "Or(And('A','C'),Then('B','C'))", "And('C',Or('A','B'))"]
+['A', 'A or B', 'A or C'], 
+['B', 'B or (B then A)', 'B or (B then C)'], 
+['A then B', 'A and B', 'A then (B or C)'], 
+['B then A', 'B then (A or C)', '(B or C) then A'], 
+['A then C', 'A and C', '(A or B) then C'], 
+['A then B then C', 'A and B and C', 'C and (A then B)'], 
+['A then C then B', 'B and (A then C)', '(A and C) then B'], 
+['B then A then C', 'B then (A and C)', 'B and (A then C)'], 
+['A or C', 'A or B or C', 'A or C or (B then A)'], 
+['B and (A or C)', '(A or C) then B', '(B and C) or (A then B)'], 
+['(B or C) then A', '(A and C) or (B then A)', 'A and (B or C)'], 
+['A and C', '(A and C) or (B then C)', '(A and C) or (B then A)'], 
+['A', 'A or B', 'A or C'], 
+['A then B', 'A and B', 'A then (B or C)'], 
+['B then A', 'B then (A or C)', '(B or C) then A'], 
+['A then C', 'A and C', '(A or B) then C'], 
+['(A then C) or (B then A)', '(A and C) or (B then A)', 'A and (B or C)'], 
+['B then (A or C)', 'B and (A or C)', '(A and B) or (B then C)'], 
+['(A or B) then C', '(A and C) or (B then C)', 'C and (A or B)']
 ]
-
-
 	
 testGrid = Grid('testGrid')
 grid1 = [[testGrid] for i in range(8)]
@@ -147,8 +209,7 @@ H.parseToEnglish()
 
 oFile = open('model_results'+sys.argv[1]+'_'+'.csv','w')
 CSV = csv.writer(oFile)
-# CSV.writerow(['Trial','Rational Action', 'Rational Choice', 'Hypothesis Rank',
-				# 'Hypothesis','Posterior'])
+# CSV.writerow(['Trial','Rational Action', 'Rational Choice', 'Hypothesis Rank',# 'Hypothesis','Posterior'])
 # oFile2 = open('parsed_english.csv','w')
 # CSV2 = csv.writer(oFile2)
 
@@ -161,6 +222,7 @@ stimCounter = 1
 lesion = ['RA/RC Lesion', 'RA Lesion','RC Lesion','Full Model']
 
 cfull = list()
+infers = list()
 
 for trial in range(len(trials)):
 
@@ -176,9 +238,13 @@ for trial in range(len(trials)):
 	allMaxHyp = set()
 	allData = list()
 	allEval = list()
+	ins = list()
 	for i in ra:
 
 		for j in rc:
+
+			if i!=j:
+				continue
 
 			if trials[trial]:
 
@@ -192,19 +258,38 @@ for trial in range(len(trials)):
 					rationalAction=i, rationalChoice=j, hypotheses=H,MCMCOn=False,trials=trialOn)
 
 				c = list()
+				# infers.append(infer)
 
 				for k in range(3):
 
-					ind = infer.hypotheses.index(chek[trial][k])
+					ind = H.englishHypotheses.index(chek[trial][k])
+					# ind = H.hypotheses.index(infer.maxHyp[k])
+
+					# if i == 1 and j == 1:
+					# 	a = H.hypotheses[ind].count('Then')
+					# 	b = H.hypotheses[ind].count('And')
+					# 	c = H.hypotheses[ind].count('Or')
+					# 	args = 0
+					# 	args += H.hypotheses[ind].count("'C'")
+					# 	args += H.hypotheses[ind].count("'B'")
+					# 	args += H.hypotheses[ind].count("'A'")
+
+					# 	CSV.writerow([trial+1,'Full Model',k+1,H.englishHypotheses[ind],infer.posteriors[-1][ind]/infer.prior[ind],a,b,c,args,infer.primHypotheses.count(infer.primHypotheses[ind])])
+					# 	# c.append(H.englishHypotheses[ind])
 
 					if i == 1 and j == 1:
 						CSV.writerow([trial+1,'Full Model',k+1,H.englishHypotheses[ind],infer.posteriors[-1][ind]])
 						c.append(H.englishHypotheses[ind])
 
-					elif i == 1 and j == 0:
+					elif i == 0 and j == 0:
 						CSV.writerow([trial+1,'Alternate Model',k+1,H.englishHypotheses[ind],infer.posteriors[-1][ind]])
+
+				ins.append(infer)
+
 				if i ==1 and j==1:
 					cfull.append(c)
+
+	infers.append(ins)    
 
 				# allMaxHyp = set(infer.maxHypMCMC[0:3])`
 				# allData.append(infer.hypPosteriorMCMC)
@@ -423,6 +508,12 @@ oFile.close()
 """
 Parents turned around, any effecct?
 Was it mentioned why parents peeking is a problem?
+
+
+
+
+
+To represent a new concept as a new, unseen kind, must be able to compare 
 
 
 """

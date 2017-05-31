@@ -60,11 +60,11 @@ class MDP(object):
 		"""
 		return self.t[state][action][:]
 
-	def getReward(self, state):
+	def getReward(self, state, action, nextState):
 		"""
 			Gets reward for transition from state->action->nextState.
 		"""
-		return self.r[state]
+		return self.r[state][action][nextState]
 
 
 	def takeAction(self, state, action):
@@ -110,7 +110,7 @@ class MDP(object):
 
 			for i in range(len(self.s)-1):
 
-				self.values[i] = self.r[i] + np.max(self.discount * \
+				self.values[i] = np.max(self.r[i] + self.discount * \
 							np.dot(self.t[i][:][:], self.values))
 
 			# print "Convergence Measure: {}".format(np.max(np.abs(self.values - oldValues)))
@@ -172,7 +172,7 @@ class MDP(object):
 				sum_nextState = 0
 				for k in range(len(self.s)-1):
 					sum_nextState += self.getTransitionStatesAndProbs(i,j)[k] * \
-					(self.getReward(i) + self.discount*self.values[k])
+					(self.getReward(i,j,k) + self.discount*self.values[k])
 
 				if sum_nextState > max_a:
 					max_a = sum_nextState
