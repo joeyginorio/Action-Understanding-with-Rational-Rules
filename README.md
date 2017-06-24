@@ -1,2 +1,2 @@
-# Action-Understanding-with-Rational-Rules
-Perform Bayesian inference applied to action understanding using a rational rules model.
+# Interpreting actions by attributing compositional desires
+Velez-Ginorio, J., Siegel, M., Tenenbaum, J.B., & Jara-Ettinger, J. (2017). Proceedings of the 39th Annual Conference of the Cognitive Science Society.
