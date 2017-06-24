@@ -379,7 +379,7 @@ class InferenceMachine():
 
 		"""
 
-		self.prior = [(math.exp(-3*(self.And[i]*1.0+self.Then[i]*1.0+self.Or[i]*1.0+self.args[i]))*self.primHypotheses.count(self.primHypotheses[i]))+.05 for i in range(len(self.primHypotheses))]
+		self.prior = [.5*(math.exp(-.5*(self.And[i]*1.0+self.Then[i]*1.0+self.Or[i]*1.0+self.args[i]))) for i in range(len(self.primHypotheses))]
 		# self.prior /= np.sum(self.prior)
 
 	def buildBiasEngine(self):

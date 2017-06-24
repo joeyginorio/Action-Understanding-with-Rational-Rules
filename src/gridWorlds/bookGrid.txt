@@ -1,11 +1,12 @@
-4
-PostOffice
-Pharmacy
-University
-Home
+3
+A
+B
+C
 
 O---O
 -----
-----O
 -----
-----O
+--W--
+--W-O
+
+
