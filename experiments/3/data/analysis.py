@@ -177,8 +177,6 @@ def bootstrap_mean(values):
 ############
 
 
-
-
 """ Plot of correlations / CIs """
 
 a = list()
