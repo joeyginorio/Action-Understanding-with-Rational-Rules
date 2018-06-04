@@ -1,0 +1,121 @@
+Trial,Model,Rank,Hypothesis,Result
+1,Full Lesion,1,A,0.0037440164
+1,Full Lesion,2,C,0.0037440164
+1,Full Lesion,3,B,0.0037440164
+1,Full Model,1,A,0.3032653299
+1,Full Model,2,C,0
+1,Full Model,3,B,0
+2,Full Lesion,1,B,0.0004160018
+2,Full Lesion,2,A,0.0004160018
+2,Full Lesion,3,C,0.0004160018
+2,Full Model,1,B,0.3032653299
+2,Full Model,2,A,0
+2,Full Model,3,C,8.94091961383481E-34
+3,Full Lesion,1,C,5.1358249903693E-06
+3,Full Lesion,2,A,5.1358249903693E-06
+3,Full Lesion,3,B,5.1358249903693E-06
+3,Full Model,1,C,3.747114709658E-06
+3,Full Model,2,A,0
+3,Full Model,3,B,0
+4,Full Lesion,1,A and B,1.29586037545362E-09
+4,Full Lesion,2,A then B,2.59172075090725E-09
+4,Full Lesion,3,A then C,2.59172075090725E-09
+4,Full Model,1,A and B,0.0705203465
+4,Full Model,2,A then B,0.10977676
+4,Full Model,3,A then C,5.73427039186243E-64
+5,Full Lesion,1,A and C,1.59982762401682E-11
+5,Full Lesion,2,A then C,3.19965524803364E-11
+5,Full Lesion,3,A then B,3.19965524803364E-11
+5,Full Model,1,A and C,0.1037489642
+5,Full Model,2,A then C,0.1115650801
+5,Full Model,3,A then B,0
+6,Full Lesion,1,B then A,2.87968972323028E-10
+6,Full Lesion,2,B then A then C,1.74662010759855E-10
+6,Full Lesion,3,B then C,2.87968972323028E-10
+6,Full Model,1,B then A,1.48759764964697E-06
+6,Full Model,2,B then A then C,9.02273583827342E-07
+6,Full Model,3,B then C,0
+7,Full Lesion,1,C and B,0.000000105
+7,Full Lesion,2,B then C,2.09929380823487E-07
+7,Full Lesion,3,B then A,2.09929380823487E-07
+7,Full Model,1,C and B,0.0982661965
+7,Full Model,2,B then C,0.1115650801
+7,Full Model,3,B then A,0
+8,Full Lesion,1,C then A,4.38910184915451E-14
+8,Full Lesion,2,C then A then B,2.66212484011363E-14
+8,Full Lesion,3,C then B,4.38910184915451E-14
+8,Full Model,1,C then A,1.37848646539427E-06
+8,Full Model,2,C then A then B,8.36094305260526E-07
+8,Full Model,3,C then B,0
+9,Full Lesion,1,C then B,2.59172075090725E-09
+9,Full Lesion,2,C then A,2.59172075090725E-09
+9,Full Lesion,3,C then B then A,1.5719580968387E-09
+9,Full Model,1,C then B,1.37848646539427E-06
+9,Full Model,2,C then A,9.68302546076338E-66
+9,Full Model,3,C then B then A,8.36094305260526E-07
+10,Full Lesion,1,A,6.34052467946827E-08
+10,Full Lesion,2,C,6.34052467946827E-08
+10,Full Lesion,3,B,6.34052467946827E-08
+10,Full Model,1,A,4.04370965909376E-06
+10,Full Model,2,C,0
+10,Full Model,3,B,0
+11,Full Lesion,1,B,5.70647221152144E-07
+11,Full Lesion,2,A,5.70647221152144E-07
+11,Full Lesion,3,C,5.70647221152144E-07
+11,Full Model,1,B,0.3032653299
+11,Full Model,2,A,0
+11,Full Model,3,C,0
+12,Full Lesion,1,A or B,1.88936442741139E-06
+12,Full Lesion,2,A and B,1.88936442741139E-06
+12,Full Lesion,3,A,5.1358249903693E-06
+12,Full Model,1,A or B,0.0631259861
+12,Full Model,2,A and B,0.0631259861
+12,Full Model,3,A,8.34846640329855E-34
+13,Full Lesion,1,A or C,1.88936442741139E-06
+13,Full Lesion,2,A and C,1.88936442741139E-06
+13,Full Lesion,3,A,5.1358249903693E-06
+13,Full Model,1,A or C,0.0964804361
+13,Full Model,2,A and C,0.0964804361
+13,Full Model,3,A,0
+14,Full Lesion,1,A then B,6.02071584246161E-17
+14,Full Lesion,2,A then C,6.02071584246161E-17
+14,Full Lesion,3,A then B then C,3.65174875187054E-17
+14,Full Model,1,A then B,1.46375236861661E-06
+14,Full Model,2,A then C,6.20729521827641E-128
+14,Full Model,3,A then B then C,8.87810689792963E-07
+15,Full Lesion,1,A then C,1.25878211681105E-23
+15,Full Lesion,2,A then C then B,7.63489947743868E-24
+15,Full Lesion,3,A then B,1.25878211681105E-23
+15,Full Model,1,A then C,1.48759764964697E-06
+15,Full Model,2,A then C then B,9.02273583827342E-07
+15,Full Model,3,A then B,0
+16,Full Lesion,1,B then A,5.41864425821545E-16
+16,Full Lesion,2,B then A then C,3.28657387668349E-16
+16,Full Lesion,3,B then C,5.41864425821545E-16
+16,Full Model,1,B then A,1.48759764964697E-06
+16,Full Model,2,B then A then C,9.02273583827342E-07
+16,Full Model,3,B then C,0
+17,Full Lesion,1,A and B,1.21919495809848E-15
+17,Full Lesion,2,(A and B) then C,4.48516759864307E-16
+17,Full Lesion,3,A and (C or B),2.24258379932154E-16
+17,Full Model,1,A and B,0.0621141151
+17,Full Model,2,(A and B) then C,0.0277479881
+17,Full Model,3,A and (C or B),0.0181024671
+18,Full Lesion,1,A and C,2.29413040788813E-21
+18,Full Lesion,2,(A and C) then B,8.43963412428298E-22
+18,Full Lesion,3,B and (A and C),2.10990853107075E-22
+18,Full Model,1,A and C,0.0964804361
+18,Full Model,2,(A and C) then B,0.0405805513
+18,Full Model,3,B and (A and C),0.0159467745
+19,Full Lesion,1,B then (A and C),1.45319430196036E-13
+19,Full Lesion,2,B then (A or C),1.45319430196036E-13
+19,Full Lesion,3,B and (A or C),3.63298575490089E-14
+19,Full Model,1,B then (A and C),0.0354931689
+19,Full Model,2,B then (A or C),0.0354931689
+19,Full Model,3,B and (A or C),0.0226536883
+20,Full Lesion,1,(A or C) then B,5.53724394894207E-18
+20,Full Lesion,2,A and C,1.5051789606154E-17
+20,Full Lesion,3,(A and C) then B,5.53724394894207E-18
+20,Full Model,1,(A or C) then B,1.69046130904763E-12
+20,Full Model,2,A and C,5.14470788577512E-132
+20,Full Model,3,(A and C) then B,1.22815687475792E-134

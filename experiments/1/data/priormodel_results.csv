@@ -1,0 +1,58 @@
+Trial,Model,Rank,Hypothesis,Hyp,Result
+1,Prior Model,1,A,'A',0.3032653299
+1,Prior Model,2,A or B,"Or('A','B')",0.1115650801
+1,Prior Model,3,A or C,"Or('A','C')",0.1115650801
+2,Prior Model,1,B,'B',0.3032653299
+2,Prior Model,2,B or (A and B),"Or('B',And('A','B'))",0.0410424993
+2,Prior Model,3,B or (B and C),"Or('B',And('B','C'))",0.0410424993
+3,Prior Model,1,A then B,"Then('A','B')",0.1115650801
+3,Prior Model,2,A and B,"And('A','B')",0.1115650801
+3,Prior Model,3,A then (B or C),"Then('A',Or('B','C'))",0.0410424993
+4,Prior Model,1,B then A,"Then('B','A')",0.1115650801
+4,Prior Model,2,A and B,"And('A','B')",0.1115650801
+4,Prior Model,3,(B or C) then A,"Then(Or('B','C'),'A')",0.0410424993
+5,Prior Model,1,A then C,"Then('A','C')",0.1115650801
+5,Prior Model,2,A and C,"And('A','C')",0.1115650801
+5,Prior Model,3,(A or B) then C,"Then(Or('A','B'),'C')",0.0410424993
+6,Prior Model,1,A then B then C,"Then('A','B','C')",0.0676676416
+6,Prior Model,2,A and B and C,"And('A','B','C')",0.0676676416
+6,Prior Model,3,(A and B) then C,"Then(And('A','B'),'C')",0.0410424993
+7,Prior Model,1,A then C then B,"Then('A','C','B')",0.0676676416
+7,Prior Model,2,B and (A then C),"And('B',Then('A','C'))",0.0410424993
+7,Prior Model,3,(A and C) then B,"Then(And('A','C'),'B')",0.0410424993
+8,Prior Model,1,B then A then C,"Then('B','A','C')",0.0676676416
+8,Prior Model,2,B then (A and C),"Then('B',And('A','C'))",0.0410424993
+8,Prior Model,3,C and (B then A),"And('C',Then('B','A'))",0.0410424993
+9,Prior Model,1,A or C,"Or('A','C')",0.1115650801
+9,Prior Model,2,A or B or C,"Or('A','B','C')",0.0676676416
+9,Prior Model,3,A or C or (C then B),"Or('A','C',Then('C','B'))",0.0248935342
+10,Prior Model,1,(A or C) then B,"Then(Or('A','C'),'B')",0.0410424993
+10,Prior Model,2,B and (A or C),"And('B',Or('A','C'))",0.0410424993
+10,Prior Model,3,(A and B) or (C then B),"Or(And('A','B'),Then('C','B'))",0.0150986917
+11,Prior Model,1,(B or C) then A,"Then(Or('B','C'),'A')",0.0410424993
+11,Prior Model,2,A and (B or C),"And('A',Or('B','C'))",0.0410424993
+11,Prior Model,3,(A and C) or (B then A),"Or(And('A','C'),Then('B','A'))",0.0150986917
+12,Prior Model,1,A and C,"And('A','C')",0.1115650801
+12,Prior Model,2,A and (B or C),"And('A',Or('B','C'))",0.0410424993
+12,Prior Model,3,C and (A or B),"And('C',Or('A','B'))",0.0410424993
+13,Prior Model,1,A,'A',0.3032653299
+13,Prior Model,2,A or B,"Or('A','B')",0.1115650801
+13,Prior Model,3,A or (B and C),"Or('A',And('B','C'))",0.0410424993
+14,Prior Model,1,A then B,"Then('A','B')",0.1115650801
+14,Prior Model,2,A and B,"And('A','B')",0.1115650801
+14,Prior Model,3,A then (B or C),"Then('A',Or('B','C'))",0.0410424993
+15,Prior Model,1,B then A,"Then('B','A')",0.1115650801
+15,Prior Model,2,A and B,"And('A','B')",0.1115650801
+15,Prior Model,3,(B or C) then A,"Then(Or('B','C'),'A')",0.0410424993
+16,Prior Model,1,A then C,"Then('A','C')",0.1115650801
+16,Prior Model,2,A and C,"And('A','C')",0.1115650801
+16,Prior Model,3,(A or B) then C,"Then(Or('A','B'),'C')",0.0410424993
+17,Prior Model,1,(A then C) or (B then A),"Or(Then('A','C'),Then('B','A'))",0.0150986917
+17,Prior Model,2,(A and C) or (B then A),"Or(And('A','C'),Then('B','A'))",0.0150986917
+17,Prior Model,3,A and (B or C),"And('A',Or('B','C'))",0.0410424993
+18,Prior Model,1,B then (A or C),"Then('B',Or('A','C'))",0.0410424993
+18,Prior Model,2,B and (A or C),"And('B',Or('A','C'))",0.0410424993
+18,Prior Model,3,(A and B) or (B then C),"Or(And('A','B'),Then('B','C'))",0.0150986917
+19,Prior Model,1,(A or B) then C,"Then(Or('A','B'),'C')",0.0410424993
+19,Prior Model,2,C and (A or B),"And('C',Or('A','B'))",0.0410424993
+19,Prior Model,3,(A and C) or (B then C),"Or(And('A','C'),Then('B','C'))",0.0150986917

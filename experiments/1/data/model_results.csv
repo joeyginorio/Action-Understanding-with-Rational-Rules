@@ -1,0 +1,115 @@
+Trial,Model,Rank,Hypothesis,Hyp,Result
+1,Alternate Model,1,A,'A',0.0004160018
+1,Alternate Model,2,A or B,"Or('A','B')",7.65192593101611E-05
+1,Alternate Model,3,A or C,"Or('A','C')",7.65192593101611E-05
+1,Full Model,1,A,'A',0.3032653299
+1,Full Model,2,A or B,"Or('A','B')",0.0865771049
+1,Full Model,3,A or C,"Or('A','C')",0.05578254
+2,Alternate Model,1,B,'B',0.0004160018
+2,Alternate Model,2,B or (A and B),"Or('B',And('A','B'))",1.87665749025832E-05
+2,Alternate Model,3,B or (B and C),"Or('B',And('B','C'))",1.87665749025832E-05
+2,Full Model,1,B,'B',0.3032653299
+2,Full Model,2,B or (A and B),"Or('B',And('A','B'))",0.0335784512
+2,Full Model,3,B or (B and C),"Or('B',And('B','C'))",0.0335784512
+3,Alternate Model,1,A then B,"Then('A','B')",2.09929380823487E-07
+3,Alternate Model,2,A and B,"And('A','B')",0.000000105
+3,Alternate Model,3,A then (B or C),"Then('A',Or('B','C'))",3.86143516514057E-08
+3,Full Model,1,A then B,"Then('A','B')",0.1115650801
+3,Full Model,2,A and B,"And('A','B')",0.0865771049
+3,Full Model,3,A then (B or C),"Then('A',Or('B','C'))",0.031849937
+4,Alternate Model,1,B then A,"Then('B','A')",2.09929380823487E-07
+4,Alternate Model,2,A and B,"And('A','B')",0.000000105
+4,Alternate Model,3,(B or C) then A,"Then(Or('B','C'),'A')",3.86143516514057E-08
+4,Full Model,1,B then A,"Then('B','A')",0.1115650801
+4,Full Model,2,A and B,"And('A','B')",0.0249879752
+4,Full Model,3,(B or C) then A,"Then(Or('B','C'),'A')",0.0205212497
+5,Alternate Model,1,A then C,"Then('A','C')",2.09929380823487E-07
+5,Alternate Model,2,A and C,"And('A','C')",0.000000105
+5,Alternate Model,3,(A or B) then C,"Then(Or('A','B'),'C')",3.86143516514057E-08
+5,Full Model,1,A then C,"Then('A','C')",0.1115650801
+5,Full Model,2,A and C,"And('A','C')",0.05578254
+5,Full Model,3,(A or B) then C,"Then(Or('A','B'),'C')",0.0205212497
+6,Alternate Model,1,A then B then C,"Then('A','B','C')",1.74662010759855E-10
+6,Alternate Model,2,A and B and C,"And('A','B','C')",2.91103351266425E-11
+6,Alternate Model,3,(A and B) then C,"Then(And('A','B'),'C')",5.2968932306455E-11
+6,Full Model,1,A then B then C,"Then('A','B','C')",0.0676676416
+6,Full Model,2,A and B and C,"And('A','B','C')",0.0246616003
+6,Full Model,3,(A and B) then C,"Then(And('A','B'),'C')",0.0378864758
+7,Alternate Model,1,A then C then B,"Then('A','C','B')",1.74662010759855E-10
+7,Alternate Model,2,B and (A then C),"And('B',Then('A','C'))",5.2968932306455E-11
+7,Alternate Model,3,(A and C) then B,"Then(And('A','C'),'B')",5.2968932306455E-11
+7,Full Model,1,A then C then B,"Then('A','C','B')",0.0676676416
+7,Full Model,2,B and (A then C),"And('B',Then('A','C'))",0.0318499369
+7,Full Model,3,(A and C) then B,"Then(And('A','C'),'B')",0.0205212497
+8,Alternate Model,1,B then A then C,"Then('B','A','C')",1.74662010759855E-10
+8,Alternate Model,2,B then (A and C),"Then('B',And('A','C'))",5.2968932306455E-11
+8,Alternate Model,3,C and (B then A),"And('C',Then('B','A'))",5.2968932306455E-11
+8,Full Model,1,B then A then C,"Then('B','A','C')",0.0676676416
+8,Full Model,2,B then (A and C),"Then('B',And('A','C'))",0.0205212497
+8,Full Model,3,C and (B then A),"And('C',Then('B','A'))",0.0031560235
+9,Alternate Model,1,A or C,"Or('A','C')",5.24823452058718E-08
+9,Alternate Model,2,A or B or C,"Or('A','B','C')",1.41476228715483E-08
+9,Alternate Model,3,A or C or (C then B),"Or('A','C',Then('C','B'))",5.20461959588949E-09
+9,Full Model,1,A or C,"Or('A','C')",0.02789127
+9,Full Model,2,A or B or C,"Or('A','B','C')",0.0129191298
+9,Full Model,3,A or C or (C then B),"Or('A','C',Then('C','B'))",0.0059247368
+10,Alternate Model,1,(A or C) then B,"Then(Or('A','C'),'B')",3.63298575490089E-14
+10,Alternate Model,2,B and (A or C),"And('B',Or('A','C'))",9.08246438725223E-15
+10,Alternate Model,3,(A and B) or (C then B),"Or(And('A','B'),Then('C','B'))",5.94000341909667E-15
+10,Full Model,1,(A or C) then B,"Then(Or('A','C'),'B')",0.0102606248
+10,Full Model,2,B and (A or C),"And('B',Or('A','C'))",0.0061790735
+10,Full Model,3,(A and B) or (C then B),"Or(And('A','B'),Then('C','B'))",0.0028826475
+11,Alternate Model,1,(B or C) then A,"Then(Or('B','C'),'A')",3.63298575490089E-14
+11,Alternate Model,2,A and (B or C),"And('A',Or('B','C'))",9.08246438725223E-15
+11,Alternate Model,3,(A and C) or (B then A),"Or(And('A','C'),Then('B','A'))",5.94000341909667E-15
+11,Full Model,1,(B or C) then A,"Then(Or('B','C'),'A')",0.0102606248
+11,Full Model,2,A and (B or C),"And('A',Or('B','C'))",0.0009820424
+11,Full Model,3,(A and C) or (B then A),"Or(And('A','C'),Then('B','A'))",0.0016776324
+12,Alternate Model,1,A and C,"And('A','C')",9.87547916059766E-14
+12,Alternate Model,2,A and (B or C),"And('A',Or('B','C'))",9.08246438725223E-15
+12,Alternate Model,3,C and (A or B),"And('C',Or('A','B'))",9.08246438725223E-15
+12,Full Model,1,A and C,"And('A','C')",0.02789127
+12,Full Model,2,A and (B or C),"And('A',Or('B','C'))",0.0009820424
+12,Full Model,3,C and (A or B),"And('C',Or('A','B'))",0.0009820424
+13,Alternate Model,1,A,'A',5.70647221152144E-07
+13,Alternate Model,2,A or B,"Or('A','B')",5.24823452058718E-08
+13,Alternate Model,3,A or (B and C),"Or('A',And('B','C'))",8.58096703364571E-09
+13,Full Model,1,A,'A',0.3032653299
+13,Full Model,2,A or B,"Or('A','B')",0.0671858532
+13,Full Model,3,A or (B and C),"Or('A',And('B','C'))",0.0362428767
+14,Alternate Model,1,A then B,"Then('A','B')",3.95019166423906E-13
+14,Alternate Model,2,A and B,"And('A','B')",9.87547916059766E-14
+14,Alternate Model,3,A then (B or C),"Then('A',Or('B','C'))",3.63298575490089E-14
+14,Full Model,1,A then B,"Then('A','B')",0.1115650801
+14,Full Model,2,A and B,"And('A','B')",0.0671858532
+14,Full Model,3,A then (B or C),"Then('A',Or('B','C'))",0.0247162941
+15,Alternate Model,1,B then A,"Then('B','A')",3.95019166423906E-13
+15,Alternate Model,2,A and B,"And('A','B')",9.87547916059766E-14
+15,Alternate Model,3,(B or C) then A,"Then(Or('B','C'),'A')",3.63298575490089E-14
+15,Full Model,1,B then A,"Then('B','A')",0.1115650801
+15,Full Model,2,A and B,"And('A','B')",0.0055967235
+15,Full Model,3,(B or C) then A,"Then(Or('B','C'),'A')",0.0102606248
+16,Alternate Model,1,A then C,"Then('A','C')",3.95019166423906E-13
+16,Alternate Model,2,A and C,"And('A','C')",9.87547916059766E-14
+16,Alternate Model,3,(A or B) then C,"Then(Or('A','B'),'C')",3.63298575490089E-14
+16,Full Model,1,A then C,"Then('A','C')",0.1115650801
+16,Full Model,2,A and C,"And('A','C')",0.02789127
+16,Full Model,3,(A or B) then C,"Then(Or('A','B'),'C')",0.0102606248
+17,Alternate Model,1,(A then C) or (B then A),"Or(Then('A','C'),Then('B','A'))",1.33650076929675E-14
+17,Alternate Model,2,(A and C) or (B then A),"Or(And('A','C'),Then('B','A'))",5.94000341909667E-15
+17,Alternate Model,3,A and (B or C),"And('A',Or('B','C'))",9.08246438725223E-15
+17,Full Model,1,(A then C) or (B then A),"Or(Then('A','C'),Then('B','A'))",0.0037746729
+17,Full Model,2,(A and C) or (B then A),"Or(And('A','C'),Then('B','A'))",0.0016776324
+17,Full Model,3,A and (B or C),"And('A',Or('B','C'))",0.0009820424
+18,Alternate Model,1,B then (A or C),"Then('B',Or('A','C'))",3.63298575490089E-14
+18,Alternate Model,2,B and (A or C),"And('B',Or('A','C'))",9.08246438725223E-15
+18,Alternate Model,3,(A and B) or (B then C),"Or(And('A','B'),Then('B','C'))",5.94000341909667E-15
+18,Full Model,1,B then (A or C),"Then('B',Or('A','C'))",0.0102606248
+18,Full Model,2,B and (A or C),"And('B',Or('A','C'))",0.0005147299
+18,Full Model,3,(A and B) or (B then C),"Or(And('A','B'),Then('B','C'))",0.0005055902
+19,Alternate Model,1,(A or B) then C,"Then(Or('A','B'),'C')",3.63298575490089E-14
+19,Alternate Model,2,C and (A or B),"And('C',Or('A','B'))",9.08246438725223E-15
+19,Alternate Model,3,(A and C) or (B then C),"Or(And('A','C'),Then('B','C'))",5.94000341909667E-15
+19,Full Model,1,(A or B) then C,"Then(Or('A','B'),'C')",0.0102606248
+19,Full Model,2,C and (A or B),"And('C',Or('A','B'))",0.0009820424
+19,Full Model,3,(A and C) or (B then C),"Or(And('A','C'),Then('B','C'))",0.0016776324

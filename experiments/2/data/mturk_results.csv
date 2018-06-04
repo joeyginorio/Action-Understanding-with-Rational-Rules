@@ -1,0 +1,481 @@
+Key,Id,Trial,Image,H1,H1Data,H2,H2Data,H3,H3Data
+1,pdChicK,5,0,B then A then C,8,(A and B) then C,1,B then (A and C),5
+2,pdChicK,14,0,A and (B then C),1,B then C then A,8,B then (A and C),5
+3,pdChicK,9,0,B,8,C,0,A,0
+4,pdChicK,15,0,C then A then B,8,B and (C then A),1,(A and C) then B,5
+5,pdChicK,12,0,C then A,8,C then A then B,5,C then B,0
+6,pdChicK,6,0,B then C then A,5,B then (A and C),5,B and (C then A),5
+7,pdChicK,4,0,C then A,8,C then A then B,5,C then B,0
+8,pdChicK,16,0,(B and C) then A,5,C and (B then A),3,C then B then A,8
+9,pdChicK,2,0,A,0,C,0,B,8
+10,pdChicK,1,0,B,9,A,0,C,0
+11,pdChicK,3,0,B then C,9,B then A,0,B then C then A,5
+12,pdChicK,13,0,B then A then C,9,(A and B) then C,2,B then (A and C),7
+13,pdChicK,7,0,C then A then B,8,B and (C then A),0,(A and C) then B,0
+14,pdChicK,11,0,B then C then A,5,B then A,0,B then C,8
+15,pdChicK,10,0,A,0,C,0,B,10
+16,pdChicK,8,0,(B and C) then A,5,C then B then A,8,C and (B then A),0
+17,8Bi8S0P,12,0,C then A then B,5,C then B,0,C then A,10
+18,8Bi8S0P,3,0,B then A,0,B then C then A,5,B then C,10
+19,8Bi8S0P,6,0,B then C then A,10,B then (A and C),5,B and (C then A),1
+20,8Bi8S0P,2,0,A,0,B,5,C,5
+21,8Bi8S0P,13,0,(A and B) then C,0,B then (A and C),5,B then A then C,9
+22,8Bi8S0P,10,0,C,0,B,10,A,0
+23,8Bi8S0P,8,0,C then B then A,10,(B and C) then A,5,C and (B then A),0
+24,8Bi8S0P,9,0,B,10,C,0,A,0
+25,8Bi8S0P,11,0,B then C then A,5,B then A,0,B then C,10
+26,8Bi8S0P,4,0,C then B,3,C then A then B,5,C then A,5
+27,8Bi8S0P,14,0,B then (A and C),5,B then C then A,10,A and (B then C),0
+28,8Bi8S0P,5,0,B then (A and C),5,(A and B) then C,5,B then A then C,5
+29,8Bi8S0P,15,0,C then A then B,8,(A and C) then B,5,B and (C then A),0
+30,8Bi8S0P,7,0,B and (C then A),0,(A and C) then B,0,C then A then B,10
+31,8Bi8S0P,1,0,A,0,C,0,B,10
+32,8Bi8S0P,16,0,C and (B then A),5,(B and C) then A,0,C then B then A,8
+33,xAMS8ZK,5,0,(A and B) then C,0,B then (A and C),3,B then A then C,8
+34,xAMS8ZK,6,0,B and (C then A),1,B then (A and C),5,B then C then A,8
+35,xAMS8ZK,7,0,(A and C) then B,1,C then A then B,9,B and (C then A),0
+36,xAMS8ZK,3,0,B then A,1,B then C,8,B then C then A,1
+37,xAMS8ZK,13,0,B then A then C,9,B then (A and C),1,(A and B) then C,1
+38,xAMS8ZK,14,0,A and (B then C),1,B then (A and C),1,B then C then A,9
+39,xAMS8ZK,15,0,B and (C then A),0,(A and C) then B,1,C then A then B,9
+40,xAMS8ZK,16,0,C then B then A,7,(B and C) then A,1,C and (B then A),1
+41,xAMS8ZK,11,0,B then C,9,B then C then A,5,B then A,0
+42,xAMS8ZK,2,0,A,5,C,5,B,5
+43,xAMS8ZK,10,0,C,5,B,5,A,5
+44,xAMS8ZK,12,0,C then A,6,C then A then B,4,C then B,4
+45,xAMS8ZK,1,0,C,1,B,5,A,1
+46,xAMS8ZK,9,0,A,0,B,5,C,0
+47,xAMS8ZK,8,0,C then B then A,9,C and (B then A),1,(B and C) then A,1
+48,xAMS8ZK,4,0,C then B,4,C then A then B,5,C then A,7
+49,uP5qH9F,15,0,(A and C) then B,8,B and (C then A),1,C then A then B,9
+50,uP5qH9F,12,0,C then A,5,C then B,1,C then A then B,2
+51,uP5qH9F,13,0,B then (A and C),2,(A and B) then C,2,B then A then C,9
+52,uP5qH9F,2,0,C,5,A,0,B,7
+53,uP5qH9F,14,0,B then C then A,8,A and (B then C),0,B then (A and C),5
+54,uP5qH9F,4,0,C then A,10,C then A then B,5,C then B,0
+55,uP5qH9F,16,0,C and (B then A),0,(B and C) then A,3,C then B then A,9
+56,uP5qH9F,5,0,B then A then C,9,B then (A and C),7,(A and B) then C,1
+57,uP5qH9F,11,0,B then C,9,B then A,1,B then C then A,6
+58,uP5qH9F,9,0,A,0,B,8,C,0
+59,uP5qH9F,10,0,A,0,B,8,C,0
+60,uP5qH9F,3,0,B then C,9,B then C then A,5,B then A,0
+61,uP5qH9F,1,0,B,8,A,0,C,0
+62,uP5qH9F,6,0,B then C then A,8,B and (C then A),2,B then (A and C),5
+63,uP5qH9F,7,0,(A and C) then B,0,B and (C then A),0,C then A then B,10
+64,uP5qH9F,8,0,C and (B then A),5,C then B then A,8,(B and C) then A,2
+65,il4AYQm,1,0,C,0,A,0,B,10
+66,il4AYQm,5,0,B then A then C,10,(A and B) then C,0,B then (A and C),0
+67,il4AYQm,7,0,B and (C then A),0,(A and C) then B,5,C then A then B,10
+68,il4AYQm,6,0,B then C then A,5,B then (A and C),10,B and (C then A),0
+69,il4AYQm,2,0,B,10,C,0,A,0
+70,il4AYQm,16,0,C and (B then A),5,(B and C) then A,5,C then B then A,10
+71,il4AYQm,12,0,C then A,10,C then A then B,5,C then B,0
+72,il4AYQm,3,0,B then C,10,B then A,0,B then C then A,5
+73,il4AYQm,4,0,C then B,0,C then A,10,C then A then B,5
+74,il4AYQm,10,0,C,0,A,0,B,10
+75,il4AYQm,9,0,B,10,A,0,C,0
+76,il4AYQm,11,0,B then A,0,B then C then A,5,B then C,10
+77,il4AYQm,8,0,C and (B then A),5,C then B then A,10,(B and C) then A,5
+78,il4AYQm,15,0,B and (C then A),5,(A and C) then B,5,C then A then B,10
+79,il4AYQm,13,0,B then (A and C),0,B then A then C,10,(A and B) then C,0
+80,il4AYQm,14,0,B then C then A,10,A and (B then C),5,B then (A and C),0
+81,jNFtHO0,10,0,A,0,B,5,C,0
+82,jNFtHO0,1,0,A,0,B,5,C,0
+83,jNFtHO0,11,0,B then C,10,B then A,0,B then C then A,0
+84,jNFtHO0,6,0,B then C then A,10,B then (A and C),0,B and (C then A),0
+85,jNFtHO0,14,0,B then (A and C),5,A and (B then C),0,B then C then A,5
+86,jNFtHO0,16,0,C and (B then A),0,(B and C) then A,0,C then B then A,10
+87,jNFtHO0,4,0,C then A,10,C then B,0,C then A then B,5
+88,jNFtHO0,5,0,B then A then C,10,(A and B) then C,0,B then (A and C),0
+89,jNFtHO0,2,0,A,0,C,5,B,5
+90,jNFtHO0,3,0,B then A,0,B then C,10,B then C then A,5
+91,jNFtHO0,15,0,(A and C) then B,0,C then A then B,10,B and (C then A),1
+92,jNFtHO0,8,0,C then B then A,10,C and (B then A),0,(B and C) then A,0
+93,jNFtHO0,7,0,B and (C then A),3,(A and C) then B,2,C then A then B,8
+94,jNFtHO0,13,0,B then (A and C),0,(A and B) then C,0,B then A then C,10
+95,jNFtHO0,9,0,B,5,A,0,C,0
+96,jNFtHO0,12,0,C then B,0,C then A,10,C then A then B,5
+97,cft1HjQ,12,0,C then A,8,C then B,3,C then A then B,5
+98,cft1HjQ,11,0,B then C,9,B then A,1,B then C then A,1
+99,cft1HjQ,3,0,B then C,10,B then A,1,B then C then A,1
+100,cft1HjQ,7,0,(A and C) then B,0,C then A then B,9,B and (C then A),0
+101,cft1HjQ,13,0,(A and B) then C,0,B then A then C,10,B then (A and C),0
+102,cft1HjQ,4,0,C then A then B,7,C then B,3,C then A,9
+103,cft1HjQ,10,0,A,2,B,10,C,1
+104,cft1HjQ,16,0,(B and C) then A,0,C and (B then A),0,C then B then A,10
+105,cft1HjQ,6,0,B then C then A,9,B and (C then A),2,B then (A and C),2
+106,cft1HjQ,9,0,A,0,C,0,B,10
+107,cft1HjQ,2,0,C,5,B,6,A,2
+108,cft1HjQ,8,0,C and (B then A),0,(B and C) then A,0,C then B then A,10
+109,cft1HjQ,14,0,B then (A and C),0,A and (B then C),0,B then C then A,10
+110,cft1HjQ,1,0,B,10,A,0,C,0
+111,cft1HjQ,15,0,C then A then B,10,(A and C) then B,0,B and (C then A),0
+112,cft1HjQ,5,0,B then (A and C),0,(A and B) then C,0,B then A then C,10
+113,0rRqHpL,14,0,B then C then A,10,A and (B then C),0,B then (A and C),5
+114,0rRqHpL,16,0,C and (B then A),0,C then B then A,9,(B and C) then A,0
+115,0rRqHpL,7,0,(A and C) then B,0,B and (C then A),0,C then A then B,10
+116,0rRqHpL,5,0,B then (A and C),5,(A and B) then C,0,B then A then C,10
+117,0rRqHpL,8,0,C then B then A,10,C and (B then A),5,(B and C) then A,5
+118,0rRqHpL,11,0,B then A,0,B then C then A,9,B then C,8
+119,0rRqHpL,10,0,B,10,C,0,A,0
+120,0rRqHpL,4,0,C then B,0,C then A,6,C then A then B,5
+121,0rRqHpL,3,0,B then A,0,B then C,9,B then C then A,5
+122,0rRqHpL,15,0,(A and C) then B,7,C then A then B,8,B and (C then A),0
+123,0rRqHpL,1,0,A,0,B,10,C,0
+124,0rRqHpL,2,0,A,0,C,5,B,5
+125,0rRqHpL,9,0,B,9,C,0,A,0
+126,0rRqHpL,6,0,B then (A and C),7,B and (C then A),0,B then C then A,7
+127,0rRqHpL,12,0,C then B,0,C then A then B,7,C then A,8
+128,0rRqHpL,13,0,B then A then C,8,(A and B) then C,0,B then (A and C),7
+129,4tpW4Ag,16,0,(B and C) then A,5,C then B then A,8,C and (B then A),2
+130,4tpW4Ag,8,0,(B and C) then A,3,C then B then A,10,C and (B then A),1
+131,4tpW4Ag,3,0,B then C,10,B then A,0,B then C then A,5
+132,4tpW4Ag,2,0,C,5,B,5,A,0
+133,4tpW4Ag,13,0,B then A then C,10,B then (A and C),5,(A and B) then C,5
+134,4tpW4Ag,11,0,B then A,0,B then C,10,B then C then A,5
+135,4tpW4Ag,12,0,C then A,10,C then B,0,C then A then B,5
+136,4tpW4Ag,9,0,B,10,C,0,A,0
+137,4tpW4Ag,4,0,C then A,10,C then A then B,5,C then B,0
+138,4tpW4Ag,5,0,B then A then C,10,B then (A and C),5,(A and B) then C,5
+139,4tpW4Ag,7,0,(A and C) then B,5,C then A then B,0,B and (C then A),0
+140,4tpW4Ag,6,0,B then C then A,5,B then (A and C),5,B and (C then A),4
+141,4tpW4Ag,15,0,C then A then B,10,B and (C then A),5,(A and C) then B,5
+142,4tpW4Ag,1,0,A,0,B,10,C,0
+143,4tpW4Ag,10,0,C,0,B,10,A,0
+144,4tpW4Ag,14,0,B then (A and C),5,A and (B then C),0,B then C then A,8
+145,HsS3h1A,12,0,C then A,10,C then A then B,0,C then B,0
+146,HsS3h1A,7,0,B and (C then A),0,C then A then B,10,(A and C) then B,0
+147,HsS3h1A,10,0,A,0,C,0,B,10
+148,HsS3h1A,8,0,C and (B then A),0,C then B then A,10,(B and C) then A,0
+149,HsS3h1A,9,0,C,0,A,0,B,10
+150,HsS3h1A,15,0,(A and C) then B,0,B and (C then A),0,C then A then B,10
+151,HsS3h1A,14,0,A and (B then C),0,B then (A and C),0,B then C then A,10
+152,HsS3h1A,2,0,A,5,C,5,B,5
+153,HsS3h1A,16,0,C then B then A,10,(B and C) then A,0,C and (B then A),0
+154,HsS3h1A,13,0,B then A then C,10,B then (A and C),0,(A and B) then C,0
+155,HsS3h1A,4,0,C then B,5,C then A then B,5,C then A,5
+156,HsS3h1A,11,0,B then C then A,0,B then A,0,B then C,10
+157,HsS3h1A,6,0,B then C then A,10,B and (C then A),0,B then (A and C),0
+158,HsS3h1A,3,0,B then C,10,B then C then A,5,B then A,0
+159,HsS3h1A,5,0,(A and B) then C,0,B then (A and C),0,B then A then C,10
+160,HsS3h1A,1,0,C,0,B,10,A,0
+161,GuSpCR7,16,0,C and (B then A),10,(B and C) then A,0,C then B then A,10
+162,GuSpCR7,9,0,A,0,C,0,B,6
+163,GuSpCR7,3,0,B then A,2,B then C,9,B then C then A,9
+164,GuSpCR7,5,0,B then (A and C),4,B then A then C,8,(A and B) then C,5
+165,GuSpCR7,14,0,A and (B then C),7,B then C then A,9,B then (A and C),8
+166,GuSpCR7,4,0,C then A,9,C then B,0,C then A then B,5
+167,GuSpCR7,6,0,B then (A and C),7,B and (C then A),5,B then C then A,9
+168,GuSpCR7,1,0,A,0,B,5,C,1
+169,GuSpCR7,8,0,C and (B then A),6,(B and C) then A,6,C then B then A,8
+170,GuSpCR7,7,0,(A and C) then B,5,B and (C then A),3,C then A then B,10
+171,GuSpCR7,13,0,B then (A and C),7,(A and B) then C,3,B then A then C,9
+172,GuSpCR7,2,0,A,0,C,5,B,6
+173,GuSpCR7,10,0,B,9,A,4,C,4
+174,GuSpCR7,12,0,C then B,0,C then A then B,7,C then A,10
+175,GuSpCR7,11,0,B then C then A,8,B then C,10,B then A,0
+176,GuSpCR7,15,0,C then A then B,10,B and (C then A),4,(A and C) then B,6
+177,6HSco0e,12,0,C then A,10,C then A then B,5,C then B,0
+178,6HSco0e,5,0,B then A then C,10,B then (A and C),5,(A and B) then C,5
+179,6HSco0e,6,0,B then C then A,10,B and (C then A),0,B then (A and C),5
+180,6HSco0e,1,0,B,10,A,0,C,0
+181,6HSco0e,4,0,C then B,0,C then A then B,5,C then A,10
+182,6HSco0e,15,0,C then A then B,10,(A and C) then B,5,B and (C then A),5
+183,6HSco0e,8,0,C and (B then A),5,(B and C) then A,5,C then B then A,5
+184,6HSco0e,9,0,B,10,A,0,C,0
+185,6HSco0e,16,0,C then B then A,10,C and (B then A),5,(B and C) then A,5
+186,6HSco0e,2,0,A,0,B,10,C,0
+187,6HSco0e,14,0,B then C then A,10,A and (B then C),2,B then (A and C),5
+188,6HSco0e,10,0,B,10,C,5,A,5
+189,6HSco0e,13,0,B then A then C,10,(A and B) then C,5,B then (A and C),5
+190,6HSco0e,3,0,B then C then A,5,B then C,10,B then A,0
+191,6HSco0e,11,0,B then C,10,B then C then A,5,B then A,0
+192,6HSco0e,7,0,B and (C then A),2,C then A then B,10,(A and C) then B,5
+193,b38o7Sh,4,0,C then A then B,5,C then A,6,C then B,0
+194,b38o7Sh,14,0,B then C then A,8,B then (A and C),5,A and (B then C),4
+195,b38o7Sh,8,0,C and (B then A),3,(B and C) then A,7,C then B then A,8
+196,b38o7Sh,3,0,B then C then A,2,B then A,2,B then C,8
+197,b38o7Sh,7,0,C then A then B,9,B and (C then A),5,(A and C) then B,7
+198,b38o7Sh,9,0,C,1,A,1,B,7
+199,b38o7Sh,6,0,B and (C then A),3,B then C then A,7,B then (A and C),6
+200,b38o7Sh,15,0,C then A then B,8,B and (C then A),3,(A and C) then B,6
+201,b38o7Sh,13,0,(A and B) then C,5,B then (A and C),6,B then A then C,7
+202,b38o7Sh,1,0,B,8,A,1,C,1
+203,b38o7Sh,2,0,B,5,C,5,A,0
+204,b38o7Sh,5,0,B then (A and C),5,B then A then C,6,(A and B) then C,5
+205,b38o7Sh,10,0,B,5,A,0,C,0
+206,b38o7Sh,16,0,C then B then A,7,(B and C) then A,5,C and (B then A),3
+207,b38o7Sh,11,0,B then C,8,B then A,1,B then C then A,0
+208,b38o7Sh,12,0,C then A then B,5,C then B,2,C then A,5
+209,l6bGfty,7,0,B and (C then A),0,C then A then B,10,(A and C) then B,5
+210,l6bGfty,9,0,C,0,A,0,B,10
+211,l6bGfty,14,0,B then C then A,8,B then (A and C),4,A and (B then C),0
+212,l6bGfty,1,0,C,1,A,0,B,8
+213,l6bGfty,3,0,B then C then A,5,B then C,10,B then A,0
+214,l6bGfty,11,0,B then C,8,B then C then A,5,B then A,1
+215,l6bGfty,16,0,C and (B then A),0,C then B then A,9,(B and C) then A,5
+216,l6bGfty,5,0,B then (A and C),5,(A and B) then C,0,B then A then C,8
+217,l6bGfty,13,0,(A and B) then C,3,B then (A and C),6,B then A then C,8
+218,l6bGfty,6,0,B and (C then A),4,B then (A and C),7,B then C then A,8
+219,l6bGfty,4,0,C then A,8,C then A then B,5,C then B,1
+220,l6bGfty,2,0,C,5,A,0,B,5
+221,l6bGfty,15,0,C then A then B,10,B and (C then A),2,(A and C) then B,5
+222,l6bGfty,10,0,C,0,B,10,A,0
+223,l6bGfty,12,0,C then A,8,C then B,0,C then A then B,6
+224,l6bGfty,8,0,C then B then A,9,C and (B then A),0,(B and C) then A,2
+225,vlLgtzX,7,0,B and (C then A),8,C then A then B,10,(A and C) then B,5
+226,vlLgtzX,12,0,C then B,0,C then A then B,5,C then A,9
+227,vlLgtzX,10,0,A,0,C,0,B,10
+228,vlLgtzX,15,0,(A and C) then B,5,C then A then B,8,B and (C then A),0
+229,vlLgtzX,4,0,C then A,10,C then A then B,5,C then B,0
+230,vlLgtzX,13,0,B then (A and C),3,B then A then C,9,(A and B) then C,0
+231,vlLgtzX,16,0,C and (B then A),8,(B and C) then A,3,C then B then A,10
+232,vlLgtzX,9,0,B,5,C,0,A,0
+233,vlLgtzX,8,0,C and (B then A),8,(B and C) then A,0,C then B then A,10
+234,vlLgtzX,6,0,B and (C then A),10,B then (A and C),0,B then C then A,10
+235,vlLgtzX,5,0,B then A then C,10,B then (A and C),5,(A and B) then C,0
+236,vlLgtzX,14,0,B then C then A,10,A and (B then C),9,B then (A and C),0
+237,vlLgtzX,1,0,C,0,A,0,B,5
+238,vlLgtzX,2,0,B,5,A,0,C,5
+239,vlLgtzX,3,0,B then C,10,B then C then A,5,B then A,0
+240,vlLgtzX,11,0,B then C,8,B then C then A,5,B then A,0
+241,Y4aRKGc,1,0,B,7,A,0,C,0
+242,Y4aRKGc,9,0,A,0,B,7,C,0
+243,Y4aRKGc,15,0,B and (C then A),8,C then A then B,8,(A and C) then B,5
+244,Y4aRKGc,4,0,C then B,5,C then A,5,C then A then B,7
+245,Y4aRKGc,10,0,A,3,B,6,C,3
+246,Y4aRKGc,3,0,B then C then A,4,B then C,7,B then A,5
+247,Y4aRKGc,5,0,B then (A and C),8,B then A then C,8,(A and B) then C,2
+248,Y4aRKGc,16,0,C then B then A,6,(B and C) then A,5,C and (B then A),5
+249,Y4aRKGc,7,0,B and (C then A),7,C then A then B,5,(A and C) then B,5
+250,Y4aRKGc,2,0,B,6,C,5,A,3
+251,Y4aRKGc,6,0,B then C then A,9,B then (A and C),7,B and (C then A),6
+252,Y4aRKGc,14,0,A and (B then C),6,B then C then A,5,B then (A and C),5
+253,Y4aRKGc,13,0,B then (A and C),7,(A and B) then C,5,B then A then C,6
+254,Y4aRKGc,12,0,C then B,5,C then A then B,5,C then A,4
+255,Y4aRKGc,8,0,C and (B then A),5,C then B then A,7,(B and C) then A,5
+256,Y4aRKGc,11,0,B then C then A,6,B then A,5,B then C,6
+257,fmkHW6R,13,0,B then (A and C),7,(A and B) then C,8,B then A then C,9
+258,fmkHW6R,7,0,C then A then B,9,(A and C) then B,3,B and (C then A),3
+259,fmkHW6R,16,0,C then B then A,5,(B and C) then A,5,C and (B then A),5
+260,fmkHW6R,8,0,(B and C) then A,5,C then B then A,8,C and (B then A),5
+261,fmkHW6R,5,0,B then (A and C),2,B then A then C,8,(A and B) then C,5
+262,fmkHW6R,15,0,B and (C then A),5,(A and C) then B,5,C then A then B,7
+263,fmkHW6R,10,0,B,10,A,0,C,0
+264,fmkHW6R,14,0,B then (A and C),5,A and (B then C),0,B then C then A,9
+265,fmkHW6R,2,0,C,5,B,5,A,0
+266,fmkHW6R,3,0,B then C,8,B then A,0,B then C then A,5
+267,fmkHW6R,1,0,B,10,A,0,C,0
+268,fmkHW6R,4,0,C then A,5,C then A then B,5,C then B,0
+269,fmkHW6R,6,0,B and (C then A),2,B then (A and C),5,B then C then A,7
+270,fmkHW6R,9,0,A,0,B,10,C,0
+271,fmkHW6R,12,0,C then A then B,5,C then A,5,C then B,0
+272,fmkHW6R,11,0,B then C,10,B then C then A,0,B then A,0
+273,E8munWu,6,0,B then (A and C),8,B then C then A,9,B and (C then A),4
+274,E8munWu,1,0,C,0,A,0,B,9
+275,E8munWu,7,0,B and (C then A),2,(A and C) then B,5,C then A then B,10
+276,E8munWu,3,0,B then C,9,B then C then A,1,B then A,5
+277,E8munWu,8,0,C and (B then A),5,(B and C) then A,2,C then B then A,8
+278,E8munWu,16,0,C then B then A,2,C and (B then A),8,(B and C) then A,2
+279,E8munWu,9,0,B,5,A,0,C,0
+280,E8munWu,15,0,B and (C then A),3,C then A then B,9,(A and C) then B,5
+281,E8munWu,14,0,A and (B then C),2,B then (A and C),3,B then C then A,6
+282,E8munWu,13,0,B then A then C,7,(A and B) then C,1,B then (A and C),6
+283,E8munWu,5,0,(A and B) then C,4,B then (A and C),1,B then A then C,7
+284,E8munWu,4,0,C then A then B,9,C then A,3,C then B,6
+285,E8munWu,2,0,B,6,A,2,C,7
+286,E8munWu,11,0,B then C then A,1,B then A,8,B then C,2
+287,E8munWu,10,0,A,6,B,2,C,7
+288,E8munWu,12,0,C then B,7,C then A,1,C then A then B,4
+289,xJMMaGZ,15,0,(A and C) then B,9,C then A then B,5,B and (C then A),0
+290,xJMMaGZ,13,0,B then A then C,10,(A and B) then C,0,B then (A and C),0
+291,xJMMaGZ,16,0,(B and C) then A,5,C then B then A,5,C and (B then A),0
+292,xJMMaGZ,3,0,B then A,0,B then C then A,5,B then C,9
+293,xJMMaGZ,4,0,C then A then B,5,C then B,0,C then A,9
+294,xJMMaGZ,5,0,(A and B) then C,0,B then A then C,10,B then (A and C),0
+295,xJMMaGZ,10,0,B,10,A,0,C,0
+296,xJMMaGZ,2,0,A,0,C,5,B,5
+297,xJMMaGZ,14,0,B then C then A,9,B then (A and C),5,A and (B then C),0
+298,xJMMaGZ,6,0,B and (C then A),0,B then (A and C),5,B then C then A,9
+299,xJMMaGZ,8,0,C and (B then A),0,C then B then A,9,(B and C) then A,5
+300,xJMMaGZ,1,0,B,10,A,0,C,0
+301,xJMMaGZ,11,0,B then C,9,B then A,0,B then C then A,5
+302,xJMMaGZ,7,0,C then A then B,10,(A and C) then B,0,B and (C then A),0
+303,xJMMaGZ,9,0,A,0,C,0,B,10
+304,xJMMaGZ,12,0,C then A then B,5,C then B,0,C then A,9
+305,vTwxdj5,13,0,B then (A and C),0,(A and B) then C,0,B then A then C,10
+306,vTwxdj5,10,0,A,10,C,10,B,10
+307,vTwxdj5,3,0,B then C then A,0,B then C,10,B then A,0
+308,vTwxdj5,12,0,C then A then B,0,C then B,0,C then A,10
+309,vTwxdj5,14,0,A and (B then C),0,B then C then A,10,B then (A and C),0
+310,vTwxdj5,16,0,(B and C) then A,0,C then B then A,10,C and (B then A),0
+311,vTwxdj5,8,0,(B and C) then A,0,C then B then A,10,C and (B then A),0
+312,vTwxdj5,2,0,C,10,B,10,A,10
+313,vTwxdj5,7,0,B and (C then A),0,C then A then B,10,(A and C) then B,0
+314,vTwxdj5,5,0,B then A then C,10,B then (A and C),0,(A and B) then C,0
+315,vTwxdj5,6,0,B and (C then A),0,B then C then A,10,B then (A and C),0
+316,vTwxdj5,15,0,(A and C) then B,0,C then A then B,10,B and (C then A),0
+317,vTwxdj5,4,0,C then A then B,0,C then A,10,C then B,0
+318,vTwxdj5,1,0,B,10,C,0,A,0
+319,vTwxdj5,9,0,A,0,C,0,B,10
+320,vTwxdj5,11,0,B then C,10,B then C then A,0,B then A,0
+321,GxbDSdT,3,0,B then C then A,5,B then A,0,B then C,8
+322,GxbDSdT,9,0,C,0,A,1,B,9
+323,GxbDSdT,7,0,B and (C then A),5,(A and C) then B,5,C then A then B,9
+324,GxbDSdT,15,0,C then A then B,8,B and (C then A),1,(A and C) then B,5
+325,GxbDSdT,8,0,C and (B then A),8,(B and C) then A,9,C then B then A,10
+326,GxbDSdT,2,0,A,5,B,5,C,5
+327,GxbDSdT,1,0,C,2,B,10,A,2
+328,GxbDSdT,12,0,C then A then B,5,C then B,2,C then A,9
+329,GxbDSdT,4,0,C then A then B,6,C then A,6,C then B,2
+330,GxbDSdT,11,0,B then A,0,B then C,9,B then C then A,5
+331,GxbDSdT,14,0,B then C then A,10,B then (A and C),7,A and (B then C),1
+332,GxbDSdT,5,0,B then (A and C),5,(A and B) then C,5,B then A then C,9
+333,GxbDSdT,16,0,C and (B then A),2,C then B then A,10,(B and C) then A,2
+334,GxbDSdT,13,0,B then A then C,10,(A and B) then C,2,B then (A and C),5
+335,GxbDSdT,10,0,B,8,C,2,A,2
+336,GxbDSdT,6,0,B then C then A,9,B then (A and C),5,B and (C then A),0
+337,2O2qhIJ,1,0,C,0,A,0,B,10
+338,2O2qhIJ,9,0,A,0,C,0,B,10
+339,2O2qhIJ,3,0,B then C then A,0,B then C,10,B then A,0
+340,2O2qhIJ,14,0,A and (B then C),0,B then (A and C),0,B then C then A,10
+341,2O2qhIJ,11,0,B then C then A,5,B then A,0,B then C,5
+342,2O2qhIJ,10,0,A,0,B,5,C,0
+343,2O2qhIJ,6,0,B then (A and C),0,B and (C then A),0,B then C then A,10
+344,2O2qhIJ,2,0,B,5,A,0,C,5
+345,2O2qhIJ,16,0,C then B then A,5,(B and C) then A,0,C and (B then A),0
+346,2O2qhIJ,7,0,(A and C) then B,5,B and (C then A),0,C then A then B,5
+347,2O2qhIJ,8,0,(B and C) then A,5,C then B then A,5,C and (B then A),0
+348,2O2qhIJ,5,0,(A and B) then C,0,B then (A and C),0,B then A then C,10
+349,2O2qhIJ,4,0,C then B,0,C then A,6,C then A then B,5
+350,2O2qhIJ,12,0,C then A then B,5,C then A,5,C then B,0
+351,2O2qhIJ,13,0,B then A then C,5,B then (A and C),5,(A and B) then C,0
+352,2O2qhIJ,15,0,(A and C) then B,0,C then A then B,10,B and (C then A),0
+353,9Nj8dhO,14,0,B then C then A,0,B then (A and C),0,A and (B then C),0
+354,9Nj8dhO,6,0,B and (C then A),0,B then C then A,5,B then (A and C),0
+355,9Nj8dhO,10,0,C,2,A,2,B,5
+356,9Nj8dhO,8,0,(B and C) then A,2,C then B then A,5,C and (B then A),0
+357,9Nj8dhO,9,0,B,9,C,0,A,0
+358,9Nj8dhO,7,0,B and (C then A),1,C then A then B,6,(A and C) then B,3
+359,9Nj8dhO,2,0,A,2,B,7,C,4
+360,9Nj8dhO,11,0,B then A,0,B then C,8,B then C then A,2
+361,9Nj8dhO,1,0,C,1,B,7,A,1
+362,9Nj8dhO,5,0,B then (A and C),1,B then A then C,6,(A and B) then C,2
+363,9Nj8dhO,12,0,C then B,2,C then A,7,C then A then B,3
+364,9Nj8dhO,16,0,C then B then A,6,(B and C) then A,1,C and (B then A),1
+365,9Nj8dhO,13,0,B then (A and C),1,B then A then C,7,(A and B) then C,1
+366,9Nj8dhO,15,0,B and (C then A),1,(A and C) then B,2,C then A then B,5
+367,9Nj8dhO,4,0,C then B,2,C then A,8,C then A then B,5
+368,9Nj8dhO,3,0,B then C,8,B then A,0,B then C then A,4
+369,0EqbRdh,8,0,C then B then A,10,C and (B then A),5,(B and C) then A,0
+370,0EqbRdh,15,0,C then A then B,10,B and (C then A),0,(A and C) then B,7
+371,0EqbRdh,3,0,B then C,10,B then A,0,B then C then A,5
+372,0EqbRdh,5,0,B then (A and C),0,(A and B) then C,7,B then A then C,10
+373,0EqbRdh,13,0,B then A then C,10,B then (A and C),5,(A and B) then C,5
+374,0EqbRdh,7,0,(A and C) then B,0,C then A then B,10,B and (C then A),5
+375,0EqbRdh,4,0,C then A,10,C then A then B,5,C then B,0
+376,0EqbRdh,11,0,B then C,10,B then C then A,5,B then A,0
+377,0EqbRdh,10,0,B,5,C,0,A,0
+378,0EqbRdh,14,0,B then C then A,10,B then (A and C),7,A and (B then C),3
+379,0EqbRdh,16,0,(B and C) then A,7,C and (B then A),5,C then B then A,10
+380,0EqbRdh,12,0,C then A,10,C then B,0,C then A then B,5
+381,0EqbRdh,6,0,B then (A and C),5,B then C then A,10,B and (C then A),0
+382,0EqbRdh,2,0,C,5,B,5,A,5
+383,0EqbRdh,1,0,B,10,C,0,A,0
+384,0EqbRdh,9,0,A,0,B,10,C,0
+385,xYpO26b,7,0,C then A then B,9,(A and C) then B,5,B and (C then A),1
+386,xYpO26b,5,0,B then A then C,8,(A and B) then C,2,B then (A and C),4
+387,xYpO26b,14,0,A and (B then C),3,B then (A and C),5,B then C then A,7
+388,xYpO26b,13,0,B then A then C,6,(A and B) then C,4,B then (A and C),5
+389,xYpO26b,4,0,C then A then B,5,C then A,6,C then B,0
+390,xYpO26b,8,0,C and (B then A),0,(B and C) then A,2,C then B then A,8
+391,xYpO26b,11,0,B then C,10,B then A,0,B then C then A,5
+392,xYpO26b,1,0,B,10,C,0,A,0
+393,xYpO26b,10,0,C,0,B,9,A,0
+394,xYpO26b,6,0,B and (C then A),0,B then C then A,8,B then (A and C),5
+395,xYpO26b,12,0,C then A then B,5,C then A,8,C then B,0
+396,xYpO26b,3,0,B then A,0,B then C then A,7,B then C,8
+397,xYpO26b,16,0,(B and C) then A,5,C and (B then A),0,C then B then A,7
+398,xYpO26b,9,0,B,9,C,0,A,0
+399,xYpO26b,2,0,B,5,C,5,A,0
+400,xYpO26b,15,0,(A and C) then B,5,C then A then B,7,B and (C then A),2
+401,qZqTMRc,4,0,C then A,9,C then B,3,C then A then B,5
+402,qZqTMRc,6,0,B and (C then A),3,B then (A and C),5,B then C then A,8
+403,qZqTMRc,15,0,B and (C then A),1,C then A then B,8,(A and C) then B,3
+404,qZqTMRc,5,0,B then A then C,8,B then (A and C),5,(A and B) then C,1
+405,qZqTMRc,13,0,(A and B) then C,1,B then (A and C),5,B then A then C,8
+406,qZqTMRc,16,0,C then B then A,8,(B and C) then A,5,C and (B then A),3
+407,qZqTMRc,10,0,C,1,A,1,B,9
+408,qZqTMRc,9,0,C,0,B,9,A,0
+409,qZqTMRc,7,0,B and (C then A),1,C then A then B,9,(A and C) then B,3
+410,qZqTMRc,14,0,B then (A and C),2,B then C then A,8,A and (B then C),3
+411,qZqTMRc,2,0,B,7,C,7,A,2
+412,qZqTMRc,1,0,B,9,A,1,C,1
+413,qZqTMRc,8,0,(B and C) then A,4,C then B then A,8,C and (B then A),2
+414,qZqTMRc,3,0,B then A,0,B then C,9,B then C then A,5
+415,qZqTMRc,12,0,C then B,1,C then A,9,C then A then B,5
+416,qZqTMRc,11,0,B then C then A,5,B then C,9,B then A,1
+417,y4J8bTy,13,0,B then (A and C),5,(A and B) then C,0,B then A then C,10
+418,y4J8bTy,3,0,B then C,7,B then C then A,5,B then A,0
+419,y4J8bTy,14,0,A and (B then C),1,B then C then A,10,B then (A and C),5
+420,y4J8bTy,1,0,C,0,B,8,A,0
+421,y4J8bTy,8,0,C and (B then A),5,C then B then A,10,(B and C) then A,2
+422,y4J8bTy,10,0,C,0,A,0,B,5
+423,y4J8bTy,7,0,B and (C then A),0,(A and C) then B,5,C then A then B,10
+424,y4J8bTy,15,0,(A and C) then B,5,B and (C then A),5,C then A then B,5
+425,y4J8bTy,9,0,B,10,A,0,C,0
+426,y4J8bTy,16,0,C then B then A,10,(B and C) then A,0,C and (B then A),5
+427,y4J8bTy,6,0,B then C then A,10,B then (A and C),5,B and (C then A),5
+428,y4J8bTy,2,0,A,0,C,5,B,5
+429,y4J8bTy,12,0,C then A,10,C then A then B,5,C then B,0
+430,y4J8bTy,11,0,B then C,10,B then A,0,B then C then A,5
+431,y4J8bTy,5,0,B then (A and C),5,B then A then C,10,(A and B) then C,0
+432,y4J8bTy,4,0,C then A,10,C then B,0,C then A then B,5
+433,oYUCw3r,6,0,B then (A and C),4,B then C then A,4,B and (C then A),5
+434,oYUCw3r,11,0,B then C then A,5,B then C,7,B then A,3
+435,oYUCw3r,5,0,B then A then C,5,B then (A and C),4,(A and B) then C,5
+436,oYUCw3r,12,0,C then A then B,3,C then A,1,C then B,2
+437,oYUCw3r,1,0,C,0,A,0,B,10
+438,oYUCw3r,7,0,B and (C then A),3,(A and C) then B,1,C then A then B,2
+439,oYUCw3r,9,0,A,0,B,10,C,0
+440,oYUCw3r,10,0,A,0,B,10,C,0
+441,oYUCw3r,14,0,B then C then A,2,A and (B then C),3,B then (A and C),2
+442,oYUCw3r,8,0,(B and C) then A,2,C and (B then A),3,C then B then A,1
+443,oYUCw3r,4,0,C then A then B,2,C then B,3,C then A,4
+444,oYUCw3r,13,0,(A and B) then C,2,B then A then C,1,B then (A and C),2
+445,oYUCw3r,16,0,(B and C) then A,7,C and (B then A),3,C then B then A,4
+446,oYUCw3r,2,0,A,0,B,10,C,0
+447,oYUCw3r,3,0,B then A,0,B then C then A,5,B then C,6
+448,oYUCw3r,15,0,B and (C then A),2,(A and C) then B,4,C then A then B,2
+449,a9R5mPx,8,0,(B and C) then A,1,C then B then A,9,C and (B then A),2
+450,a9R5mPx,10,0,C,0,A,0,B,10
+451,a9R5mPx,16,0,C then B then A,10,(B and C) then A,0,C and (B then A),0
+452,a9R5mPx,6,0,B then C then A,10,B and (C then A),3,B then (A and C),2
+453,a9R5mPx,9,0,C,0,B,10,A,0
+454,a9R5mPx,7,0,B and (C then A),5,C then A then B,0,(A and C) then B,8
+455,a9R5mPx,13,0,B then A then C,8,(A and B) then C,2,B then (A and C),2
+456,a9R5mPx,11,0,B then C,10,B then A,0,B then C then A,5
+457,a9R5mPx,3,0,B then A,0,B then C then A,5,B then C,7
+458,a9R5mPx,12,0,C then B,0,C then A,8,C then A then B,5
+459,a9R5mPx,4,0,C then B,2,C then A then B,2,C then A,7
+460,a9R5mPx,2,0,B,5,A,0,C,5
+461,a9R5mPx,1,0,A,0,C,0,B,10
+462,a9R5mPx,5,0,B then (A and C),8,(A and B) then C,6,B then A then C,8
+463,a9R5mPx,15,0,C then A then B,9,(A and C) then B,7,B and (C then A),5
+464,a9R5mPx,14,0,A and (B then C),8,B then C then A,8,B then (A and C),6
+465,vaE14xa,3,0,B then C,8,B then A,0,B then C then A,5
+466,vaE14xa,12,0,C then B,0,C then A,8,C then A then B,5
+467,vaE14xa,9,0,C,0,A,0,B,7
+468,vaE14xa,5,0,B then (A and C),4,B then A then C,8,(A and B) then C,5
+469,vaE14xa,8,0,(B and C) then A,3,C and (B then A),4,C then B then A,8
+470,vaE14xa,11,0,B then C then A,5,B then A,0,B then C,8
+471,vaE14xa,10,0,C,0,A,0,B,5
+472,vaE14xa,7,0,B and (C then A),3,(A and C) then B,3,C then A then B,7
+473,vaE14xa,2,0,A,0,B,5,C,5
+474,vaE14xa,15,0,B and (C then A),3,C then A then B,8,(A and C) then B,5
+475,vaE14xa,16,0,C then B then A,8,(B and C) then A,3,C and (B then A),5
+476,vaE14xa,14,0,B then C then A,8,B then (A and C),5,A and (B then C),5
+477,vaE14xa,1,0,B,5,A,0,C,0
+478,vaE14xa,6,0,B and (C then A),4,B then C then A,8,B then (A and C),5
+479,vaE14xa,13,0,B then (A and C),5,B then A then C,8,(A and B) then C,5
+480,vaE14xa,4,0,C then B,1,C then A,5,C then A then B,5
