@@ -32,6 +32,28 @@ class Grid():
 		elif grid == 'testGrid2':
 			self.getTestGrid2()
 
+		elif grid == 'exp4_train':
+			self.get_exp4_train()
+
+		elif grid == 'exp4_test_abc':
+			self.get_exp4_test_abc()
+
+		elif grid == 'exp4_test_acb':
+			self.get_exp4_test_acb()
+
+		elif grid == 'exp4_test_bac':
+			self.get_exp4_test_bac()
+
+		elif grid == 'exp4_test_bca':
+			self.get_exp4_test_bca()
+
+		elif grid == 'exp4_test_cab':
+			self.get_exp4_test_cab()
+
+		elif grid == 'exp4_test_cba':
+			self.get_exp4_test_cba()
+
+
 
 	def setGrid(self, fileName):
 		""" 
@@ -95,3 +117,40 @@ class Grid():
 
 		fileName = 'gridWorlds/testGrid2.txt'
 		self.setGrid(fileName)
+
+	def get_exp4_train(self):
+
+		fileName = 'gridWorlds/exp4_train.txt'
+		self.setGrid(fileName)
+
+	def get_exp4_test_abc(self):
+
+		fileName = 'gridWorlds/exp4_test_abc.txt'
+		self.setGrid(fileName)
+
+	def get_exp4_test_acb(self):
+
+		fileName = 'gridWorlds/exp4_test_acb.txt'
+		self.setGrid(fileName)
+
+	def get_exp4_test_bac(self):
+
+		fileName = 'gridWorlds/exp4_test_bac.txt'
+		self.setGrid(fileName)
+
+	def get_exp4_test_bca(self):
+
+		fileName = 'gridWorlds/exp4_test_bca.txt'
+		self.setGrid(fileName)
+
+	def get_exp4_test_cab(self):
+
+		fileName = 'gridWorlds/exp4_test_cab.txt'
+		self.setGrid(fileName)
+
+	def get_exp4_test_cba(self):
+
+		fileName = 'gridWorlds/exp4_test_cba.txt'
+		self.setGrid(fileName)
+
+

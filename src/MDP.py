@@ -32,7 +32,7 @@ class MDP(object):
 	__metaclass__ = ABCMeta
 	
 	def __init__(self, states=None, actions=None, rewards=None, transitions=None, 
-				discount=.99, tau=.01, epsilon=.01):
+				discount=.999, tau=.01, epsilon=.01):
 
 		self.s = np.array(states)
 		self.a = np.array(actions)

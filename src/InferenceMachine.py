@@ -34,7 +34,7 @@ class InferenceMachine():
 	"""
 
 	def __init__(self, depth, grid, start, action, reward=100, 
-		hypotheses = None, discount=.9, tau=.01, epsilon=.001, 
+		hypotheses = None, discount=.999, tau=.01, epsilon=.001, 
 		tauChoice=.01, rationalAction=1, rationalChoice=1,MCMCOn=True, trials=-1):
 
 		self.trials=trials
@@ -310,7 +310,9 @@ class InferenceMachine():
 			for j in range(len(evalHypothesesCost[i])):
 				evalHypothesesCost[i][j] = self.reward - evalHypothesesCost[i][j]
 				evalHypothesesCost[i][j][-1] = 0.0
-
+				#
+				# evalHypothesesCost[i][j] /= evalHypothesesCost[i][j].sum()
+				#
 				evalHypothesesCost[i][j] /= self.tauChoice
 				maxCost = max(evalHypothesesCost[i][j])
 				arg = maxCost + np.log((np.exp(evalHypothesesCost[i][j] - maxCost).sum()))
@@ -379,6 +381,7 @@ class InferenceMachine():
 
 		"""
 
+		# self.prior = [(math.exp(-3*(self.And[i]*1.0+self.Then[i]*1.0+self.Or[i]*1.0+self.args[i]))*self.primHypotheses.count(self.primHypotheses[i]))+.05 for i in range(len(self.primHypotheses))]
 		self.prior = [.5*(math.exp(-.5*(self.And[i]*1.0+self.Then[i]*1.0+self.Or[i]*1.0+self.args[i]))) for i in range(len(self.primHypotheses))]
 		# self.prior /= np.sum(self.prior)
 
